@@ -1,0 +1,101 @@
+{
+    "common": {
+        "name":                     "statistics",
+        "version":                  "0.0.1",
+	    "news": {
+			"0.0.1": {
+			  "en": "initial adapter",
+			  "de": "Initiale Version",
+			  "ru": "Первоначальный адаптер"
+			}
+		},
+        "title":                    "statistics for iobroker states",
+        "desc":                     {
+				 "en": "ioBroker statistics Adapter",
+				 "de": "ioBroker Statistics Adapter",
+				 "ru": "ioBroker Statistics драйвер как образец"
+		},
+        "platform":                 "Javascript/Node.js",
+        "mode":                     "daemon",
+        "icon":                     "statistics.png",
+        "enabled":                  true,
+		"extIcon":                  "https://raw.githubusercontent.com/foxthefox/ioBroker.statistics/master/admin/statistics.png",
+		"keywords":                 ["statistics", "vis", "GUI", "graphical"],
+        "readme":                   "https://github.com/foxthefox/ioBroker.statistics/blob/master/README.md",
+		"loglevel":                 "debug",
+        "type":                     "common adapters"
+    },
+    "native": {
+        "elcost": 0.28,
+        "gascost": 42,
+        "meter": [
+                {
+                    "mid": "1",
+                    "mstate": "hmrpc.0.",
+                    "mname": "Wohnzimmer_1"
+                },
+                {
+                    "mid": "2",
+                    "mstate": "hmrpc.0.",
+                    "mname": "Wohnzimmer_1"
+                }
+            ],
+        "sum": [
+                {
+                    "sid": "11",
+                    "sgroup": "energy",
+                    "sstate": "hmrpc.0.",
+                    "sname": "Part 1 of Total Energy"
+                },
+                {
+                    "sid": "12",
+                    "sgroup": "water",
+                    "sstate": "hmrpc.0.",
+                    "sname": "Part 1 of Total Water"
+                }
+            ],
+        "avg": [
+                {
+                    "aid": "21",
+                    "astate": "hmrpc.0.",
+                    "aname": " Average 1"
+                },
+                {
+                    "aid": "22",
+                    "astate": "hmrpc.0.",
+                    "aname": " Average 2"
+                }
+            ],
+        "cnt": [
+                {
+                    "cid": "31",
+                    "cstate": "hmrpc.0.",
+                    "cthres": "1",
+                    "cname": " Schaltspiele EIN/AUS"
+                },
+                {
+                    "cid": "32",
+                    "cstate": "hmrpc.0.",
+                    "cthres": "0.24",
+                    "cname": " Schaltspiele aus Wert"
+                }
+            ],
+        "opcnt": [
+                {
+                    "ocid": "41",
+                    "ocstate": "hmrpc.0.",
+                    "cthres": "1",
+                    "cname": " Betriebszeit EIN"
+                },
+                {
+                    "ocid": "42",
+                    "ocstate": "hmrpc.0.",
+                    "octhres": "0",
+                    "ocname": " Betriebszeit AUS"
+                }
+            ]
+        },
+    "objects": [
+
+    ]
+}

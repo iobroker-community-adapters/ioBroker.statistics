@@ -1,0 +1,270 @@
+<html>
+
+
+<!-- these 4 files always have to be included -->
+<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
+<script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+<script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
+
+
+<!-- other files can be included
+<link rel="stylesheet" type="text/css" href="../../lib/css/jqGrid/ui.jqgrid-4.5.4.css"/>
+<script type="text/javascript" src="../../lib/js/jqGrid/jquery.jqGrid-4.5.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="../../lib/css/jquery.multiselect-1.13.css"/>
+<script type="text/javascript" src="../../lib/js/jquery.multiselect-1.13.min.js"></script>
+<!--
+<script type="text/javascript" src="../../lib/js/jqGrid/i18n/grid.locale-all.js"></script>
+-->
+
+
+
+<!-- these tnree file always have to be included-->
+<link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+
+<!-- you have to define 2 functions in the global scope: -->
+<script type="text/javascript">
+
+    var meter = [];
+    var sum = [];
+    var avg = [];
+    var cnt = [];
+    var opcnt = [];
+
+    // Dictionary (systemDictionary is global variable from adapter-settings.js)
+    systemDictionary = {
+        "statistics adapter settings": {"de": "statistics adapter setting", "en": "statistics adapter setting", "ru": "statistics adapter setting"},
+        "General":                    {"en": "General", "de": "Allgemein", "ru": "Тест 1"},
+        "Meter":                    {"en": "Meter", "de": "Zähler", "ru": "Тест 1"},
+        "Summen":                    {"en": "Sum", "de": "Summen", "ru": "Тест 1"},
+        "Mittelwerte":               {"en": "Mean", "de": "Mittelwerte", "ru": "Тест 1"},
+        "JSON Import/Export":       {"en": "JSON Import/Export", "de": "JSON Import/Export", "ru": "Тест 2"},
+        "elcost":       {"en": "elcost", "de": "elcost", "ru": "Тест 2"},
+        "gascost":       {"en": "gascost", "de": "gascost", "ru": "Тест 2"},
+        "sum configuration":       {"en": "sum configuration", "de": "sum configuration", "ru": "Тест 2"},
+        "avg configuration":       {"en": "avg configuration", "de": "avg configuration", "ru": "Тест 2"},
+        "what to configure:":       {"en": "what to configure:", "de": "what to configure:", "ru": "Тест 2"},
+        "import/export":       {"en": "import/export", "de": "import/export", "ru": "Тест 2"},
+        "test1":                    {"en": "Test 2", "de": "Test 2", "ru": "Тест 2"},
+        "test2":                    {"en": "Test 2", "de": "Test 2", "ru": "Тест 2"},
+        "on save adapter restarts with new config immediately": {
+            "de": "Beim Speichern von Einstellungen der Adapter wird sofort neu gestartet.",
+            "en": "on save adapter restarts with new config immediately",
+            "ru": "Сразу после сохранения настроек драйвер перезапуститься с новыми значениями"
+        }
+    };
+    
+    function setValue(id, value, onChange) {
+        // example: select elements with id=key and class=value and insert value
+        if ($('#' + id + '.value').attr('type') == 'checkbox') {
+            $('#' + id + '.value').prop('checked', value).change(function() {
+                onChange();
+            });
+        } else {
+            $('#' + id + '.value').val(value).change(function() {
+                onChange();
+            }).keyup(function() {
+                // Check that only numbers entered
+                if ($(this).hasClass('number')) {
+                    var val = $(this).val();
+                    if (val) {
+                        var newVal = '';
+                        for (var i = 0; i < val.length; i++) {
+                            if (val[i] >= '0' && val[i] <= '9') {
+                                newVal += val[i];
+                            }
+                        }
+
+                        if (val != newVal) $(this).val(newVal);
+                    }
+                }
+
+                onChange();
+            });
+        }
+    }
+
+
+    // the function loadSettings has to exist ...
+    function load(settings, onChange) {
+
+        if (!settings) return;
+
+        meter = settings.meter || [];
+        sum = settings.sum || [];
+        avg = settings.avg || [];
+
+        for (var key in settings) {
+            setValue(key, settings[key], onChange);
+        }
+        /** other code for set value
+            // example: select elements with id=key and class=value and insert value
+            for (var key in settings) {
+                // example: select elements with id=key and class=value and insert value
+                if ($('#' + key + '.value').attr('type') == 'checkbox') {
+                    $('#' + key + '.value').prop('checked', settings[key]).change(function () {
+                        onChange();
+                    });
+                } else {
+                    $('#' + key + '.value').val(settings[key]).change(function () {
+                        onChange();
+                    }).keyup(function () {
+                        $(this).trigger('change');
+                    });
+                }
+            }
+        */
+        
+        //$('#tabs').show().tabs();
+
+
+        $('#tabs').show().tabs({
+            activate:  function (event, ui) {
+                if (ui.newPanel.attr('id') === 'tabs-2') {
+                    values2table('metertable', meter, onChange);
+                    showMessage('ttt' + JSON.stringify(meter));
+                }
+                if (ui.newPanel.attr('id') === 'tabs-3') {
+                    values2table('sumtable', sum, onChange);
+                    showMessage('ttt'  + JSON.stringify(sum));
+                }
+                if (ui.newPanel.attr('id') === 'tabs-4') {
+                    values2table('avgtable', avg, onChange);
+                    showMessage('ttt' + JSON.stringify(avg));
+                }
+            }
+        });
+/*
+        values2table('metertable', meter, onChange);        
+        values2table('sumtable', sum, onChange);
+        values2table('avgtable', avg, onChange);
+        showMessage('ttt' + JSON.stringify(meter)+ ' ' + JSON.stringify(sum));         
+*/
+
+        // Signal to admin, that no changes yet
+        onChange(false);
+    }
+
+    // ... and the function save has to exist.
+    // you have to make sure the callback is called with the settings object as first param!
+    function save(callback) {
+        // example: select elements with class=value and build settings object
+        var obj = {};
+        $('.value').each(function () {
+            var $this = $(this);
+            if ($this.attr('type') === 'checkbox') {
+                obj[$this.attr('id')] = $this.prop('checked');
+            } else {
+                obj[$this.attr('id')] = $this.val();
+            }
+        });
+        // Get edited table
+        obj.meter = table2values('metertable');
+        obj.sum = table2values('sumtable');
+        obj.avg = table2values('avgtable');
+
+        callback(obj);
+    }
+</script>
+<!-- you have to put your config page in a div with id adapter-container style="width: 100%; height: 100%; overflow: hidden;"-->
+<div id="adapter-container" style="width: 100%; height: 100%; overflow: hidden">
+    <table><tr>
+        <td><img src="statistics.png"/></td>
+        <td><h3 class="translate">statistics adapter settings</h3></td></tr>
+        <tr>
+        <td><p class="translate">on save adapter restarts with new config immediately</p></td>
+    </tr></table>
+    <div id="tabs" style="width: 100%; height: 100%; overflow: hidden; display: none;">
+        <ul>
+            <li><a href="#tabs-1" class="translate">General</a></li>
+            <li><a href="#tabs-2" class="translate">Meter</a></li>
+            <li><a href="#tabs-3" class="translate">Summen</a></li>
+            <li><a href="#tabs-4" class="translate">Mittelwerte</a></li>
+            <li><a href="#tabs-5" class="translate">JSON</a></li>
+        </ul>
+
+
+        <div id="tabs-1" style="display: flex;  align-items: left; flex-direction: column;overflow: auto">
+            <h4 class="translate">general configuration</h4>       
+            <table>
+                <tr><td><label class="translate">elcost</label></td><td><input class="value" id="elcost"></td><td>€/kWh</td><tr>
+                <tr><td><label class="translate">gascost</label></td><td><input class="value" id="gascost"></td><td>€/m³</td><tr>
+            </table>
+            
+        </div>
+
+        <div id="tabs-2">
+            <h4 class="translate">meter configuration</h4>
+            <p class="translate">what to configure:</p>
+            <div id="metertable" style="width: 100%; height: calc(100% - 300px)">
+                <button class="table-button-add" style="display: inline-block; margin-left: 10px; height: 2em"></button>
+                <div style="width: 100%; height: calc(100% - 30px); overflow: auto;">
+                    <table class="table-values" style="width: 100%;">
+                        <thead>
+                        <tr>
+                            <th data-name="mid"   style="width: 40px" class="translate">mid</th>
+                            <th data-name="mstate"    style="width: 150px"class="translate">Meter Instance</th>
+                            <th data-name="mname"     style="width: 200px" class="translate">Name</th>
+                            <th data-buttons="delete" style="width: 40px"></th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabs-3" >
+            <h4 class="translate">sum configuration</h4>
+            <p class="translate">what to configure:</p>
+            <div id="sumtable" style="width: 100%; height: calc(100% - 300px)">
+                <button class="table-button-add" style="display: inline-block; margin-left: 10px; height: 2em"></button>
+                <div style="width: 100%; height: calc(100% - 30px); overflow: auto;">
+                    <table class="table-values" style="width: 100%;">
+                        <thead>
+                        <tr>
+                            <th data-name="sid"   style="width: 40px" class="translate">sid</th>
+                            <th data-name="sgroup"   style="width: 100px" class="translate">sgroup</th>
+                            <th data-name="sstate"    style="width: 150px"class="translate">Sum Instance</th>
+                            <th data-name="sname"     style="width: 200px" class="translate">Name</th>
+                            <th data-buttons="delete" style="width: 40px"></th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="tabs-4" >
+            <h4 class="translate">avg configuration</h4>
+            <p class="translate">what to configure:</p>
+            <div id="avgtable" style="width: 100%; height: calc(100% - 300px)">
+                <button class="table-button-add" style="display: inline-block; margin-left: 10px; height: 2em"></button>
+                <div style="width: 100%; height: calc(100% - 30px); overflow: auto;">
+                    <table class="table-values" style="width: 100%;">
+                        <thead>
+                        <tr>
+                            <th data-name="aid"   style="width: 40px" class="translate">aid</th>
+                            <th data-name="astate"    style="width: 150px"class="translate">Avg Instance</th>
+                            <th data-name="aname"     style="width: 200px" class="translate">Name</th>
+                            <th data-buttons="delete" style="width: 40px"></th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="tabs-5" >
+            <h4 class="translate">import/export</h4>
+            <button style="display: inline-block; margin-left: 10px;">Import</button>
+        </div>
+
+    </div> <!--tabs-->
+
+</div> <!--adapter container-->
+</html>
