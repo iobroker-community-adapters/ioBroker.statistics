@@ -28,11 +28,7 @@
 <!-- you have to define 2 functions in the global scope: -->
 <script type="text/javascript">
 
-    var meter = [];
-    var sum = [];
-    var avg = [];
-    var cnt = [];
-    var opcnt = [];
+    var stateobj = [];
 
     // Dictionary (systemDictionary is global variable from adapter-settings.js)
     systemDictionary = {
@@ -93,9 +89,7 @@
 
         if (!settings) return;
 
-        meter = settings.meter || [];
-        sum = settings.sum || [];
-        avg = settings.avg || [];
+        stateobj = settings.stateobj || [];
 
         for (var key in settings) {
             setValue(key, settings[key], onChange);
@@ -124,16 +118,8 @@
         $('#tabs').show().tabs({
             activate:  function (event, ui) {
                 if (ui.newPanel.attr('id') === 'tabs-2') {
-                    values2table('metertable', meter, onChange);
-                    showMessage('ttt' + JSON.stringify(meter));
-                }
-                if (ui.newPanel.attr('id') === 'tabs-3') {
-                    values2table('sumtable', sum, onChange);
-                    showMessage('ttt'  + JSON.stringify(sum));
-                }
-                if (ui.newPanel.attr('id') === 'tabs-4') {
-                    values2table('avgtable', avg, onChange);
-                    showMessage('ttt' + JSON.stringify(avg));
+                    values2table('metertable', stateobj, onChange);
+                    //showMessage('ttt' + JSON.stringify(stateobj));
                 }
             }
         });
@@ -162,9 +148,7 @@
             }
         });
         // Get edited table
-        obj.meter = table2values('metertable');
-        obj.sum = table2values('sumtable');
-        obj.avg = table2values('avgtable');
+        obj.stateobj = table2values('metertable');
 
         callback(obj);
     }
@@ -180,9 +164,7 @@
     <div id="tabs" style="width: 100%; height: 100%; overflow: hidden; display: none;">
         <ul>
             <li><a href="#tabs-1" class="translate">General</a></li>
-            <li><a href="#tabs-2" class="translate">Meter</a></li>
-            <li><a href="#tabs-3" class="translate">Summen</a></li>
-            <li><a href="#tabs-4" class="translate">Mittelwerte</a></li>
+            <li><a href="#tabs-2" class="translate">Werte</a></li>
             <li><a href="#tabs-5" class="translate">JSON</a></li>
         </ul>
 
@@ -205,58 +187,21 @@
                     <table class="table-values" style="width: 100%;">
                         <thead>
                         <tr>
-                            <th data-name="mid"   style="width: 40px" class="translate">mid</th>
-                            <th data-name="mstate"    style="width: 150px"class="translate">Meter Instance</th>
-                            <th data-name="mname"     style="width: 200px" class="translate">Name</th>
+                            <th data-name="logobject"    style="width: 150px"class="translate">Instance</th>
+                            <th data-name="logname"    style="width: 200px"  class="translate">Name</th>
+                            <th data-name="count"       data-type="checkbox" style="width: 40px" class="translate">Zählung</th>
+                            <th data-name="sumcnt"      data-type="checkbox" style="width: 40px" class="translate">ZVerbrauch</th>
+                            <th data-name="sumdelta"    data-type="checkbox" style="width: 40px" class="translate">Verbrauch</th>
+                            <th data-name="timecount"   data-type="checkbox" style="width: 40px" class="translate">Betriebszeit</th>
+                            <th data-name="avg"         data-type="checkbox" style="width: 40px" class="translate">MW</th>
+                            <th data-name="sumgroup"    data-type="checkbox" style="width: 40px" class="translate">SumGroup</th>
+                            <th data-name="sumgroupname"     style="width: 200px" class="translate">SGName</th>
                             <th data-buttons="delete" style="width: 40px"></th>
                         </tr>
                         </thead>
                     </table>
                 </div>
             </div>
-        </div>
-
-        <div id="tabs-3" >
-            <h4 class="translate">sum configuration</h4>
-            <p class="translate">what to configure:</p>
-            <div id="sumtable" style="width: 100%; height: calc(100% - 300px)">
-                <button class="table-button-add" style="display: inline-block; margin-left: 10px; height: 2em"></button>
-                <div style="width: 100%; height: calc(100% - 30px); overflow: auto;">
-                    <table class="table-values" style="width: 100%;">
-                        <thead>
-                        <tr>
-                            <th data-name="sid"   style="width: 40px" class="translate">sid</th>
-                            <th data-name="sgroup"   style="width: 100px" class="translate">sgroup</th>
-                            <th data-name="sstate"    style="width: 150px"class="translate">Sum Instance</th>
-                            <th data-name="sname"     style="width: 200px" class="translate">Name</th>
-                            <th data-buttons="delete" style="width: 40px"></th>
-                        </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-
-        <div id="tabs-4" >
-            <h4 class="translate">avg configuration</h4>
-            <p class="translate">what to configure:</p>
-            <div id="avgtable" style="width: 100%; height: calc(100% - 300px)">
-                <button class="table-button-add" style="display: inline-block; margin-left: 10px; height: 2em"></button>
-                <div style="width: 100%; height: calc(100% - 30px); overflow: auto;">
-                    <table class="table-values" style="width: 100%;">
-                        <thead>
-                        <tr>
-                            <th data-name="aid"   style="width: 40px" class="translate">aid</th>
-                            <th data-name="astate"    style="width: 150px"class="translate">Avg Instance</th>
-                            <th data-name="aname"     style="width: 200px" class="translate">Name</th>
-                            <th data-buttons="delete" style="width: 40px"></th>
-                        </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-
         </div>
 
         <div id="tabs-5" >
