@@ -5,7 +5,7 @@
 	    "news": {
             "0.0.2": {
                 "en": "bailerplate running",
-                "de": "Grundgerüst lauffähig",
+                "de": "Grundgerüst lauffähig"
               },
 			"0.0.1": {
 			  "en": "initial adapter",
