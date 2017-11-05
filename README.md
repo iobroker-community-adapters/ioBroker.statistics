@@ -4,7 +4,13 @@
 
 This adapter is a shall make the configuration of statistics more easier. 
 
+## known issues
+
+* table in admin page not scrollable
+
 ## Changelog
+#### 0.0.2
+* setup running
 
 #### 0.0.1
 * initial release 
