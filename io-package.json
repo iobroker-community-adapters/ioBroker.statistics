@@ -1,8 +1,12 @@
 {
     "common": {
         "name":                     "statistics",
-        "version":                  "0.0.1",
+        "version":                  "0.0.2",
 	    "news": {
+            "0.0.2": {
+                "en": "bailerplate running",
+                "de": "Grundgerüst lauffähig",
+              },
 			"0.0.1": {
 			  "en": "initial adapter",
 			  "de": "Initiale Version",
@@ -28,70 +32,28 @@
     "native": {
         "elcost": 0.28,
         "gascost": 42,
-        "meter": [
+        "stateobj": [
                 {
-                    "mid": "1",
-                    "mstate": "hmrpc.0.",
-                    "mname": "Wohnzimmer_1"
+                    "logobject": "hm-rpc.1.CUX0600001.1.METER",
+                    "logname": "Küche",
+                    "count": false,
+                    "sumcnt": false,
+                    "sumdelta": true,
+                    "timecount": false,
+                    "avg": false,
+                    "sumgroup": false,
+                    "sumgroupname": "electric"
                 },
                 {
-                    "mid": "2",
-                    "mstate": "hmrpc.0.",
-                    "mname": "Wohnzimmer_1"
-                }
-            ],
-        "sum": [
-                {
-                    "sid": "11",
-                    "sgroup": "energy",
-                    "sstate": "hmrpc.0.",
-                    "sname": "Part 1 of Total Energy"
-                },
-                {
-                    "sid": "12",
-                    "sgroup": "water",
-                    "sstate": "hmrpc.0.",
-                    "sname": "Part 1 of Total Water"
-                }
-            ],
-        "avg": [
-                {
-                    "aid": "21",
-                    "astate": "hmrpc.0.",
-                    "aname": " Average 1"
-                },
-                {
-                    "aid": "22",
-                    "astate": "hmrpc.0.",
-                    "aname": " Average 2"
-                }
-            ],
-        "cnt": [
-                {
-                    "cid": "31",
-                    "cstate": "hmrpc.0.",
-                    "cthres": "1",
-                    "cname": " Schaltspiele EIN/AUS"
-                },
-                {
-                    "cid": "32",
-                    "cstate": "hmrpc.0.",
-                    "cthres": "0.24",
-                    "cname": " Schaltspiele aus Wert"
-                }
-            ],
-        "opcnt": [
-                {
-                    "ocid": "41",
-                    "ocstate": "hmrpc.0.",
-                    "cthres": "1",
-                    "cname": " Betriebszeit EIN"
-                },
-                {
-                    "ocid": "42",
-                    "ocstate": "hmrpc.0.",
-                    "octhres": "0",
-                    "ocname": " Betriebszeit AUS"
+                    "logobject": "hm-rpc.1.CUX0600002.1.METER",
+                    "logname": "Wohnzimmer_1",
+                    "count": false,
+                    "sumcnt": false,
+                    "sumdelta": true,
+                    "timecount": false,
+                    "avg": false,
+                    "sumgroup": false,
+                    "sumgroupname": "electric"
                 }
             ]
         },
