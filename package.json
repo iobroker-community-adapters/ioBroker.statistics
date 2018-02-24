@@ -4,20 +4,18 @@
   "description": "ioBroker statistics Adapter",
   "author": {
     "name": "Author foxthefox",
-    "email": "foxthefox@mail.com"
+    "email": "foxthefox@wysiwis.net"
   },
   "contributors": [
     {
-      "name": "Author foxthefox",
-      "email": "foxthefox@mail.com"
     }
   ],
   "homepage": "https://github.com/foxthefox/ioBroker.statistics",
   "license": "MIT",
   "keywords": [
-    "ioBroker",
+    "count",
     "statistics",
-    "Smart Home"
+    "daily values"
   ],
   "repository": {
     "type": "git",
@@ -25,13 +23,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-replace": "^0.9.3",
-    "grunt-contrib-jshint": "^0.11.2",
-    "grunt-jscs": "^2.0.0",
-    "grunt-http": "^1.6.0",
-    "mocha": "^2.3.4",
-    "chai": "^3.4.1"
+      "gulp": "^3.9.1",
+      "mocha": "^4.1.0",
+      "chai": "^4.1.2"
   },
   "main": "main.js",
   "scripts": {
