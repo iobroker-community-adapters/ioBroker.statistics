@@ -23,7 +23,8 @@
   },
   "dependencies": {
       "node-schedule": "^1.2.5",
-      "async":"^2.6.0"},
+      "async":"^2.6.0"
+  },
   "devDependencies": {
       "gulp": "^3.9.1",
       "mocha": "^4.1.0",
