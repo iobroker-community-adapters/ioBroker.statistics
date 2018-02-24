@@ -24,7 +24,23 @@ npm install https://github.com/foxthefox/ioBroker.statistics/tarball/master --pr
 
 ## Settings
 * you have to specify the full object name in each line
-* you have to specify the type of statistical logging you want to have 
+* you have to specify the type of statistical logging you want to have
+choose from the following settings:
+* count impulses or on/off switchings
+* sumcount, calculate costs from the counted values
+* sumdelta
+* sumgroup
+* avg
+* timecount
+* 5min
+
+## Operation
+The adapter subscribes to the configured objects and creates his own states in the statistics tree.
+2 seperate trees are created:
+* statistics.0/save -> final stored values of the timeframe
+* statistics.0/temp -> temporary values througout the day
+
+after save or temp the orignal object is kept (unfortunately it is split by the "." in a deeper structure than needed.
 
 ## known issues
 
