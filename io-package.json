@@ -3,30 +3,30 @@
         "name":                     "statistics",
         "version":                  "0.0.2",
 	    "news": {
-            "0.0.2": {
-                "en": "bailerplate running",
-                "de": "Grundgerüst lauffähig"
-              },
-			"0.0.1": {
-			  "en": "initial adapter",
-			  "de": "Initiale Version",
-			  "ru": "Первоначальный адаптер"
-			}
+	    "0.0.2": {
+		"en": "boilerplate running",
+		"de": "Grundgerüst lauffähig"
+	      },
+		"0.0.1": {
+		  "en": "initial adapter",
+		  "de": "Initiale Version",
+		  "ru": "Первоначальный адаптер"
+		}
 		},
-        "title":                    "statistics for iobroker states",
-        "desc":                     {
-				 "en": "ioBroker statistics Adapter",
-				 "de": "ioBroker Statistics Adapter",
-				 "ru": "ioBroker Statistics драйвер как образец"
+        "title":                    "statistics for iobroker objects",
+        "desc":   {
+		 "en": "ioBroker statistics Adapter",
+		 "de": "ioBroker Statistics Adapter",
+		 "ru": "ioBroker Statistics драйвер как образец"
 		},
         "platform":                 "Javascript/Node.js",
         "mode":                     "daemon",
         "icon":                     "statistics.png",
         "enabled":                  true,
-		"extIcon":                  "https://raw.githubusercontent.com/foxthefox/ioBroker.statistics/master/admin/statistics.png",
-		"keywords":                 ["statistics", "vis", "GUI", "graphical"],
+	"extIcon":                  "https://raw.githubusercontent.com/foxthefox/ioBroker.statistics/master/admin/statistics.png",
+	"keywords":                 ["statistics", "sum", "daily value"],
         "readme":                   "https://github.com/foxthefox/ioBroker.statistics/blob/master/README.md",
-		"loglevel":                 "debug",
+	"loglevel":                 "debug",
         "type":                     "common adapters"
     },
     "native": {
