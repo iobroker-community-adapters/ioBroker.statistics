@@ -41,6 +41,7 @@
                     "sumdelta": true,
                     "timecount": false,
                     "avg": false,
+		    "fivemin": false,
                     "sumgroup": false,
                     "sumgroupname": "electric"
                 },
@@ -52,6 +53,7 @@
                     "sumdelta": true,
                     "timecount": false,
                     "avg": false,
+		    "fivemin": false,
                     "sumgroup": false,
                     "sumgroupname": "electric"
                 }
