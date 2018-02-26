@@ -30,11 +30,11 @@ choose from the following settings:
 
 * count impulses or on/off switchings
 * sumcount, calculate costs from the counted values
-* sumdelta
-* sumgroup
-* avg
-* timecount
-* 5min
+* sumdelta, delta between logged analogue values
+* sumgroup, sum up of grouped values
+* avg, dayly max, min and average
+* timecount, how long was status ON and how long OFF
+* 5min,count within 5 min and dayly max, min and average of it
 
 ## Operation
 The adapter subscribes to the configured objects and creates his own states in the statistics tree.
