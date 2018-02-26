@@ -22,7 +22,7 @@
         "platform":                 "Javascript/Node.js",
         "mode":                     "daemon",
         "icon":                     "statistics.png",
-        "enabled":                  true,
+        "enabled":                  false,
 	"extIcon":                  "https://raw.githubusercontent.com/foxthefox/ioBroker.statistics/master/admin/statistics.png",
 	"keywords":                 ["statistics", "sum", "daily value"],
         "readme":                   "https://github.com/foxthefox/ioBroker.statistics/blob/master/README.md",
@@ -36,18 +36,6 @@
                 {
                     "logobject": "hm-rpc.1.CUX0600001.1.METER",
                     "logname": "Küche",
-                    "count": false,
-                    "sumcnt": false,
-                    "sumdelta": true,
-                    "timecount": false,
-                    "avg": false,
-		    "fivemin": false,
-                    "sumgroup": false,
-                    "sumgroupname": "electric"
-                },
-                {
-                    "logobject": "hm-rpc.1.CUX0600002.1.METER",
-                    "logname": "Wohnzimmer_1",
                     "count": false,
                     "sumcnt": false,
                     "sumdelta": true,
