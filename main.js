@@ -18,14 +18,15 @@ var stateObjects = require(__dirname + '/lib/objects');
 var CronJob = require('cron').CronJob;
 var async = require('async');
 
-var statisticTimeout;
-
-var avg5min, daysave, weeksave, monthsave, quartersave1, quartersave2,yearsave, dayreset, weekreset, monthreset, quarterreset, yearreset;
 
 // you have to call the adapter function and pass a options object
 // name has to be set and has to be equal to adapters folder name and main file name excluding extension
 // adapter will be restarted automatically every time as the configuration changed, e.g system.adapter.statistics.0
 var adapter = utils.adapter('statistics');
+
+var statisticTimeout;
+
+var avg5min, daysave, weeksave, monthsave, quartersave1, quartersave2,yearsave, dayreset, weekreset, monthreset, quarterreset, yearreset;
 
 var types = []; //zum Merken welche  Berechnungen laufen umd dann die Auswahl am tagesende richtig zu triggern.
 var typeobjects = {}; //zum Merken der benutzen Objekte innerhalb der Typen(Berechnungen)
