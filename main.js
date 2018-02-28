@@ -447,7 +447,7 @@ function newTimeCntValue(id, state){
     */
     adapter.log.debug('timecount call '+id+ ' with '+ state.val);
     
-    if (state.val === 1 || state.val === true || state.val === 'true'){
+    if (state.val === 1 || state.val === true || state.val === 'true' || state.val === 'on'){
         //Zeitstempel im zuletzt gespeicherten Tageswert sollte hinreichend genau sein
         /*
         var last = adapter.getForeignState(adapter.namespace + '.temp.timecnt.' + id + '.last01');
@@ -465,7 +465,7 @@ function newTimeCntValue(id, state){
         
         async.waterfall([
             function(callback) {
-                adapter.getForeignState(adapter.namespace + '.temp.timecnt.' + id + '.last01', function(err, value) {
+                adapter.getForeignState(adapter.namespace + '.temp.timecnt.' + id + '.last10', function(err, value) {
                     if (err) return callback(err);
                     var last= value;
                     callback(null, last);
@@ -482,7 +482,8 @@ function newTimeCntValue(id, state){
                 async.eachSeries(nameObjects["timecnt"]["save"], function(item, nextItem) {
                     var dp=item;
                     //adapter.log.debug('timecnt on' +dp);
-                    if (dp.indexOf("on")!== -1 && dp !=="offmonth"){ //on ist auch in month
+                    // der 01 Übergang setzt die OFF Zeiten
+                    if (dp.indexOf("off")!== -1 ){
                         async.waterfall([
                             function(callback) {
                                 adapter.getForeignState(adapter.namespace + '.temp.timecnt.' + id + '.'+dp, function(err, value) {
@@ -509,7 +510,7 @@ function newTimeCntValue(id, state){
                 callback(); //eachSeries callback
             },
             function(callback){
-                adapter.setForeignState(adapter.namespace + '.temp.timecnt.' + id + '.last01',{lc:state.lc},true);
+                adapter.setForeignState(adapter.namespace + '.temp.timecnt.' + id + '.last01',{lc:state.lc},true); // setzen des last01 auf das aktuelle Ereignis
                 callback(null, 'done');
             }
         ], function (err, result) {
@@ -518,7 +519,7 @@ function newTimeCntValue(id, state){
         
     }
 
-    if (state.val === 0 || state.val === false || state.val === 'false'){
+    if (state.val === 0 || state.val === false || state.val === 'false' || state.val === 'off'){
         /*
         var last = adapter.getForeignState(adapter.namespace + '.temp.timecnt.' + id + '.last10');
         var delta = state.ts - last.ts;
@@ -535,7 +536,7 @@ function newTimeCntValue(id, state){
         
         async.waterfall([
             function(callback) {
-                adapter.getForeignState(adapter.namespace + '.temp.timecnt.' + id + '.last10', function(err, value) {
+                adapter.getForeignState(adapter.namespace + '.temp.timecnt.' + id + '.last01', function(err, value) {
                     if (err) return callback(err);
                     var last= value;
                     callback(null, last);
@@ -552,7 +553,8 @@ function newTimeCntValue(id, state){
                 async.eachSeries(nameObjects["timecnt"]["save"], function(item, nextItem) {
                     var dp=item;
                     //adapter.log.debug('timecnt off' +dp);
-                    if (dp.indexOf("off")!== -1){
+                    // der 01 Übergang setzt die OFF Zeiten
+                    if (dp.indexOf("on")!== -1 && dp !=="offmonth"){ //on ist auch in month
                         async.waterfall([
                             function(callback) {
                                 adapter.getForeignState(adapter.namespace + '.temp.timecnt.' + id + '.'+dp, function(err, value) {
