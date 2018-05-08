@@ -55,3 +55,9 @@ after save or temp the orignal object is kept (unfortunately it is split by the 
 
 #### 0.0.1
 * initial release 
+
+## License
+
+The MIT License (MIT)
+
+Copyright (c) 2018 foxthefox <foxthefox@wysiwis.net>
