@@ -13,7 +13,18 @@
 		  "ru": "Первоначальный адаптер"
 		}
 		},
-        "title":                    "statistics for iobroker objects",
+        "title":                    "statistics",
+	    "titleLang": {
+		    "en": "statistics for iobroker objects",
+		    "de": "Statistiken für Iobroker-Objekte",
+		    "ru": "Статистика для iobroker объектов",
+		    "pt": "estatísticas para objetos iobroker",
+		    "nl": "statistieken voor iobroker-objecten",
+		    "fr": "statistiques pour les objets iobroker",
+		    "it": "statistiche per oggetti iobroker",
+		    "es": "estadísticas para objetos iobroker",
+		    "pl": "statystyki obiektów iobroker"
+	    },
         "desc":   {
 		 "en": "ioBroker statistics Adapter",
 		 "de": "ioBroker Statistics Adapter",
