@@ -1,9 +1,9 @@
 {
   "name": "iobroker.statistics",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "ioBroker statistics Adapter",
   "author": {
-    "name": "Author foxthefox",
+    "name": "foxthefox",
     "email": "foxthefox@wysiwis.net"
   },
   "contributors": [
