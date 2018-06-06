@@ -47,9 +47,12 @@ after save or temp the orignal object is kept (unfortunately it is split by the 
 
 ## known issues
 
-* table in admin page not scrollable
+* table in adminv2 page not scrollable
 
 ## Changelog
+### 0.0.3
+* adminv3 implemented
+
 #### 0.0.2
 * setup running
 
