@@ -1,64 +1,87 @@
 {
     "common": {
-        "name":                     "statistics",
-        "version":                  "0.0.2",
-	    "news": {
-	    "0.0.2": {
-		"en": "boilerplate running",
-		"de": "Grundgerüst lauffähig"
-	      },
-		"0.0.1": {
-		  "en": "initial adapter",
-		  "de": "Initiale Version",
-		  "ru": "Первоначальный адаптер"
-		}
-		},
-        "title":                    "statistics",
-	    "titleLang": {
-		    "en": "statistics for iobroker objects",
-		    "de": "Statistiken für Iobroker-Objekte",
-		    "ru": "Статистика для iobroker объектов",
-		    "pt": "estatísticas para objetos iobroker",
-		    "nl": "statistieken voor iobroker-objecten",
-		    "fr": "statistiques pour les objets iobroker",
-		    "it": "statistiche per oggetti iobroker",
-		    "es": "estadísticas para objetos iobroker",
-		    "pl": "statystyki obiektów iobroker"
-	    },
-        "desc":   {
-		 "en": "ioBroker statistics Adapter",
-		 "de": "ioBroker Statistics Adapter",
-		 "ru": "ioBroker Statistics драйвер как образец"
-		},
-        "platform":                 "Javascript/Node.js",
-        "mode":                     "daemon",
-        "icon":                     "statistics.png",
-        "enabled":                  false,
-	"extIcon":                  "https://raw.githubusercontent.com/foxthefox/ioBroker.statistics/master/admin/statistics.png",
-	"keywords":                 ["statistics", "sum", "daily value"],
-        "readme":                   "https://github.com/foxthefox/ioBroker.statistics/blob/master/README.md",
-	"loglevel":                 "debug",
-        "type":                     "common adapters"
-    },
-    "native": {
-        "elcost": 0.28,
-        "gascost": 42,
-        "stateobj": [
-                {
-                    "logobject": "hm-rpc.1.CUX0600001.1.METER",
-                    "logname": "Küche",
-                    "count": false,
-                    "sumcnt": false,
-                    "sumdelta": true,
-                    "timecount": false,
-                    "avg": false,
-		    "fivemin": false,
-                    "sumgroup": false,
-                    "sumgroupname": "electric"
-                }
-            ]
+        "name": "statistics",
+        "version": "0.0.2",
+        "news": {
+            "0.0.2": {
+                "en": "boilerplate running",
+                "de": "Grundgerüst läuft",
+                "ru": "плавный ход",
+                "pt": "boilerplate em execução",
+                "nl": "boilerplate running",
+                "fr": "passe-partout en cours d'exécution",
+                "it": "caldaia in funzione",
+                "es": "repetitivo corriendo",
+                "pl": "uruchomiona płyta główna"
+            },
+            "0.0.1": {
+                "en": "initial adapter",
+                "de": "Initiale Version",
+                "ru": "Первоначальный адаптер"
+            }
         },
-    "objects": [
+        "title": "statistics",
+        "titleLang": {
+            "en": "statistics for iobroker objects",
+            "de": "Statistiken für Iobroker-Objekte",
+            "ru": "Статистика для iobroker объектов",
+            "pt": "estatísticas para objetos iobroker",
+            "nl": "statistieken voor iobroker-objecten",
+            "fr": "statistiques pour les objets iobroker",
+            "it": "statistiche per oggetti iobroker",
+            "es": "estadísticas para objetos iobroker",
+            "pl": "statystyki obiektów iobroker"
+        },
+        "desc": {
+            "en": "ioBroker statistics Adapter",
+            "de": "ioBroker Statistik Adapter",
+            "ru": "ioBroker статистика Адаптер",
+            "pt": "Adaptador de estatísticas ioBroker",
+            "nl": "ioBroker statistieken Adapter",
+            "fr": "ioBroker statistiques Adaptateur",
+            "it": "Adattatore statistiche ioBroker",
+            "es": "Adaptador de estadísticas ioBroker",
+            "pl": "Adapter statystyk ioBroker"
+        },
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "icon": "statistics.png",
+        "enabled": false,
+        "extIcon": "https://raw.githubusercontent.com/foxthefox/ioBroker.statistics/master/admin/statistics.png",
+        "keywords": [
+            "statistics",
+            "sum",
+            "daily value"
+        ],
+        "readme": "https://github.com/foxthefox/ioBroker.statistics/blob/master/README.md",
+        "loglevel": "debug",
+        "type": "common adapters",
+        "materialize": true,
+        "authors": [
+            {
+                "name": "foxthefox",
+                "email": "foxthefox@wysiwis.net"
+            }
+        ]
+    },
 
+"native": {
+    "elcost": 0.28,
+    "gascost": 42,
+    "stateobj": [
+        {
+            "logobject": "hm-rpc.1.CUX0600001.1.METER",
+            "logname": "Küche",
+            "count": false,
+            "sumcnt": false,
+            "sumdelta": true,
+            "timecount": false,
+            "avg": false,
+            "fivemin": false,
+            "sumgroup": false,
+            "sumgroupname": "electric"
+        }
     ]
+},
+"objects": []
 }
