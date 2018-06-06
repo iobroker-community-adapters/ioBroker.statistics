@@ -1,8 +1,19 @@
 {
     "common": {
         "name": "statistics",
-        "version": "0.0.2",
+        "version": "0.0.3",
         "news": {
+            "0.0.3": {
+                "en": "adminv3 implemented",
+                "de": "adminv3 implementiert",
+                "ru": "adminv3 реализовано",
+                "pt": "adminv3 implementado",
+                "nl": "adminv3 geïmplementeerd",
+                "fr": "adminv3 implémenté",
+                "it": "adminv3 implementato",
+                "es": "adminv3 implementado",
+                "pl": "Zaimplementowano adminv3"
+              },
             "0.0.2": {
                 "en": "boilerplate running",
                 "de": "Grundgerüst läuft",
