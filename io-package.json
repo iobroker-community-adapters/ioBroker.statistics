@@ -58,6 +58,7 @@
         "mode": "daemon",
         "icon": "statistics.png",
         "enabled": false,
+        "preserveSettings": "custom",
         "extIcon": "https://raw.githubusercontent.com/foxthefox/ioBroker.statistics/master/admin/statistics.png",
         "keywords": [
             "statistics",
@@ -68,6 +69,7 @@
         "loglevel": "debug",
         "type": "common adapters",
         "materialize": true,
+        "supportCustoms": true,
         "authors": [
             {
                 "name": "foxthefox",
