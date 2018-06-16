@@ -31,6 +31,8 @@ var avg5min, daysave, weeksave, monthsave, quartersave1, quartersave2,yearsave, 
 var types = []; //zum Merken welche  Berechnungen laufen umd dann die Auswahl am tagesende richtig zu triggern.
 var typeobjects = {}; //zum Merken der benutzen Objekte innerhalb der Typen(Berechnungen)
 
+var statDP = {};
+
 var nameObjects = {
     count :{ //Impulse zählen oder Schaltspiele zählen
         save: ['day','week','month','quarter','year'],
@@ -93,7 +95,17 @@ adapter.on('unload', function (callback) {
 // is called if a subscribed object changes
 adapter.on('objectChange', function (id, obj) {
     // Warning, obj can be null if it was deleted
+    adapter.log.info('received objectChange ');
     adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
+    if (obj && obj.common &&
+        (
+            // todo remove history sometime (2016.08) - Do not forget object selector in io-package.json
+            (obj.common.history && obj.common.history[adapter.namespace] && obj.common.history[adapter.namespace].enabled) ||
+            (obj.common.custom  && obj.common.custom[adapter.namespace]  && obj.common.custom[adapter.namespace].enabled)
+        )
+    ) {
+        adapter.log.info('received objectChange for stat');
+    }
 });
 
 process.on('SIGINT', function () {
