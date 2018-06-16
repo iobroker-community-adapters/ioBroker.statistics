@@ -1,0 +1,103 @@
+<script type="text/x-iobroker" data-template-name="statistics">
+    <div class="row">
+        <div class="col s4">
+            <input type="checkbox" data-field="enabled" data-default="false"/>
+            <!-- this field is mandatory, just to find out if to include this settings or not</span-->
+            <span class="translate">enabled</span>
+        </div>
+    </div>
+    <div class="section">
+        <div class="row">
+            <div class="col s12">
+                <h6 class="translate sub-title">für Impulse, binäre Datenpunkte</h6>
+                <p>configure here the possible settings for binary values</p>
+            </div>
+            <div class="col s4">
+            </div>
+            <div class="col s4">
+                <input class="value" id="count" type="checkbox"/><span class="translate">Zählung</span>
+                <p>Impulse oder Schaltspiele zählen</p></td>
+            </div>
+            <div class="col s4">
+                    <input class="value" id="sumcount" type="checkbox"/><span class="translate">Zählung -> Verbrauch</span>
+                    <p>aus Zählung den Verbrauch ermitteln</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s4">
+            </div>
+            <div class="col s4">
+                <input class="value" id="timecount" type="checkbox"/><span class="translate">Betriebszeitzählung</span>
+                <p>Zeiten für Zustand 0 bzw 1 ermitteln</p></td>    
+            </div>
+            <div class="col s4">
+                <input class="value" id="fivemin" type="checkbox"/><span class="translate">5min Werte</span>
+                <p>alle 5min den Verbrauch ermitteln</p></td>
+            </div>
+        </div>
+        <div class="row">
+                <div class="col s4">
+                </div>
+                <div class="col s4">
+                    <input class="value" id="impvalue" />
+                    <label for="impvalue" class="translate">ZählerKonstante</label>
+                    <p>Umrechnungsfaktor für Verbrauchszählung</p></td>    
+                </div>
+                <div class="col s4">
+                    <input class="value" id="impunit" />
+                    <label for="impunit" class="translate">Einheit</label>
+                    <p>Einheit der ZählerKonstante</p></td>
+                </div>
+            </div>
+        </div>
+    <div class="section">
+        <div class="row">
+            <div class="col s12">
+                <h6 class="translate sub-title">für Analogwerte (auch Verbrauch aus Zählung)</h6>
+                <p>configure here the possible settings for analog values</p>
+            </div>
+            <div class="col s4">
+            </div>
+            <div class="col s4">
+                <input class="value" id="sumdelta" type="checkbox"/><span class="translate">Verbrauch</span>
+                <p>Verbrauch</p></td>
+            </div>
+            <div class="col s4">
+                    <input class="value" id="avg" type="checkbox"/><span class="translate">Mittelwerte / Tageswerte</span>
+                    <p>Tages/Wochen/Monats/Quartals/Jahreswerte</p>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="row">
+            <div class="col s12">
+                <h6 class="translate sub-title">Wert in Gruppen zusammenfassen</h6>
+                <p>the groups are defined in the admin page</p>
+            </div>
+            <div class="col s4">
+            </div>
+            <div class="col s4">
+                <input class="value" id="sumgroup" type="checkbox"/><span class="translate">Erfassung in Gruppe</span>
+                <p>Teil einer Gruppenerfassung</p></td>
+            </div>
+            <div class="col s4">
+                <label for="sumgroupname" class="translate">Gruppenzuordnung</label>
+                <select name="sumgroupname" id="sumgroupname" class="value">
+                    <option value="energy">energy</option>
+                    <option value="gas">gas</option>
+                </select>
+                <p>Auswahl der Gruppe</p>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- translations -->
+<script type="text/javascript">
+    systemDictionary = $.extend(systemDictionary, {
+        "enabled": {                                     "en": "enabled",                                         "de": "Aktiviert",                                       "ru": "активно",                                         "pt": "ativado",                                         "nl": "ingeschakeld",                                    "fr": "activée",                                         "it": "abilitato",                                       "es": "habilitado",                                      "pl": "włączony"}    });
+    // There are two ways how to predefine default settings:
+    // - with attribute "data-default" (content independent)
+    // - with function in global variable "defaults". Function name is equal with adapter name.
+    //   as input function receives object with all information concerning it
+</script>

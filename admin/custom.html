@@ -1,0 +1,113 @@
+<script type="text/x-iobroker" data-template-name="statistics">
+    <div class="form-row">
+        <table style="font-size: 12px">
+            <tr>
+                <td class="translate">enabled</td>
+                <td><input type="checkbox" data-field="enabled" data-default="false"></td>
+                <!-- this field is mandatory, just to find out if to include this settings or not -->
+                <td style="width: 40px">&nbsp;</td>
+            </tr>
+            <tr>
+                <td>für Impulse, binäre Datenpunkte</td>
+                <td></td>
+                <td></td>
+                <td class="translate">Zählung</td>
+                <td><input type="checkbox" data-field="count" data-default="false"></td>
+                <td class="translate">Impulse oder Schaltspiele zählen</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="translate">Zählung -> Verbrauch</td>
+                <td><input type="checkbox" data-field="sumcount" data-default="false"></td>
+                <td class="translate">aus Zählung den Verbrauch ermitteln</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="translate">Betriebszeitzählung</td>
+                <td><input type="checkbox" data-field="timecount" data-default="false"></td>
+                <td class="translate">Zeiten für Zustand 0 bzw 1 ermitteln</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="translate">5min Werte</td>
+                <td><input type="checkbox" data-field="fivemin" data-default="false"></td>
+                <td class="translate">alle 5min den Verbrauch ermitteln</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="translate">Zählerkonstante</td>
+                <td><input type="value" data-field="impvalue" min="1" data-default="1"></td>
+                <td class="translate">Umrechnungsfaktor für Verbrauchszählung</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="translate">Zählerkonstante Einheit</td>
+                <td><input type="value" data-field="impunit" data-default="x/Imp"></td>
+                <td class="translate">Einheit der ZählerKonstante</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>für Analogwerte (auch Verbrauch aus Zählung)</td>
+                <td></td>
+                <td></td>
+                <td class="translate">Verbrauch</td>
+                <td><input type="checkbox" data-field="sumdelta" data-default="false"></td>
+                <td class="translate">Verbrauch</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="translate">Mittelwerte / Tageswerte</td>
+                <td><input type="checkbox" data-field="avg" data-default="false"></td>
+                <td class="translate">Tages/Wochen/Monats/Quartals/Jahreswerte</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Wert in Gruppen zusammenfassen</td>
+                <td></td>
+                <td></td>
+                <td class="translate">Erfassung in Gruppe</td>
+                <td><input type="checkbox" data-field="sumgroup" data-default="false"></td>
+                <td class="translate">Teil einer Gruppenerfassung</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="translate">Gruppenzuordnung</td>
+                <td><input type="value" data-field="sumgroupname" data-default="energy"></td>
+                <td class="translate">Auswahl der Gruppe</td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<!-- translations -->
+<script type="text/javascript">
+    systemDictionary = $.extend(systemDictionary, {
+        "enabled":                {"en": "enabled",               "de": "Aktiviert",                    "ru": "активно"}
+    });
+    // There are two ways how to predefine default settings:
+    // - with attribute "data-default" (content independent)
+    // - with function in global variable "defaults". Function name is equal with adapter name.
+    //   as input function receives object with all information concerning it
+</script>
