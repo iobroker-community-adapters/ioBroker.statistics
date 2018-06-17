@@ -81,6 +81,20 @@
 "native": {
     "elcost": 0.28,
     "gascost": 42,
+    "groups": [
+        {
+            "groupid": "electric",
+            "groupname": "total energy",
+            "groupcost": 0.28,
+            "groupcostunit": "€/kWh"
+        },
+        {
+            "groupid": "gas",
+            "groupname": "total gas",
+            "groupcost": 0.28,
+            "groupcostunit": "€/m³"
+        }
+    ],    
     "stateobj": [
         {
             "logobject": "hm-rpc.1.CUX0600001.1.METER",
