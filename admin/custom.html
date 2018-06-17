@@ -6,6 +6,7 @@
                 <td><input type="checkbox" data-field="enabled" data-default="false"></td>
                 <!-- this field is mandatory, just to find out if to include this settings or not -->
                 <td style="width: 40px">&nbsp;</td>
+                <td><input type="text" data-field="logname" data-default="Log 1"></td>
             </tr>
             <tr>
                 <td>für Impulse, binäre Datenpunkte</td>
@@ -65,9 +66,9 @@
                 <td>für Analogwerte (auch Verbrauch aus Zählung)</td>
                 <td></td>
                 <td></td>
-                <td class="translate">Verbrauch</td>
+                <td class="translate">Zähler in Delta Verbrauch</td>
                 <td><input type="checkbox" data-field="sumdelta" data-default="false"></td>
-                <td class="translate">Verbrauch</td>
+                <td class="translate">fortlaufende Zählerstände in Verbrauchswerte umrechnen </td>
                 <td></td>
             </tr>
             <tr>
@@ -93,7 +94,7 @@
                 <td></td>
                 <td></td>
                 <td class="translate">Gruppenzuordnung</td>
-                <td><input type="value" data-field="sumgroupname" data-default="energy"></td>
+                <td><input type="text" data-field="sumgroupname" data-default="energy"></td>
                 <td class="translate">Auswahl der Gruppe</td>
                 <td></td>
             </tr>
