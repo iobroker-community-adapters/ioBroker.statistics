@@ -28,7 +28,7 @@
 <!-- you have to define 2 functions in the global scope: -->
 <script type="text/javascript">
 
-    var stateobj = [];
+    var groups = [];
 
     // Dictionary (systemDictionary is global variable from adapter-settings.js)
     systemDictionary = {
@@ -89,7 +89,7 @@
 
         if (!settings) return;
 
-        stateobj = settings.stateobj || [];
+        groups = settings.groups || [];
 
         for (var key in settings) {
             setValue(key, settings[key], onChange);
@@ -118,8 +118,8 @@
         $('#tabs').show().tabs({
             activate:  function (event, ui) {
                 if (ui.newPanel.attr('id') === 'tabs-2') {
-                    values2table('metertable', stateobj, onChange);
-                    //showMessage('ttt' + JSON.stringify(stateobj));
+                    values2table('metertable', groups, onChange);
+                    //showMessage('ttt' + JSON.stringify(groups));
                 }
             }
         });
@@ -148,7 +148,7 @@
             }
         });
         // Get edited table
-        obj.stateobj = table2values('metertable');
+        obj.groups = table2values('metertable');
 
         callback(obj);
     }
@@ -187,16 +187,11 @@
                     <table class="table-values" style="width: 100%;">
                         <thead>
                         <tr>
-                            <th data-name="logobject"    style="width: 150px"class="translate">Instance</th>
-                            <th data-name="logname"    style="width: 200px"  class="translate">Name</th>
-                            <th data-name="count"       data-type="checkbox" style="width: 40px" class="translate">Zählung</th>
-                            <th data-name="sumcnt"      data-type="checkbox" style="width: 40px" class="translate">ZVerbrauch</th>
-                            <th data-name="sumdelta"    data-type="checkbox" style="width: 40px" class="translate">Verbrauch</th>
-                            <th data-name="timecount"   data-type="checkbox" style="width: 40px" class="translate">Betriebszeit</th>
-                            <th data-name="avg"         data-type="checkbox" style="width: 40px" class="translate">MW</th>
-                            <th data-name="fivemin"         data-type="checkbox" style="width: 40px" class="translate">5min</th>
-                            <th data-name="sumgroup"    data-type="checkbox" style="width: 40px" class="translate">SumGroup</th>
-                            <th data-name="sumgroupname"     style="width: 200px" class="translate">SGName</th>
+                            <th data-name="_index"   style="width: 40px" class="translate"></th>
+                            <th data-name="groupid"    style="width: 150px"class="translate">Gruppe</th>
+                            <th data-name="groupname"    style="width: 200px"  class="translate">Gruppenname</th>
+                            <th data-name="groupcost"     style="width: 200px" class="translate">Kosten</th>
+                            <th data-name="groupcostunit"     style="width: 200px" class="translate">Einheit</th>
                             <th data-buttons="delete" style="width: 40px"></th>
                         </tr>
                         </thead>
