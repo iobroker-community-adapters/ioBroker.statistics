@@ -120,7 +120,7 @@ adapter.on('objectChange', function (id, obj) {
 
     }
     else { //disabled
-        if(statDP[id][adapter.namespace]){
+        if(statDP[id]){
             adapter.log.info('alt aber disabled id' + id );
             adapter.unsubscribeForeignStates(id);
             delete statDP[id];
@@ -1151,7 +1151,7 @@ function setupObjects(id, obj){
         });
         fivemincount++;
     }        
-    if(obj.timecount === 'true' || obj.timecount === true || obj.timecount === 1){
+    if(obj.timecnt === 'true' || obj.timecnt === true || obj.timecnt === 1){
         if(types.indexOf('timecnt') === -1){types.push("timecnt");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
         typeobjects["timecnt"].push(logobject);
         defineObject( "timecnt" , logobject, logname); //type, id, name
