@@ -108,18 +108,20 @@ adapter.on('objectChange', function (id, obj) {
             adapter.log.info('neu aber anderes Setting ' + id);
             statDP[id] = obj.common.custom;
             // was ist wegen der type, typeobjects zu beachten, wenn Datenpunkt schon darin existiert
+            setupObjects(id,obj.common.custom[adapter.namespace]);
         }
         else{
             adapter.log.info('ganz neu ' + id);  
             // was ist wegen der type, typeobjects zu beachten, wenn Datenpunkt schon darin existiert
             statDP[id] = obj.common.custom;
+            setupObjects(id,obj.common.custom[adapter.namespace]);
             adapter.log.info('enabled logging of ' + id);
         }
 
     }
     else { //disabled
         if(statDP[id][adapter.namespace]){
-            adapter.log.info('alt aber disabaled id' + id );
+            adapter.log.info('alt aber disabled id' + id );
             adapter.unsubscribeForeignStates(id);
             delete statDP[id];
             //types und typeobjects müssen auch bereinigt werden
@@ -1063,7 +1065,7 @@ function defineObject(type, id, name){
             adapter.log.error('Unknown state: ' + objects[s]);
             continue;
         }
-        adapter.log.debug('obj anlegen  ' + objects[s] + ' structure '+ JSON.stringify(obj));
+        adapter.log.debug(type + ' obj save anlegen  ' + objects[s] + ' for '+id+' structure '+ JSON.stringify(obj));
         adapter.setObjectNotExists(adapter.namespace + '.save.' + type + '.' + id + '.' + objects[s], obj);
     }
 
@@ -1080,7 +1082,7 @@ function defineObject(type, id, name){
             adapter.log.error('Unknown state: ' + objects[s]);
             continue;
         }
-        adapter.log.debug('obj anlegen  ' + objects[s] + ' structure '+ JSON.stringify(obj));
+        adapter.log.debug(type + ' obj temp anlegen  ' + objects[s] + ' for '+id+' structure '+ JSON.stringify(obj));
         adapter.setObjectNotExists(adapter.namespace + '.temp.' + type + '.' + id + '.' + objects[s], obj);
     }
 }
@@ -1108,8 +1110,8 @@ function setupObjects(id, obj){
     var logname = obj.logname;
 
     var avgcount = 0;
-    var fivemin = 0;
-    var timecnt = 0;
+    var fivemincount = 0;
+    var timecount = 0;
 
     adapter.log.debug('function werte ' + logobject +' named ' + logname);
 
@@ -1147,7 +1149,7 @@ function setupObjects(id, obj){
             native: {
             }
         });
-        fivemin++;
+        fivemincount++;
     }        
     if(obj.timecount === 'true' || obj.timecount === true || obj.timecount === 1){
         if(types.indexOf('timecnt') === -1){types.push("timecnt");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
@@ -1226,7 +1228,7 @@ function setupObjects(id, obj){
             }
         });
     }
-    
+
     // aufräumen, falls während der Laufzeit der letzte Datenpunkt seiner Art wegfällt.
     if (avgcount === 0 && types.indexOf('avg') === 1){
         var i = types.indexOf('avg');
