@@ -95,39 +95,38 @@ adapter.on('unload', function (callback) {
 // is called if a subscribed object changes
 adapter.on('objectChange', function (id, obj) {
     // Warning, obj can be null if it was deleted
-    adapter.log.info('received objectChange '+ id + ' obj  '+JSON.stringify(obj));
+    adapter.log.debug('received objectChange '+ id + ' obj  '+JSON.stringify(obj));
     //nur das verarbeiten was auch diesen Adapter interessiert
     if (obj && obj.common && obj.common.custom  && obj.common.custom[adapter.namespace] && obj.common.custom[adapter.namespace].enabled) {
-        //hier sollte nur ein Datenpunkt 
-        adapter.log.info('received objectChange for stat' + id + ' ' + JSON.stringify(obj.common.custom));
+        //hier sollte nur ein Datenpunkt ankommen/sein
+        adapter.log.debug('received objectChange for stat' + id + ' ' + JSON.stringify(obj.common.custom));
         //alt aber gelöscht
-        adapter.log.info('saved types ' + JSON.stringify(types));
-        adapter.log.info('saved typeobjects ' + JSON.stringify(typeobjects));
         adapter.log.info('statDP ' + JSON.stringify(statDP));
         if(statDP[id]){
-            adapter.log.info('neu aber anderes Setting ' + id);
+            //adapter.log.info('neu aber anderes Setting ' + id);
             statDP[id] = obj.common.custom;
-            // was ist wegen der type, typeobjects zu beachten, wenn Datenpunkt schon darin existiert
-            setupObjects(id,obj.common.custom[adapter.namespace]);
+            setupObjects2(statDP);//alles wird neu angelegt, wie bei neustart
         }
         else{
-            adapter.log.info('ganz neu ' + id);  
-            // was ist wegen der type, typeobjects zu beachten, wenn Datenpunkt schon darin existiert
+            //adapter.log.info('ganz neu ' + id);  
             statDP[id] = obj.common.custom;
-            setupObjects(id,obj.common.custom[adapter.namespace]);
+            setupObjects2(statDP); //alles wird neu angelegt, wie bei neustart
             adapter.log.info('enabled logging of ' + id);
         }
 
     }
     else { //disabled
         if(statDP[id]){
-            adapter.log.info('alt aber disabled id' + id );
+            //adapter.log.info('alt aber disabled id' + id );
             adapter.unsubscribeForeignStates(id);
             delete statDP[id];
-            //types und typeobjects müssen auch bereinigt werden
+            setupObjects2(statDP); //alles wird neu angelegt, wie bei neustart
             adapter.log.info('disabled logging of ' + id);
+
         }
     }
+    adapter.log.debug('saved types update' + JSON.stringify(types));
+    adapter.log.debug('saved typeobjects update' + JSON.stringify(typeobjects));
 });
 
 process.on('SIGINT', function () {
@@ -1105,153 +1104,10 @@ function timestamp(ts) {
     return output;    
 }
 
-function setupObjects(id, obj){
-    var logobject = id;
-    var logname = obj.logname;
+function setupObjects2(obj){
 
-    var avgcount = 0;
-    var fivemincount = 0;
-    var timecount = 0;
-
-    adapter.log.debug('function werte ' + logobject +' named ' + logname);
-
-    //reihenfolge avg/fivemin/timecnt ist wichtig um die Reigenfolge in types festzulegen, wo dann in genau der reihenfolge die täglichen Endwerte gespeichert werden -> alles blödsinn, wenn die Werte nicht genau mit der Reihenfolge auch kommen
-    if(obj.avg === 'true' || obj.avg === true || obj.avg === 1){
-        // nur ein push wenn nicht schon vorhanden
-        if(types.indexOf('avg') === -1){types.push("avg");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
-        typeobjects["avg"].push(logobject);
-        defineObject( "avg" , logobject, logname); //type, id, name
-        adapter.subscribeForeignStates(logobject);
-        adapter.setObjectNotExists(adapter.namespace + '.save.avg', {
-            type: 'channel',
-            common: {
-                name: 'Mittelwerte',
-                role: 'sensor'
-            },
-            native: {
-            }
-        });
-        avgcount++;
-    }
-    // 5minuten Werte Lassen sich nur ermitteln, wenn auch gezählt wird
-    adapter.log.debug('fivemin = '+ obj.fivemin + '  count=  ' + obj.count);
-    if((obj.fivemin === 'true' && obj.count === 'true') || (obj.fivemin === true && obj.count === true)|| (obj.fivemin === 1 && obj.count === 1)){
-        if(types.indexOf('fivemin') === -1){types.push("fivemin");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
-        //da aus eigenem Adapter, ist der id unverändert zu verwenden
-        typeobjects["fivemin"].push(logobject);
-        defineObject( "fivemin" , logobject, logname); //type, id, name
-        adapter.setObjectNotExists(adapter.namespace + '.save.fivemin', {
-            type: 'channel',
-            common: {
-                name: '5min Verbräuche',
-                role: 'sensor'
-            },
-            native: {
-            }
-        });
-        fivemincount++;
-    }        
-    if(obj.timecnt === 'true' || obj.timecnt === true || obj.timecnt === 1){
-        if(types.indexOf('timecnt') === -1){types.push("timecnt");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
-        typeobjects["timecnt"].push(logobject);
-        defineObject( "timecnt" , logobject, logname); //type, id, name
-        adapter.subscribeForeignStates(logobject);
-        adapter.setObjectNotExists(adapter.namespace + '.save.timecnt', {
-            type: 'channel',
-            common: {
-                name: 'Betriebszeitzähler',
-                role: 'sensor'
-            },
-            native: {
-            }
-        });
-        timecount++;
-    }
-    if(obj.count === 'true' || obj.count === true || obj.count === 1){
-        if(types.indexOf('count') === -1){types.push("count");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
-        typeobjects["count"].push(logobject);
-        defineObject( "count" , logobject, logname); //type, id, name
-        adapter.subscribeForeignStates(logobject);
-        adapter.setObjectNotExists(adapter.namespace + '.save.count', {
-            type: 'channel',
-            common: {
-                name: 'Impulszählung, Schaltspielzählung',
-                role: 'sensor'
-            },
-            native: {
-            }
-        });
-    }
-    //Umrechnung Impulse in Verbrauch ist nur sinnvoll wenn Impulse vorhanden
-    if((obj.sumcnt === 'true' && obj.count === 'true')  || (obj.sumcnt === true && obj.count === true) || (obj.sumcnt === 1 && obj.count === 1)){
-        if(types.indexOf('sumcnt') === -1){types.push("sumcnt");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
-        typeobjects["sumcnt"].push(logobject);
-        defineObject( "sumcnt" , logobject, logname, obj.unit); //type, id, name, Unit
-        adapter.setObjectNotExists(adapter.namespace + '.save.sumcnt', {
-            type: 'channel',
-            common: {
-                name: 'Verbrauch aus Impulszählung',
-                role: 'sensor'
-            },
-            native: {
-            }
-        });
-    }
-    if(obj.sumdelta === 'true' || obj.sumdelta === true || obj.sumdelta === 1){
-        if(types.indexOf('sumdelta') === -1){types.push("sumdelta");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
-        typeobjects["sumdelta"].push(logobject);
-        defineObject( "sumdelta" , logobject, logname); //type, id, name
-        adapter.subscribeForeignStates(logobject);
-        adapter.setObjectNotExists(adapter.namespace + '.save.sumdelta', {
-            type: 'channel',
-            common: {
-                name: 'Verbrauch',
-                role: 'sensor'
-            },
-            native: {
-            }
-        });
-    }
-    //sumgroup macht nur sinn wenn es auch die deltawerte gibt
-    if((obj.sumgroup === 'true' && obj.sumdelta === 'true') || (obj.sumgroup === true && obj.sumdelta === true)|| (obj.sumgroup === 1 && obj.sumdelta === 1)){
-        if(types.indexOf('sumgroup') === -1){types.push("sumgroup");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
-        //sumgroupname für Objekterstellung übermitteln
-        typeobjects["sumgroup"].push(logobject);
-        defineObject( "sumgroup" , obj.sumgroupname, "Summe "+obj.sumgroupname); //type, id ist der gruppenname, name
-        adapter.setObjectNotExists(adapter.namespace + '.save.sumgroup', {
-            type: 'channel',
-            common: {
-                name: 'Verbrauch zusammengefasst',
-                role: 'sensor'
-            },
-            native: {
-            }
-        });
-    }
-
-    // aufräumen, falls während der Laufzeit der letzte Datenpunkt seiner Art wegfällt.
-    if (avgcount === 0 && types.indexOf('avg') === 1){
-        var i = types.indexOf('avg');
-        types.splice(i,1);
-    }
-    if (fivemincount === 0 && types.indexOf('fivemin') === 1){
-        var i = types.indexOf('fivemin');
-        types.splice(i,1);
-    }
-    if (timecount === 0 && types.indexOf('timecnt') === 1){
-        var i = types.indexOf('timecnt');
-        types.splice(i,1);
-    }
-}
-
-function main() { 
-    // objects with statistics
-    var obj = adapter.config.stateobj;
-    adapter.log.debug('obj config ' + JSON.stringify(obj));
-    if (!adapter.config.stateobj) {
-        adapter.log.warn('No config defined');
-        return;
-    }
+    //Funktion wird initial und bei updates komplett durchlaufen
+    //kurzzeitig types/typeobjects null, also hoffentlich kein 5min Aufruf
 
     //typeobjects und types wird nach start des adapters neu aufgebaut
     //beim löschen von Datenpunkten während der Laufzeit ist in den beiden arrays zu bereinigen
@@ -1263,9 +1119,152 @@ function main() {
     typeobjects["sumgroup"]=[];
     typeobjects["fivemin"]=[];
 
+    for (var id in obj){
+
+        var logobject = id;
+        var logname = obj[id][adapter.namespace].logname;
+
+        adapter.log.debug('werte ' + logobject +' named ' + logname);
+
+        //reihenfolge avg/fivemin/timecnt ist wichtig um die Reihenfolge in types festzulegen, wo dann in genau der reihenfolge die täglichen Endwerte gespeichert werden -> alles blödsinn, wenn die Werte nicht genau mit der Reihenfolge auch kommen
+        if(obj[id][adapter.namespace].avg === 'true' || obj[id][adapter.namespace].avg === true || obj[id][adapter.namespace].avg === 1){
+            // nur ein push wenn nicht schon vorhanden
+            if(types.indexOf('avg') === -1){types.push("avg");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
+            typeobjects["avg"].push(logobject);
+            defineObject( "avg" , logobject, logname); //type, id, name
+            adapter.subscribeForeignStates(logobject);
+            adapter.setObjectNotExists(adapter.namespace + '.save.avg', {
+                type: 'channel',
+                common: {
+                    name: 'Mittelwerte',
+                    role: 'sensor'
+                },
+                native: {
+                }
+            });
+        }
+        // 5minuten Werte Lassen sich nur ermitteln, wenn auch gezählt wird
+        adapter.log.debug('fivemin = '+ obj[id][adapter.namespace].fivemin + '  count=  ' + obj[id][adapter.namespace].count);
+        if((obj[id][adapter.namespace].fivemin === 'true' && obj[id][adapter.namespace].count === 'true') || (obj[id][adapter.namespace].fivemin === true && obj[id][adapter.namespace].count === true)|| (obj[id][adapter.namespace].fivemin === 1 && obj[id][adapter.namespace].count === 1)){
+            if(types.indexOf('fivemin') === -1){types.push("fivemin");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
+            //da aus eigenem Adapter, ist der id unverändert zu verwenden
+            typeobjects["fivemin"].push(logobject);
+            defineObject( "fivemin" , logobject, logname); //type, id, name
+            adapter.setObjectNotExists(adapter.namespace + '.save.fivemin', {
+                type: 'channel',
+                common: {
+                    name: '5min Verbräuche',
+                    role: 'sensor'
+                },
+                native: {
+                }
+            });
+        }        
+        if(obj[id][adapter.namespace].timecount === 'true' || obj[id][adapter.namespace].timecount === true || obj[id][adapter.namespace].timecount === 1){
+            if(types.indexOf('timecnt') === -1){types.push("timecnt");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
+            typeobjects["timecnt"].push(logobject);
+            defineObject( "timecnt" , logobject, logname); //type, id, name
+            adapter.subscribeForeignStates(logobject);
+            adapter.setObjectNotExists(adapter.namespace + '.save.timecnt', {
+                type: 'channel',
+                common: {
+                    name: 'Betriebszeitzähler',
+                    role: 'sensor'
+                },
+                native: {
+                }
+            });
+        }
+        if(obj[id][adapter.namespace].count === 'true' || obj[id][adapter.namespace].count === true || obj[id][adapter.namespace].count === 1){
+            if(types.indexOf('count') === -1){types.push("count");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
+            typeobjects["count"].push(logobject);
+            defineObject( "count" , logobject, logname); //type, id, name
+            adapter.subscribeForeignStates(logobject);
+            adapter.setObjectNotExists(adapter.namespace + '.save.count', {
+                type: 'channel',
+                common: {
+                    name: 'Impulszählung, Schaltspielzählung',
+                    role: 'sensor'
+                },
+                native: {
+                }
+            });
+        }
+        //Umrechnung Impulse in Verbrauch ist nur sinnvoll wenn Impulse vorhanden
+        if((obj[id][adapter.namespace].sumcnt === 'true' && obj[id][adapter.namespace].count === 'true')  || (obj[id][adapter.namespace].sumcnt === true && obj[id][adapter.namespace].count === true) || (obj[id][adapter.namespace].sumcnt === 1 && obj[id][adapter.namespace].count === 1)){
+            if(types.indexOf('sumcnt') === -1){types.push("sumcnt");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
+            typeobjects["sumcnt"].push(logobject);
+            defineObject( "sumcnt" , logobject, logname, obj[id][adapter.namespace].unit); //type, id, name, Unit
+            adapter.setObjectNotExists(adapter.namespace + '.save.sumcnt', {
+                type: 'channel',
+                common: {
+                    name: 'Verbrauch aus Impulszählung',
+                    role: 'sensor'
+                },
+                native: {
+                }
+            });
+        }
+        if(obj[id][adapter.namespace].sumdelta === 'true' || obj[id][adapter.namespace].sumdelta === true || obj[id][adapter.namespace].sumdelta === 1){
+            if(types.indexOf('sumdelta') === -1){types.push("sumdelta");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
+            typeobjects["sumdelta"].push(logobject);
+            defineObject( "sumdelta" , logobject, logname); //type, id, name
+            adapter.subscribeForeignStates(logobject);
+            adapter.setObjectNotExists(adapter.namespace + '.save.sumdelta', {
+                type: 'channel',
+                common: {
+                    name: 'Verbrauch',
+                    role: 'sensor'
+                },
+                native: {
+                }
+            });
+        }
+        //sumgroup macht nur sinn wenn es auch die deltawerte gibt
+        if((obj[id][adapter.namespace].sumgroup === 'true' && obj[id][adapter.namespace].sumdelta === 'true') || (obj[id][adapter.namespace].sumgroup === true && obj[id][adapter.namespace].sumdelta === true)|| (obj[id][adapter.namespace].sumgroup === 1 && obj[id][adapter.namespace].sumdelta === 1)){
+            if(types.indexOf('sumgroup') === -1){types.push("sumgroup");} //in types soll nur einmal jeder Eintrag sein, damit die scheduleJobs funktionieren
+            //sumgroupname für Objekterstellung übermitteln
+            typeobjects["sumgroup"].push(logobject);
+            defineObject( "sumgroup" , obj[id][adapter.namespace].sumgroupname, "Summe "+obj[id][adapter.namespace].sumgroupname); //type, id ist der gruppenname, name
+            adapter.setObjectNotExists(adapter.namespace + '.save.sumgroup', {
+                type: 'channel',
+                common: {
+                    name: 'Verbrauch zusammengefasst',
+                    role: 'sensor'
+                },
+                native: {
+                }
+            });
+        }
+    }
+
+}
+
+function main() {
+    /*
+    // objects with statistics
+    var obj = adapter.config.stateobj;
+    adapter.log.debug('obj config ' + JSON.stringify(obj));
+    if (!adapter.config.stateobj) {
+        adapter.log.warn('No config defined');
+        return;
+    }
+    */
+   
+    //typeobjects und types wird nach start des adapters neu aufgebaut
+    //beim löschen von Datenpunkten während der Laufzeit ist in den beiden arrays zu bereinigen
+    typeobjects["count"]=[];
+    typeobjects["sumcnt"]=[];
+    typeobjects["sumdelta"]=[];
+    typeobjects["timecnt"]=[];
+    typeobjects["avg"]=[];
+    typeobjects["sumgroup"]=[];
+    typeobjects["fivemin"]=[];
+    
+
     //Einlesen der Einstellung (hier kommen auch andere Einstellung mit!)
     adapter.objects.getObjectView('custom', 'state', {}, function (err, doc) {
-        var count = 0;
+        var objcount = 0;
         if (doc && doc.rows) {
             for (var i = 0, l = doc.rows.length; i < l; i++) {
                 if (doc.rows[i].value) {
@@ -1285,7 +1284,7 @@ function main() {
                     //neuer DP in statDP und subscribeForeignState
                     //Anlegen der Statistik Objekte
                     else {
-                        count++;
+                        objcount++;
                         adapter.log.info('enabled statistics for ' + id);
 
                         //sinnvolle Werte auf die Eingabefelder
@@ -1299,21 +1298,18 @@ function main() {
                         if (statDP[id][adapter.namespace].sumgroup){
                             //statDP[id][adapter.namespace].push({"cost" : getConfigObjects(adapter.config.groups,statDP[id][adapter.namespace].sumgroupname,"cost")});                                
                         }
-
-                        //Anlegen der Statistik Objekte
-                        setupObjects(id,statDP[id][adapter.namespace]);
-
                     }
                 }
             }
-            adapter.log.info('getobjectView ' + JSON.stringify(statDP));
-            adapter.log.debug('saved types ' + JSON.stringify(types));
-            adapter.log.debug('saved typeobjects ' + JSON.stringify(typeobjects));
-            adapter.log.info('statistics observes '+count+' values');
+            //statDP ist jetzt mit allen relevanten Daten befüllt, StatisticObjekte anlegen
+            setupObjects2(statDP);
+            adapter.log.info('statistics observes '+ objcount +' values after startup');
+            adapter.log.debug('saved types startup' + JSON.stringify(types));
+            adapter.log.debug('saved typeobjects startup' + JSON.stringify(typeobjects));
         }
     });
 
-
+    /* alter code mit alleinigen Anlagen der Objekte über
     for (var anz in obj){
         var logobject = obj[anz].logobject;
         var logname = obj[anz].logname;
@@ -1433,6 +1429,7 @@ function main() {
     }
     adapter.log.debug('saved types ' + JSON.stringify(types));
     adapter.log.debug('saved typeobjects ' + JSON.stringify(typeobjects));
+    */
 
     //adapter.log.info('das letzte mal wurde vom Adapter vor ' + time(now) - adapter.getState() + ' geschrieben');
 
@@ -1459,6 +1456,17 @@ function main() {
                         else{
                             adapter.setState(adapter.namespace + '.temp.' + type + '.' + id + '.' + objects[ss], 0, true);
                         }
+                            //
+                            /*
+                            if(timecnt){
+                                abfrage wie der jetzige Zustand des objektes ist, der enthält auch einen Zeitstempel
+                                dann den gegensätzlichen Wert 0/1 oder 1/0 Wechsel mit dem jetzigen Zeitstempel versehen
+                                Dann ist der Zeitraum nicht unbestimmt.
+                                oder Wert und ts mit "jetzt" setzen und Abfrage bei newTimecnt ob ts und wert identisch sind und zu 0 errechnen
+                                außer es ist beim Setzen das gleiche Abbild
+
+                            }
+                            */
                          
                     }
                 });
