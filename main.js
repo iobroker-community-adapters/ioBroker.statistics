@@ -1122,6 +1122,7 @@ function setupObjects2(obj){
     for (var id in obj){
 
         var logobject = id;
+        adapter.log.debug('object ' + logobject +' obj ' + JSON.stringify(obj));
         var logname = obj[id][adapter.namespace].logname;
 
         adapter.log.debug('werte ' + logobject +' named ' + logname);
@@ -1250,7 +1251,7 @@ function main() {
         return;
     }
     */
-   
+
     //typeobjects und types wird nach start des adapters neu aufgebaut
     //beim löschen von Datenpunkten während der Laufzeit ist in den beiden arrays zu bereinigen
     typeobjects["count"]=[];
@@ -1271,8 +1272,8 @@ function main() {
                     var id = doc.rows[i].id;
                     statDP[id] = doc.rows[i].value; //pauschale Übernahme aller Antworten
 
-                    adapter.log.info('getObjectView id:'+id);
-                    adapter.log.info('getObjectView value:'+JSON.stringify(doc.rows[i].value));
+                    adapter.log.info('getObjectView id: '+id);
+                    adapter.log.info('getObjectView value: '+JSON.stringify(doc.rows[i].value) +' _ '+ JSON.stringify(doc.rows[i]));
                     
 
                     //Überprüfung ob info für diesen Adapter? oder ob Datensatz mit enabled=false => löschen
