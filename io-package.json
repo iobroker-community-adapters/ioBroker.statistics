@@ -83,7 +83,7 @@
     "gascost": 42,
     "groups": [
         {
-            "groupid": "electric",
+            "groupid": "energy",
             "groupname": "total energy",
             "groupcost": 0.28,
             "groupcostunit": "€/kWh"
@@ -101,12 +101,14 @@
             "logname": "Küche",
             "count": false,
             "sumcnt": false,
+            "impvalue": 1,
+            "impunit": "Imp/Unit",
             "sumdelta": true,
             "timecount": false,
             "avg": false,
             "fivemin": false,
             "sumgroup": false,
-            "sumgroupname": "electric"
+            "sumgroupname": "energy"
         }
     ]
 },
