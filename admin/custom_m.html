@@ -6,7 +6,7 @@
             <span class="translate">enabled</span>
         </div>
         <div class="col s4">
-            <input class="value" type="text" id="logname" />
+            <input  type="text" data-field=="logname" data-default="Log 1"/>
             <label for="logname" class="translate">Name für Logging</label>
             <p>Bezeichnung des StatistikLoggingObjektes</p></td> 
         </div>
@@ -20,11 +20,11 @@
             <div class="col s4">
             </div>
             <div class="col s4">
-                <input class="value" id="count" type="checkbox"/><span class="translate">Zählung</span>
+                <input  data-field=="count" type="checkbox" data-default="false"/><span class="translate">Zählung</span>
                 <p>Impulse oder Schaltspiele zählen</p></td>
             </div>
             <div class="col s4">
-                    <input class="value" id="sumcnt" type="checkbox"/><span class="translate">Zählung -> Verbrauch</span>
+                    <input  data-field=="sumcnt" type="checkbox" data-default="false"/><span class="translate">Zählung -> Verbrauch</span>
                     <p>aus Zählung den Verbrauch ermitteln</p>
             </div>
         </div>
@@ -32,11 +32,11 @@
             <div class="col s4">
             </div>
             <div class="col s4">
-                <input class="value" id="timecnt" type="checkbox"/><span class="translate">Betriebszeitzählung</span>
+                <input  data-field=="timecnt" type="checkbox" data-default="false"/><span class="translate">Betriebszeitzählung</span>
                 <p>Zeiten für Zustand 0 bzw 1 ermitteln</p></td>    
             </div>
             <div class="col s4">
-                <input class="value" id="fivemin" type="checkbox"/><span class="translate">5min Werte</span>
+                <input  data-field=="fivemin" type="checkbox" data-default="false"/><span class="translate">5min Werte</span>
                 <p>alle 5min den Verbrauch ermitteln</p></td>
             </div>
         </div>
@@ -44,12 +44,12 @@
                 <div class="col s4">
                 </div>
                 <div class="col s4">
-                    <input class="value" id="impvalue" type="number"/>
+                    <input  data-field=="impvalue" type="number" data-default="1"/>
                     <label for="impvalue" class="translate">ZählerKonstante</label>
                     <p>Umrechnungsfaktor für Verbrauchszählung</p></td>    
                 </div>
                 <div class="col s4">
-                    <input class="value" id="impunit" type="text"/>
+                    <input  data-field=="impunit" data-default="Imp/Unit" type="text"/>
                     <label for="impunit" class="translate">Einheit</label>
                     <p>Einheit der ZählerKonstante</p></td>
                 </div>
@@ -64,11 +64,11 @@
             <div class="col s4">
             </div>
             <div class="col s4">
-                <input class="value" id="sumdelta" type="checkbox"/><span class="translate">Zähler in Delta Verbrauch</span>
+                <input  data-field=="sumdelta" type="checkbox" data-default="false"/><span class="translate">Zähler in Delta Verbrauch</span>
                 <p>fortlaufende Zählerstände in Verbrauchswerte umrechnen </p></td>
             </div>
             <div class="col s4">
-                    <input class="value" id="avg" type="checkbox"/><span class="translate">Mittelwerte / Tageswerte</span>
+                    <input  data-field=="avg" type="checkbox" data-default="false"/><span class="translate">Mittelwerte / Tageswerte</span>
                     <p>Tages/Wochen/Monats/Quartals/Jahreswerte</p>
             </div>
         </div>
@@ -82,12 +82,12 @@
             <div class="col s4">
             </div>
             <div class="col s4">
-                <input class="value" id="sumgroup" type="checkbox"/><span class="translate">Erfassung in Gruppe</span>
+                <input  data-field=="sumgroup" type="checkbox" data-default="false"/><span class="translate">Erfassung in Gruppe</span>
                 <p>Teil einer Gruppenerfassung</p></td>
             </div>
             <div class="col s4">
                 <label for="sumgroupname" class="translate">Gruppenzuordnung</label>
-                <select name="sumgroupname" id="sumgroupname" class="value">
+                <select name="sumgroupname" data-field=="sumgroupname" >
                     <option value="energy">energy</option>
                     <option value="gas">gas</option>
                 </select>
