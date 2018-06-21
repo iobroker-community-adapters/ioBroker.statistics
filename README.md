@@ -11,7 +11,6 @@ This adapter is a shall make the configuration of statistics more easier.
 
 ## Installation:
 Installation requires nodejs v4 at minimum
-ioBroker admin v3 is not yet available
 
 from npm
 ```javascript
@@ -23,8 +22,9 @@ npm install https://github.com/foxthefox/ioBroker.statistics/tarball/master --pr
 ```
 
 ## Settings
-* you have to specify the full object name in each line
-* you have to specify the type of statistical logging you want to have
+* you have to specify the configuration in the settings of the state
+* you have to specify the type of statistical logging you want to have by selecting the options
+* you have to specify the relevant groups in admin page, which are available in the settings of the state
 
 choose from the following settings:
 
@@ -52,6 +52,7 @@ after save or temp the orignal object is kept (unfortunately it is split by the 
 ## Changelog
 ### 0.0.3
 * adminv3 implemented
+* complete rewrite to have configuration through the settings of the individual states instead in admin page
 
 #### 0.0.2
 * setup running
