@@ -99,20 +99,23 @@ adapter.on('objectChange', function (id, obj) {
     //nur das verarbeiten was auch diesen Adapter interessiert
     if (obj && obj.common && obj.common.custom  && obj.common.custom[adapter.namespace] && obj.common.custom[adapter.namespace].enabled) {
         //hier sollte nur ein Datenpunkt ankommen/sein
-        adapter.log.debug('received objectChange for stat' + id + ' ' + JSON.stringify(obj.common.custom));
+        adapter.log.debug('received objectChange for stat' + id + ' ' + obj.common.custom);
         //alt aber gelöscht
         adapter.log.info('statDP ' + JSON.stringify(statDP));
         if(statDP[id]){
             //adapter.log.info('neu aber anderes Setting ' + id);
             statDP[id] = obj.common.custom;
             setupObjects2(statDP);//alles wird neu angelegt, wie bei neustart
+            //setupObjects2(id, obj.common.custom);
         }
         else{
             //adapter.log.info('ganz neu ' + id);  
             statDP[id] = obj.common.custom;
             setupObjects2(statDP); //alles wird neu angelegt, wie bei neustart
+            //setupObjects2(id, obj.common.custom);
             adapter.log.info('enabled logging of ' + id);
         }
+        adapter.log.info('statDP2 ' + JSON.stringify(statDP));
 
     }
     else { //disabled
@@ -1299,6 +1302,7 @@ function main() {
                         if (statDP[id][adapter.namespace].sumgroup){
                             //statDP[id][adapter.namespace].push({"cost" : getConfigObjects(adapter.config.groups,statDP[id][adapter.namespace].sumgroupname,"cost")});                                
                         }
+                        //setupObjects2(id, doc.rows[i].value);
                     }
                 }
             }
@@ -1504,7 +1508,7 @@ function main() {
     //Speicher der Zeiträume, 2Minuten vor dem Reset
     //Täglich um 23:58
     daysave = new CronJob("58 23 * * *", function() {
-        speicherwerte('Tag');
+        speicherwerte('day');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped daysave');
@@ -1515,7 +1519,7 @@ function main() {
 
     // Sonntag 23:58
     weeksave = new CronJob("58 23 * * 0", function() {
-        speicherwerte('Woche');
+        speicherwerte('week');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped weeksave');
@@ -1527,7 +1531,7 @@ function main() {
     // Monatsletzte um 23:58 Uhr ausführen
     // Springt die Routine immer an und dort wird ermittelt ob Morgen der 1. ist
     monthsave = new CronJob("58 23 28-31 * *", function() {
-        speicherwerte('Monat');
+        speicherwerte('month');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped monthsave');
@@ -1551,7 +1555,7 @@ function main() {
  
     // Quartalsletzen (März,Juni,September,Dezember) um 23:58 Uhr ausführen
     quartersave1 = new CronJob("58 23 31 2,12 *", function() { //Monate ist Wertebereich 0-11
-        speicherwerte('Quartal');
+        speicherwerte('quarter');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped quartersave1');
@@ -1560,7 +1564,7 @@ function main() {
         timezone
     );
     quartersave2 = new CronJob("58 23 30 5,8 *", function() { //Monate ist Wertebereich 0-11
-        speicherwerte('Quartal');
+        speicherwerte('quarter');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped quartersave2');
@@ -1571,7 +1575,7 @@ function main() {
 
     // Silvester um 23:58 Uhr ausführen
     yearsave = new CronJob("58 23 31 11 *", function() { //Monate ist Wertebereich 0-11
-        speicherwerte('Jahr');
+        speicherwerte('year');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped yearsave');
@@ -1582,7 +1586,7 @@ function main() {
     // RESET DER WERTE 
     // Täglich um 0 Uhr ausführen
     dayreset = new CronJob("0 0 * * *", function() {
-        value_reset('Tag');
+        value_reset('day');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped dayreset');
@@ -1592,7 +1596,7 @@ function main() {
     );
     // Montags um 0 Uhr ausführen
     weekreset = new CronJob("0 0 * * 1", function() {
-        value_reset('Woche');
+        value_reset('week');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped weekreset');
@@ -1602,7 +1606,7 @@ function main() {
     );
     // Monatsersten um 0 Uhr ausführen
     monthreset = new CronJob("0 0 1 * *", function() {
-        value_reset('Monat');
+        value_reset('month');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped monthreset');
@@ -1612,7 +1616,7 @@ function main() {
     );
     // Quartalsersten (Jan,Apr,Jul,Okt) um 0 Uhr ausführen
     quarterreset = new CronJob("0 0 1 */3 *", function() {
-        value_reset('Quartal');
+        value_reset('quarter');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped quarterreset');
@@ -1637,7 +1641,7 @@ function main() {
     
     // Neujahr um 0 Uhr ausführen
     yearreset = new CronJob("0 0 1 0 *", function() {
-        value_reset('Jahr');
+        value_reset('year');
         }, function () {
         /* This function is executed when the job stops */
             adapter.log.debug('stopped yearreset');
