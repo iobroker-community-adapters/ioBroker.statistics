@@ -33,8 +33,8 @@ choose from the following settings:
 * sumdelta, delta between logged analogue values
 * sumgroup, sum up of grouped values
 * avg, dayly max, min and average
-* timecount, how long was status ON and how long OFF
-* 5min,count within 5 min and dayly max, min and average of it
+* timecount, how long was status true/ON and how long false/OFF
+* 5min,counts within 5 min and dayly max, min and average of it
 
 ## Operation
 The adapter subscribes to the configured objects and creates his own states in the statistics tree.
@@ -47,7 +47,7 @@ after save or temp the orignal object is kept (unfortunately it is split by the 
 
 ## known issues
 
-* table in adminv2 page not scrollable
+* groups from admin not yet transferred to the state settings
 
 ## Changelog
 ### 0.0.3
