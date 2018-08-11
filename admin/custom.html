@@ -9,93 +9,93 @@
                 <td><input type="text" data-field="logname" data-default="Log 1"></td>
             </tr>
             <tr>
-                <td>für Impulse, binäre Datenpunkte</td>
+                <td>for impulses, binary data points</td>
                 <td></td>
                 <td></td>
-                <td class="translate">Zählung</td>
+                <td class="translate">Counter</td>
                 <td><input type="checkbox" data-field="count" data-default="false"></td>
-                <td class="translate">Impulse oder Schaltspiele zählen</td>
+                <td class="translate">Counting pulses or edge changes</td>
                 <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="translate">Zählung -> Verbrauch</td>
+                <td class="translate">Counting -> Consumption</td>
                 <td><input type="checkbox" data-field="sumcnt" data-default="false"></td>
-                <td class="translate">aus Zählung den Verbrauch ermitteln</td>
+                <td class="translate">determine the consumption from counting</td>
                 <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="translate">Betriebszeitzählung</td>
+                <td class="translate">Operating time count</td>
                 <td><input type="checkbox" data-field="timecnt" data-default="false"></td>
-                <td class="translate">Zeiten für Zustand 0 bzw 1 ermitteln</td>
+                <td class="translate">Determine times for states 0 or 1</td>
                 <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="translate">5min Werte</td>
+                <td class="translate">5min Values</td>
                 <td><input type="checkbox" data-field="fivemin" data-default="false"></td>
-                <td class="translate">alle 5min den Verbrauch ermitteln</td>
+                <td class="translate">every 5 minutes determine the consumption</td>
                 <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="translate">Zählerkonstante</td>
+                <td class="translate">Factor</td>
                 <td><input type="value" data-field="impvalue" min="1" data-default="1"></td>
-                <td class="translate">Umrechnungsfaktor für Verbrauchszählung</td>
+                <td class="translate">Conversion factor for consumption count</td>
                 <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="translate">Zählerkonstante Einheit</td>
+                <td class="translate">Offset</td>
+                <td><input type="value" data-field="impoffset" min="0" data-default="0"></td>
+                <td class="translate">Offset value for consumption count</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="translate">Counter constant unit</td>
                 <td><input type="value" data-field="impunit" data-default="x/Imp"></td>
-                <td class="translate">Einheit der ZählerKonstante</td>
+                <td class="translate">Unit of counter constant</td>
                 <td></td>
             </tr>
             <tr>
-                <td>für Analogwerte (auch Verbrauch aus Zählung)</td>
+                <td>for analog values (also consumption from counting)</td>
                 <td></td>
                 <td></td>
-                <td class="translate">Zähler in Delta Verbrauch</td>
+                <td class="translate">Counter in delta consumption</td>
                 <td><input type="checkbox" data-field="sumdelta" data-default="false"></td>
-                <td class="translate">fortlaufende Zählerstände in Verbrauchswerte umrechnen </td>
+                <td class="translate">Convert consecutive meter readings into consumption values</td>
                 <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="translate">Mittelwerte / Tageswerte</td>
+                <td class="translate">Average values / daily values</td>
                 <td><input type="checkbox" data-field="avg" data-default="false"></td>
-                <td class="translate">Tages/Wochen/Monats/Quartals/Jahreswerte</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Wert in Gruppen zusammenfassen</td>
-                <td></td>
-                <td></td>
-                <td class="translate">Erfassung in Gruppe</td>
-                <td><input type="checkbox" data-field="sumgroup" data-default="false"></td>
-                <td class="translate">Teil einer Gruppenerfassung</td>
+                <td class="translate">Day-/Week-/Month-/Quarter-/Annual-values</td>
                 <td></td>
             </tr>
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td class="translate">Gruppenzuordnung</td>
-                <td><input type="text" data-field="sumgroupname" data-default="energy"></td>
-                <td class="translate">Auswahl der Gruppe</td>
+                <td class="translate">Group</td>
+                <td><select type="text" data-field="sumgroupname" data-default="energy"></select></td>
+                <td class="translate">Choose the group</td>
                 <td></td>
             </tr>
         </table>

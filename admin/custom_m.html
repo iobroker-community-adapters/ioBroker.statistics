@@ -1,97 +1,112 @@
 <script type="text/x-iobroker" data-template-name="statistics">
     <div class="row">
-        <div class="col s4">
+        <div class="input-field col s4">
             <input type="checkbox" data-field="enabled" data-default="false"/>
             <!-- this field is mandatory, just to find out if to include this settings or not</span-->
             <span class="translate">enabled</span>
         </div>
-        <div class="col s4">
-            <input  type="text" data-field="logname" data-default="Log 1"/>
-            <label for="logname" class="translate">Name für Logging</label>
-            <p>Bezeichnung des StatistikLoggingObjektes</p></td> 
+        <div class="input-field col s4">
+            <input type="text" data-field="logName"/>
+            <label for="logName" class="translate">Name for Logging</label>
+            <p class="translate">Name of statistics log</p>
         </div>
     </div>
-    <div class="section">
+    <div class="section binary">
         <div class="row">
             <div class="col s12">
-                <h6 class="translate sub-title">für Impulse, binäre Datenpunkte</h6>
-                <p>configure here the possible settings for binary values</p>
-            </div>
-            <div class="col s4">
-            </div>
-            <div class="col s4">
-                <input  data-field="count" type="checkbox" data-default="false"/><span class="translate">Zählung</span>
-                <p>Impulse oder Schaltspiele zählen</p></td>
-            </div>
-            <div class="col s4">
-                    <input  data-field="sumcnt" type="checkbox" data-default="false"/><span class="translate">Zählung -> Verbrauch</span>
-                    <p>aus Zählung den Verbrauch ermitteln</p>
+                <h6 class="translate sub-title">for impulses, binary data points</h6>
+                <span class="translate">configure here the possible settings for binary values</span>
             </div>
         </div>
         <div class="row">
             <div class="col s4">
             </div>
-            <div class="col s4">
-                <input  data-field="timecnt" type="checkbox" data-default="false"/><span class="translate">Betriebszeitzählung</span>
-                <p>Zeiten für Zustand 0 bzw 1 ermitteln</p></td>    
+            <div class="input-field col s4">
+                <input class="count" data-field="count" type="checkbox" data-default="false" />
+                <span class="translate">Count</span>
+                <p class="translate">Counting pulses or edge changes</p>
             </div>
-            <div class="col s4">
-                <input  data-field="fivemin" type="checkbox" data-default="false"/><span class="translate">5min Werte</span>
-                <p>alle 5min den Verbrauch ermitteln</p></td>
+            <div class="input-field col s4">
+                <input class="sum-count sum" data-field="sumCount" type="checkbox" data-default="false" />
+                <span class="translate">Counting -&gt; Consumption</span>
+                <p class="translate">determine the consumption from counting</p>
             </div>
         </div>
         <div class="row">
-                <div class="col s4">
-                </div>
-                <div class="col s4">
-                    <input  data-field="impvalue" type="number" data-default="1"/>
-                    <label for="impvalue" class="translate">ZählerKonstante</label>
-                    <p>Umrechnungsfaktor für Verbrauchszählung</p></td>    
-                </div>
-                <div class="col s4">
-                    <input  data-field="impunit" data-default="Imp/Unit" type="text"/>
-                    <label for="impunit" class="translate">Einheit</label>
-                    <p>Einheit der ZählerKonstante</p></td>
-                </div>
+            <div class="col s4">
+            </div>
+            <div class="input-field col s4">
+                <input data-field="timeCount" type="checkbox" data-default="false"/>
+                <span class="translate">Operating time count</span>
+                <p class="translate">Determine times for states 0 or 1</p>
+            </div>
+            <div class="input-field col s4">
+                <input data-field="fiveMin" type="checkbox" data-default="false"/>
+                <span class="translate">5min Values</span>
+                <p class="translate">every 5 minutes determine the consumption</p>
             </div>
         </div>
-    <div class="section">
         <div class="row">
-            <div class="col s12">
-                <h6 class="translate sub-title">für Analogwerte (auch Verbrauch aus Zählung)</h6>
-                <p>configure here the possible settings for analog values</p>
-            </div>
             <div class="col s4">
             </div>
-            <div class="col s4">
-                <input  data-field="sumdelta" type="checkbox" data-default="false"/><span class="translate">Zähler in Delta Verbrauch</span>
-                <p>fortlaufende Zählerstände in Verbrauchswerte umrechnen </p></td>
+            <div class="input-field col s4">
+                <input data-field="impUnitPerImpulse" data-default="1" type="text"/>
+                <label class="translate" for="impUnitPerImpulse" >Units per impulse</label>
+                <p class="translate">One impulse is equal to this value</p>
             </div>
-            <div class="col s4">
-                    <input  data-field="avg" type="checkbox" data-default="false"/><span class="translate">Mittelwerte / Tageswerte</span>
-                    <p>Tages/Wochen/Monats/Quartals/Jahreswerte</p>
+            <div class="input-field col s4">
+                <input data-field="impUnit" data-default="" type="text"/>
+                <label class="translate" for="impUnit" >Units</label>
+                <p class="translate">kWh, m, liters, or similar</p>
             </div>
         </div>
     </div>
-    <div class="section">
+    <div class="section analog">
         <div class="row">
             <div class="col s12">
-                <h6 class="translate sub-title">Wert in Gruppen zusammenfassen</h6>
-                <p>the groups are defined in the admin page</p>
+                <h6 class="translate sub-title">for analog values (also consumption from counting)</h6>
+                <p class="translate">Configure here the possible settings for analog values</p>
             </div>
+        </div>
+        <div class="row">
             <div class="col s4">
             </div>
-            <div class="col s4">
-                <input  data-field="sumgroup" type="checkbox" data-default="false"/><span class="translate">Erfassung in Gruppe</span>
-                <p>Teil einer Gruppenerfassung</p></td>
+            <div class="input-field col s4">
+                <input class="sum-delta sum" data-field="sumDelta" type="checkbox" data-default="false" />
+                <span class="translate">Counter in delta consumption</span>
+                <p class="translate">Convert consecutive meter readings into consumption values</p>
             </div>
+            <div class="input-field col s4">
+                <input data-field="avg" type="checkbox" data-default="false"/>
+                <span class="translate">Average values / daily values</span>
+                <p class="translate">Day-/Week-/Month-/Quarter-/Annual-values</p>
+            </div>
+        </div>
+        <div class="row">
             <div class="col s4">
-                <label for="sumgroupname" class="translate">Gruppenzuordnung</label>
-                <select name="sumgroupname" data-field="sumgroupname" >
-                    <option value="energy">energy</option>
-                    <option value="gas">gas</option>
-                </select>
-                <p>Auswahl der Gruppe</p>
+            </div>
+            <div class="input-field col s4 sum-ignore-minus">
+                <input data-field="sumIgnoreMinus" type="checkbox" data-default="true" />
+                <span class="translate">Ignore errors</span>
+                <p class="translate">Ignore difference if new value less than old one</p>
+            </div>
+        </div>
+    </div>
+    <div class="section group">
+        <div class="row">
+            <div class="col s4">
+                <h6 class="translate sub-title">Group the value</h6>
+                <span class="translate">The groups are defined in the admin page</span>
+            </div>
+            <div class="input-field col s4">
+                <select class="sum-group" name="sumGroup" data-field="sumGroup" ></select>
+                <label class="translate" for="sumGroup" >Group</label>
+                <p class="translate">Choose the group</p>
+            </div>
+            <div class="input-field col s4 group-factor">
+                <input data-field="groupFactor" type="number" data-default="1"/>
+                <label class="translate" for="groupFactor" >Counter factor</label>
+                <p class="translate">Conversion factor for consumption counter</p>
             </div>
         </div>
     </div>
@@ -100,43 +115,134 @@
 <!-- translations -->
 <script type="text/javascript">
     systemDictionary = $.extend(systemDictionary, {
-        "enabled": {                                     "en": "enabled",                                         "de": "Aktiviert",                                       "ru": "активно",                                         "pt": "ativado",                                         "nl": "ingeschakeld",                                    "fr": "activée",                                         "it": "abilitato",                                       "es": "habilitado",                                      "pl": "włączony"}    });
+        "5min Values": {                                 "en": "5min Values",                                     "de": "5 Minuten Werte",                                 "ru": "Значения 5min",                                   "pt": "5min valores",                                    "nl": "5min Waarden",                                    "fr": "5min valeurs",                                    "it": "5min valori",                                     "es": "Valores de 5 minutos",                            "pl": "5min Waarden"},
+        "Average values / daily values": {               "en": "Average values / daily values",                   "de": "Durchschnittswerte / Tageswerte",                 "ru": "Средние значения / суточные значения",            "pt": "Valores médios / valores diários",                "nl": "Gemiddelde waarden / dagelijkse waarden",         "fr": "Valeurs moyennes / valeurs quotidiennes",         "it": "Valori medi / valori giornalieri",                "es": "Valores promedio / valores diarios",              "pl": "Gemiddelde waarden / dagelijkse waarden"},
+        "Choose the group": {                            "en": "Choose the group",                                "de": "Wähle die Gruppe aus",                            "ru": "Выберите группу",                                 "pt": "Escolha o grupo",                                 "nl": "Kies de groep",                                   "fr": "Choisissez le groupe",                            "it": "Scegli il gruppo",                                "es": "Elige el grupo",                                  "pl": "Kies de groep"},
+        "Configure here the possible settings for analog values": {"en": "Configure here the possible settings for analog values", "de": "Konfigurieren Sie hier die möglichen Einstellungen für Analogwerte", "ru": "Настройте здесь возможные настройки для аналоговых значений", "pt": "Configure aqui as configurações possíveis para valores analógicos", "nl": "Configureer hier de mogelijke instellingen voor analoge waarden", "fr": "Configurez ici les paramètres possibles pour les valeurs analogiques", "it": "Configura qui le possibili impostazioni per i valori analogici", "es": "Configure aquí las configuraciones posibles para valores analógicos", "pl": "Configureer hier de mogelijke instellingen voor analoge waarden"},
+        "Conversion factor for consumption counter": {   "en": "Conversion factor for consumption counter",       "de": "Umrechnungsfaktor für den Verbrauchszähler",      "ru": "Коэффициент пересчета для счетчика потребления",  "pt": "Fator de conversão para contador de consumo",     "nl": "Conversiefactor voor consumptie-teller",          "fr": "Facteur de conversion pour compteur de consommation", "it": "Fattore di conversione per contatore di consumo", "es": "Factor de conversión para contador de consumo",   "pl": "Conversiefactor voor consumptie-teller"},
+        "Conversion offset for consumption counter": {   "en": "Conversion offset for consumption counter",       "de": "Conversion-Offset für Verbrauchszähler",          "ru": "Смещение преобразования для счетчика потребления", "pt": "Deslocamento de conversão para contador de consumo", "nl": "Conversie-offset voor verbruiksteller",           "fr": "Offset de conversion pour compteur de consommation", "it": "Offset di conversione per contatore di consumo",  "es": "Conversión de conversión para contador de consumo", "pl": "Conversie-offset voor verbruiksteller"},
+        "Convert consecutive meter readings into consumption values": {"en": "Convert consecutive meter readings into consumption values", "de": "Konvertieren Sie aufeinanderfolgende Zählerstände in Verbrauchswerte", "ru": "Преобразование последовательных показаний счетчика в значения потребления", "pt": "Converter leituras consecutivas do medidor em valores de consumo", "nl": "Converteer opeenvolgende meterstanden naar verbruikswaarden", "fr": "Convertir des relevés de compteurs consécutifs en valeurs de consommation", "it": "Convertire letture consecutive del contatore in valori di consumo", "es": "Convertir lecturas de medidor consecutivas en valores de consumo", "pl": "Converteer opeenvolgende meterstanden naar verbruikswaarden"},
+        "Count": {                                       "en": "Count",                                           "de": "Anzahl",                                          "ru": "подсчитывать",                                    "pt": "Contagem",                                        "nl": "tellen",                                          "fr": "Compter",                                         "it": "Contare",                                         "es": "Contar",                                          "pl": "tellen"},
+        "Counter factor": {                              "en": "Counter factor",                                  "de": "Multiplikationsfaktor",                           "ru": "Множитель",                                       "pt": "Fator contador",                                  "nl": "Tegenfactor",                                     "fr": "Contre facteur",                                  "it": "Fattore contatore",                               "es": "Factor de contador",                              "pl": "Tegenfactor"},
+        "Counter in delta consumption": {                "en": "Counter in delta consumption",                    "de": "Zähler im Delta-Verbrauch",                       "ru": "Счетчик в дельта-потреблении",                    "pt": "Contador em consumo delta",                       "nl": "Teller in delta consumptie",                      "fr": "Compteur en consommation delta",                  "it": "Contatore del consumo delta",                     "es": "Contador en consumo delta",                       "pl": "Teller in delta consumptie"},
+        "Counter offset": {                              "en": "Counter offset",                                  "de": "Zähler-Offset",                                   "ru": "Смещение счетчика",                               "pt": "Offset do contador",                              "nl": "Counter offset",                                  "fr": "Compteur offset",                                 "it": "Counter offset",                                  "es": "Contador compensado",                             "pl": "Counter offset"},
+        "Counting -&gt; Consumption": {                  "en": "Counting -&gt; Consumption",                      "de": "Zählen - &gt; Verbrauch",                         "ru": "Подсчет - &gt; потребление",                      "pt": "Contando - &gt; Consumo",                         "nl": "Tellen - &gt; Consumptie",                        "fr": "Compter - &gt; Consommation",                     "it": "Conteggio - &gt; Consumo",                        "es": "Contando - &gt; Consumo",                         "pl": "Tellen - &gt; Consumptie"},
+        "Counting pulses or edge changes": {             "en": "Counting pulses or edge changes",                 "de": "Zählimpulse oder Kantenwechsel",                  "ru": "Подсчет импульсов или изменений кромок",          "pt": "Contagem de pulsos ou mudanças de borda",         "nl": "Tellen van pulsen of randveranderingen",          "fr": "Comptage des impulsions ou des changements de bord", "it": "Conteggio di impulsi o cambi di bordo",           "es": "Contar impulsos o cambios de borde",              "pl": "Tellen van pulsen of randveranderingen"},
+        "Day-/Week-/Month-/Quarter-/Annual-values": {    "en": "Day-/Week-/Month-/Quarter-/Annual-values",        "de": "Tages- / Wochen- / Monats- / Viertel- / Jahreswerte", "ru": "ДЕНЬ / уик / месяц- / / Ежегодные квартал-значения-", "pt": "Valores dia / semana / mês / trimestre / anual",  "nl": "Dag- / Week- / Maand-/ kwartaal- / Jaarlijkse-waarden", "fr": "Valeurs journalières / hebdomadaires / mensuelles / trimestrielles / annuelles", "it": "Giorno- / Week- / Mese- / Quarter- / Annual valori", "es": "Day- / Week- / Month- / Quarter- / Annual-values", "pl": "Dag- / Week- / Maand-/ kwartaal- / Jaarlijkse-waarden"},
+        "Determine times for states 0 or 1": {           "en": "Determine times for states 0 or 1",               "de": "Ermitteln Sie die Zeiten für die Zustände 0 oder 1", "ru": "Определить время для состояний 0 или 1",          "pt": "Determine os tempos para os estados 0 ou 1",      "nl": "Bepaal de tijden voor status 0 of 1",             "fr": "Déterminer les temps pour les états 0 ou 1",      "it": "Determina i tempi per gli stati 0 o 1",           "es": "Determine los tiempos para los estados 0 o 1",    "pl": "Bepaal de tijden voor status 0 of 1"},
+        "Don't group": {                                 "en": "Don't group",                                     "de": "Gruppiere nicht",                                 "ru": "Не группировать",                                 "pt": "Não grupo",                                       "nl": "Niet groeperen",                                  "fr": "Ne pas grouper",                                  "it": "Non raggruppare",                                 "es": "No agrupar",                                      "pl": "Niet groeperen"},
+        "Group the value": {                             "en": "Group the value",                                 "de": "Gruppiere den Wert",                              "ru": "Группируйте значение",                            "pt": "Agrupar o valor",                                 "nl": "Groepeer de waarde",                              "fr": "Grouper la valeur",                               "it": "Raggruppa il valore",                             "es": "Agrupe el valor",                                 "pl": "Groepeer de waarde"},
+        "Ignore difference if new value less than old one": {"en": "Ignore difference if new value less than old one", "de": "Ignoriere den Unterschied, wenn der neue Wert kleiner als der alte ist", "ru": "Игнорировать разницу, если новое значение меньше старого", "pt": "Ignore a diferença se um novo valor menor que o antigo", "nl": "Negeer verschil als nieuwe waarde minder is dan oude", "fr": "Ignorer la différence si une nouvelle valeur est inférieure à l'ancienne", "it": "Ignora la differenza se il nuovo valore è inferiore a quello vecchio", "es": "Ignorar la diferencia si el nuevo valor es menor que el anterior", "pl": "Negeer verschil als nieuwe waarde minder is dan oude"},
+        "Ignore errors": {                               "en": "Ignore errors",                                   "de": "Ignoriere Fehler",                                "ru": "Игнорировать ошибки",                             "pt": "Ignorar erros",                                   "nl": "Negeer fouten",                                   "fr": "Ignorer les erreurs",                             "it": "Ignora errori",                                   "es": "Ignorar errores",                                 "pl": "Negeer fouten"},
+        "Name for Logging": {                            "en": "Name for Logging",                                "de": "Name für die Protokollierung",                    "ru": "Имя для регистрации",                             "pt": "Nome para o registro em log",                     "nl": "Naam voor loggen",                                "fr": "Nom pour l'enregistrement",                       "it": "Nome per la registrazione",                       "es": "Nombre para registrar",                           "pl": "Naam voor loggen"},
+        "Name of statistics log": {                      "en": "Name of statistics log",                          "de": "Name des Statistikprotokolls",                    "ru": "Имя журнала статистики",                          "pt": "Nome do log de estatísticas",                     "nl": "Naam van statistiekenlogboek",                    "fr": "Nom du journal de statistiques",                  "it": "Nome del registro delle statistiche",             "es": "Nombre del registro de estadísticas",             "pl": "Naam van statistiekenlogboek"},
+        "One impulse is equal to this value": {          "en": "One impulse is equal to this value",              "de": "Ein Impuls entspricht diesem Wert",               "ru": "Один импульс равен этому значению",               "pt": "Um impulso é igual a este valor",                 "nl": "Eén impuls is gelijk aan deze waarde",            "fr": "Une impulsion est égale à cette valeur",          "it": "Un impulso è uguale a questo valore",             "es": "Un impulso es igual a este valor",                "pl": "Jeden impuls jest równy tej wartości"},
+        "Operating time count": {                        "en": "Operating time count",                            "de": "Betriebszeitzählung",                             "ru": "Время работы",                                    "pt": "Contagem do tempo de operação",                   "nl": "Aantal bedrijfsuren",                             "fr": "Temps de fonctionnement",                         "it": "Conteggio del tempo di funzionamento",            "es": "Cuenta de tiempo de operación",                   "pl": "Aantal bedrijfsuren"},
+        "The groups are defined in the admin page": {    "en": "The groups are defined in the admin page",        "de": "Die Gruppen sind auf der Admin-Seite definiert",  "ru": "Группы определены на странице администратора",    "pt": "Os grupos são definidos na página de administração", "nl": "De groepen worden gedefinieerd op de beheerderspagina", "fr": "Les groupes sont définis dans la page admin",     "it": "I gruppi sono definiti nella pagina di amministrazione", "es": "Los grupos están definidos en la página de administración", "pl": "De groepen worden gedefinieerd op de beheerderspagina"},
+        "Unit": {                                        "en": "Unit",                                            "de": "Einheit",                                         "ru": "Ед. изм",                                         "pt": "Unidade",                                         "nl": "Eenheid",                                         "fr": "Unité",                                           "it": "Unità",                                           "es": "Unidad",                                          "pl": "Eenheid"},
+        "Unit for counter": {                            "en": "Unit for counter",                                "de": "Einheit für Zähler",                              "ru": "Блок для счетчика",                               "pt": "Unidade para contador",                           "nl": "Eenheid voor de teller",                          "fr": "Unité pour compteur",                             "it": "Unità per contatore",                             "es": "Unidad por contador",                             "pl": "Eenheid voor de teller"},
+        "Units": {                                       "en": "Units",                                           "de": "Einheiten",                                       "ru": "Единицы",                                         "pt": "Unidades",                                        "nl": "eenheden",                                        "fr": "Unités",                                          "it": "unità",                                           "es": "Unidades",                                        "pl": "Jednostki"},
+        "Units per impulse": {                           "en": "Units per impulse",                               "de": "Einheiten pro Impuls",                            "ru": "Единицы за импульс",                              "pt": "Unidades por impulso",                            "nl": "Eenheden per impuls",                             "fr": "Unités par impulsion",                            "it": "Unità per impulso",                               "es": "Unidades por impulso",                            "pl": "Jednostki za impuls"},
+        "configure here the possible settings for binary values": {"en": "configure here the possible settings for binary values", "de": "Konfigurieren Sie hier die möglichen Einstellungen für Binärwerte", "ru": "настройте здесь возможные настройки для двоичных значений", "pt": "configure aqui as configurações possíveis para valores binários", "nl": "configureer hier de mogelijke instellingen voor binaire waarden", "fr": "configurer ici les paramètres possibles pour les valeurs binaires", "it": "configurare qui le possibili impostazioni per i valori binari", "es": "configure aquí las configuraciones posibles para valores binarios", "pl": "configureer hier de mogelijke instellingen voor binaire waarden"},
+        "determine the consumption from counting": {     "en": "determine the consumption from counting",         "de": "Bestimmen Sie den Verbrauch durch Zählen",        "ru": "определить потребление от подсчета",              "pt": "determinar o consumo da contagem",                "nl": "bepaal het verbruik van tellen",                  "fr": "déterminer la consommation de compter",           "it": "determinare il consumo dal conteggio",            "es": "determinar el consumo del conteo",                "pl": "bepaal het verbruik van tellen"},
+        "every 5 minutes determine the consumption": {   "en": "every 5 minutes determine the consumption",       "de": "Alle 5 Minuten bestimmen den Verbrauch",          "ru": "каждые 5 минут определяют потребление",           "pt": "a cada 5 minutos determinam o consumo",           "nl": "elke 5 minuten bepalen het verbruik",             "fr": "toutes les 5 minutes déterminent la consommation", "it": "ogni 5 minuti determina il consumo",              "es": "cada 5 minutos determina el consumo",             "pl": "elke 5 minuten bepalen het verbruik"},
+        "for analog values (also consumption from counting)": {"en": "for analog values (also consumption from counting)", "de": "für analoge Werte (auch Verbrauch vom Zählen)",   "ru": "для аналоговых значений (также потребление от подсчета)", "pt": "para valores analógicos (também consumo de contagem)", "nl": "voor analoge waarden (ook verbruik van tellen)",  "fr": "pour les valeurs analogiques (également consommation de comptage)", "it": "per valori analogici (anche consumo dal conteggio)", "es": "para valores analógicos (también consumo de conteo)", "pl": "voor analoge waarden (ook verbruik van tellen)"},
+        "for impulses, binary data points": {            "en": "for impulses, binary data points",                "de": "für Impulse, binäre Datenpunkte",                 "ru": "для импульсов, двоичных данных",                  "pt": "para impulsos, pontos de dados binários",         "nl": "voor impulsen, binaire gegevenspunten",           "fr": "pour les impulsions, les points de données binaires", "it": "per impulsi, punti dati binari",                  "es": "para impulsos, puntos de datos binarios",         "pl": "voor impulsen, binaire gegevenspunten..."},
+        "kWh, m, liters, or similar": {                  "en": "kWh, m³, liters, or similar",                     "de": "kWh, m³, Liter oder ähnlich",                     "ru": "кВтч, м³, литры или аналогичные",                 "pt": "kWh, m³, litros ou similar",                      "nl": "kWh, m³, liter of vergelijkbaar",                 "fr": "kWh, m³, litres ou similaire",                    "it": "kWh, m³, litri o simili",                         "es": "kWh, m³, litros o similar",                       "pl": "kWh, m³, litry lub podobne"},
+    });
+
     // There are two ways how to predefine default settings:
     // - with attribute "data-default" (content independent)
     // - with function in global variable "defaults". Function name is equal with adapter name.
     //   as input function receives object with all information concerning it
     if (typeof defaults !== 'undefined') {
         defaults.statistics = function (obj, instanceObj) {
-            if (obj && obj.common && obj.common.type !== 'number') {
-                return {
-                    enabled:    false,
-                    logname:    "log 1",
-                    count:      false,
-                    sumcnt:     false,
-                    timecnt:    false,
-                    fivemin:    false,
-                    impvalue:   1,
-                    impunit:    "kWh",
-                    sumdelta:   false,
-                    avg:        false,
-                    sumgroup:   false,
-                    sumgroupname: "energy"
-                };
-            } else {
-                return {
-                    enabled:     false,
-                    logname:    "log 1",
-                    count:      false,
-                    sumcnt:     false,
-                    timecnt:    false,
-                    fivemin:    false,
-                    impvalue:   1,
-                    impunit:    "kWh",
-                    sumdelta:   false,
-                    avg:        false,
-                    sumgroup:   false,
-                    sumgroupname: "energy" //instanceObj.native.groups[0].sumgroupname
-                };
+            return {
+                enabled:    false,
+                logName:    (obj && obj.common && obj.common.name) || (obj && obj._id) || '',
+                count:      false,
+                sumCount:   false,
+                timeCount:  false,
+                fiveMin:    false,
+                groupFactor:  '',
+                impUnit:    '',
+                impUnitPerImpulse: '',
+                sumIgnoreMinus: true,
+                sumDelta:   false,
+                avg:        false,
+                sumGroup:   ''
+            };
+        }
+    }
+
+    // init select
+    if (typeof customPostInits !== 'undefined') {
+        customPostInits.statistics = function ($div, values, instanceObj, type, role) {
+            var text;
+            if (instanceObj) {
+                text = '<option value="">' + _('Don\'t group') + '</option>';
+                for (var i = 0; i < instanceObj.native.groups.length; i++) {
+                    text += '<option value="' + instanceObj.native.groups[i].id + '">' + instanceObj.native.groups[i].name + '</option>';
+                }
+                $div
+                    .find('.sum-group')
+                        .html(text)
+                        .val(values.sumGroup)
+                        .off('change')
+                        .on('change', function () {
+                            if ($(this).val()) {
+                                $div.find('.group-factor').show();
+                            } else {
+                                $div.find('.group-factor').hide();
+                            }
+                        });
+            }
+            if (!text) {
+                $div.find('.group').hide();
+            }
+
+            $div.find('.five-min').on('change', function () {
+                var checked = $(this).prop('checked');
+                $div.find('.five-min').each(function () {
+                    $(this).prop('checked', checked);
+                });
+            });
+
+            $div.find('.sum').on('change', function () {
+                var sumDelta = $div.find('.sum-delta').prop('checked');
+                var sumCount = $div.find('.sum-count').prop('checked');
+
+                if (sumDelta) {
+                    $div.find('.sum-ignore-minus').show();
+                    $div.find('.group').show();
+                } else {
+                    $div.find('.sum-ignore-minus').hide();
+                    if (sumCount) {
+                        $div.find('.group').show();
+                    } else {
+                        $div.find('.group').hide();
+                    }
+                }
+            });
+
+            if (!values.sumGroup) {
+                $div.find('.group-factor').hide();
+            }
+
+            if (!values.sumDelta && !values.sumCount) {
+                $div.find('.group').hide();
+            }
+
+            if (!values || !values.sumDelta) {
+                $div.find('.sum-ignore-minus').hide();
+            }
+
+            if (type === 'boolean') {
+                $div.find('.analog').hide();
+            }
+
+            if (type === 'number') {
+                $div.find('.binary').hide();
             }
         }
     }

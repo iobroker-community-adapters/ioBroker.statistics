@@ -44,15 +44,15 @@
             "pl": "statystyki obiektów iobroker"
         },
         "desc": {
-            "en": "ioBroker statistics Adapter",
-            "de": "ioBroker Statistik Adapter",
-            "ru": "ioBroker статистика Адаптер",
+            "en": "ioBroker statistics",
+            "de": "ioBroker Statistik",
+            "ru": "ioBroker статистика для состояний",
             "pt": "Adaptador de estatísticas ioBroker",
-            "nl": "ioBroker statistieken Adapter",
-            "fr": "ioBroker statistiques Adaptateur",
-            "it": "Adattatore statistiche ioBroker",
-            "es": "Adaptador de estadísticas ioBroker",
-            "pl": "Adapter statystyk ioBroker"
+            "nl": "ioBroker statistieken",
+            "fr": "ioBroker statistiques",
+            "it": "Statistiche ioBroker",
+            "es": "Estadísticas ioBroker",
+            "pl": "Statystyk ioBroker"
         },
         "platform": "Javascript/Node.js",
         "mode": "daemon",
@@ -74,43 +74,32 @@
             {
                 "name": "foxthefox",
                 "email": "foxthefox@wysiwis.net"
+            },
+            {
+                "name": "bluefox",
+                "email": "dogafox@gmail.com"
             }
         ]
     },
 
-"native": {
-    "elcost": 0.28,
-    "gascost": 42,
-    "groups": [
-        {
-            "groupid": "energy",
-            "groupname": "total energy",
-            "groupcost": 0.28,
-            "groupcostunit": "€/kWh"
-        },
-        {
-            "groupid": "gas",
-            "groupname": "total gas",
-            "groupcost": 0.28,
-            "groupcostunit": "€/m³"
-        }
-    ],    
-    "stateobj": [
-        {
-            "logobject": "hm-rpc.1.CUX0600001.1.METER",
-            "logname": "Küche",
-            "count": false,
-            "sumcnt": false,
-            "impvalue": 1,
-            "impunit": "Imp/Unit",
-            "sumdelta": true,
-            "timecount": false,
-            "avg": false,
-            "fivemin": false,
-            "sumgroup": false,
-            "sumgroupname": "energy"
-        }
-    ]
-},
-"objects": []
+    "native": {
+        "impUnitPerImpulse": 1,
+        "impFactor": 1,
+        "timezone": "",
+        "groups": [
+            {
+                "id": "energy",
+                "name": "total energy",
+                "price": 0.28,
+                "priceUnit": "€/kWh"
+            },
+            {
+                "id": "gas",
+                "name": "total gas",
+                "price": 0.28,
+                "priceUnit": "€/m³"
+            }
+        ]
+    },
+    "objects": []
 }

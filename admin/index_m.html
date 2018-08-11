@@ -14,13 +14,13 @@
     
         <script type="text/javascript">
     
-        var groups = [];
+            var groups = [];
 
             function setValue(id, value, onChange) {
                 var $value = $('#' + id + '.value');
     
                 if ($value.attr('type') === 'checkbox') {
-                    $value.prop('checked', value).change(function () {
+                    $value.prop('checked', value).on('change', function () {
                         onChange();
                     });
                 } else {
@@ -47,10 +47,8 @@
                 onChange(false);
     
             }
-            // ... and the function save has to exist.
-            // you have to make sure the callback is called with the settings object as first param!
+
             function save(callback) {
-                // example: select elements with class=value and build settings object
                 var obj = {};
                 $('.value').each(function () {
                     var $this = $(this);
@@ -83,31 +81,44 @@
             <div class="row">
                 <div class="col s12">
                     <ul class="tabs">
-                        <li class="tab col s2"><a href="#tab-1"    class="translate active">General</a></li>
-                        <li class="tab col s2"><a href="#tab-2" class="translate">Gruppen</a></li>
-                        <li class="tab col s2"><a href="#tab-3" class="translate">JSON</a></li>
+                        <li class="tab col s4"><a href="#tab-1" class="translate active">Main settings</a></li>
+                        <li class="tab col s4"><a href="#tab-2" class="translate">Groups</a></li>
                     </ul>
                 </div>
 
                 <div id="tab-1"    class="col s12 page">
                     <div class="row">
-                        <div class="col s12">
-                            <h6 class="translate sub-title">general configuration</h6>
+                        <div class="input-field col s4">
+                            <input type="text" id="impUnitPerImpulse" class="value"/>
+                            <label for="impUnitPerImpulse">Default units per impulse</label>
+                            <span class="translate">One impulse is equal to this value</span>
                         </div>
-                        <div class="col s6">
-                            <input class="value" id="elcostt" />
-                            <label for="elcost" class="translate">elcost</label>
-                            <p>€/kWh</p>
-                            </td>
-                            <!-- Important: label must come directly after input. Label is important. -->
-                        </div>
-                        <div class="col s6">
-                            <input class="value" id="gascost" />
-                            <label for="gascost" class="translate">gascost</label>
-                            <p>€/m³</p>
-                            <!-- Important: label must come directly after input. Label is important. -->
+                        <div class="input-field col s4">
+                            <input type="text" id="impFactor" class="value"/>
+                            <label for="impFactor">Default group factor</label>
+                            <span class="translate">Values will be added to groups with this factor by default</span>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="input-field col s8">
+                            <input type="text" id="timezone" class="value"/>
+                            <label for="timezone">Time zone</label>
+                            <span class="translate">E.g. Europe/Berlin. Leave it empty for default settings</span>
+                        </div>
+                    </div>
+                    <!--div class="row">
+                        <div class="col s12">
+                            <h6 class="translate sub-title">import/export</h6>
+                        </div>
+                        <div class="row">
+                        <div class="col s12">
+                        <div class="col s6">
+                            <button style="display: inline-block; margin-left: 10px;">Import</button>
+                        </div>
+                        <div class="col s6">
+                            <button style="display: inline-block; margin-left: 10px;">Export</button>
+                        </div>
+                    </div-->
                 </div>
                 <div id="tab-2"    class="col s12 page">
                     <div class="row">
@@ -127,32 +138,18 @@
                             <table class="table-values" style="width: 90%;">
                                 <thead>
                                     <tr>
-                                        <th data-name="_index"   style="width: 40px" class="translate"></th>
-                                        <th data-name="groupid"    style="width: 150px"class="translate">Gruppe</th>
-                                        <th data-name="groupname"    style="width: 200px"  class="translate">Gruppenname</th>
-                                        <th data-name="groupcost"     style="width: 200px" class="translate">Kosten</th>
-                                        <th data-name="groupcostunit"     style="width: 200px" class="translate">Einheit</th>
-                                        <th data-buttons="delete" style="width: 40px"></th>
+                                        <th data-name="_index"    style="width: 40px" class="translate"></th>
+                                        <th data-name="id"        style="width: 150px" class="translate">Group</th>
+                                        <th data-name="name"      style="width: 200px" class="translate">Group name</th>
+                                        <th data-name="price"     style="width: 200px" class="translate">Price</th>
+                                        <th data-name="priceUnit" style="width: 200px" class="translate">Unit</th>
+                                        <th data-buttons="delete up down"     style="width: 40px"></th>
                                     </tr>
                                 </thead>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div id="tab-3"    class="col s12 page">
-                    <div class="row">
-                        <div class="col s12">
-                            <h6 class="translate sub-title">import/export</h6>
-                        </div>
-                        <div class="col s6">
-                            <button style="display: inline-block; margin-left: 10px;">Import</button>
-                        </div>
-                        <div class="col s6">
-                                <button style="display: inline-block; margin-left: 10px;">Export</button>
-                        </div>
-                    </div>
-                </div>    
-
             </div>
         </div>
     </body>
