@@ -276,6 +276,7 @@ function newAvgValue(id, value) {
     /**
      * vergleich zwischen letzten min/max und jetzt übermittelten value
      */
+    value = parseFloat(value) || 0;
     adapter.log.debug('avg call: ' + id + ' value ' + value);
     tasks.push({
         name: 'async',
@@ -406,6 +407,8 @@ function newSumDeltaValue(id, value) {
     Delta auf alle Werte aufaddieren
     eigene Werte anders behandeln (Datenpunktname)
     */
+
+    value = parseFloat(value) || 0;
 
     tasks.push({
         name: 'async',
@@ -961,8 +964,10 @@ function defineObject(type, id, name, unit) {
         }
         adapter.log.debug(type + ' obj save creation  ' + objects[s] + ' for ' + id + ' structure ' + JSON.stringify(obj));
         obj.native.addr = id;
-        if (unit) {
+        if (unit && objects[s] !== 'dayCount') {
             obj.common.unit = unit;
+        } {
+
         }
         tasks.push({
             name: 'setObjectNotExists',
@@ -987,6 +992,11 @@ function defineObject(type, id, name, unit) {
         adapter.log.debug(type + ' obj temp creation  ' + objects[s] + ' for ' + id + ' structure ' + JSON.stringify(obj));
         obj.native.addr = id;
         obj.common.expert = true;
+        if (unit && objects[s] !== 'dayCount') {
+            obj.common.unit = unit;
+        } else if (obj.common.unit !== undefined) {
+            delete obj.common.unit;
+        }
         tasks.push({
             name: 'setObjectNotExists',
             id: adapter.namespace + '.temp.' + type + '.' + id + '.' + objects[s],
@@ -1232,7 +1242,7 @@ function processTasks() {
                 });
             });
         } else {
-            if (task.obj.native.addr) {
+            if (task.obj.native.addr && !task.id.match(/\.dayCount$/)) {
                 if (units[task.obj.native.addr] !== undefined) {
                     if (units[task.obj.native.addr]) {
                         task.obj.common.unit = units[task.obj.native.addr];

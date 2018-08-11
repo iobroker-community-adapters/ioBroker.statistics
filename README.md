@@ -1,5 +1,6 @@
 ![Logo](admin/statistics.png)
 # ioBroker.statistics
+==================
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.statistics.svg)](https://www.npmjs.com/package/iobroker.statistics)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.statistics.svg)](https://www.npmjs.com/package/iobroker.statistics)
