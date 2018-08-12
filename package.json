@@ -1,13 +1,16 @@
 {
   "name": "iobroker.statistics",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "ioBroker statistics Adapter",
   "author": {
     "name": "foxthefox",
     "email": "foxthefox@wysiwis.net"
   },
   "contributors": [
-    {}
+    {
+      "name": "Bluefox",
+      "email": "dogafox@gmail.com"
+    }
   ],
   "homepage": "https://github.com/foxthefox/ioBroker.statistics",
   "license": "MIT",
