@@ -302,7 +302,7 @@ function newAvgValue(id, value) {
      * vergleich zwischen letzten min/max und jetzt übermittelten value
      */
     value = parseFloat(value) || 0;
-    adapter.log.debug('[5 MINUTES] avg call: ' + id + ' value ' + value);
+    adapter.log.debug('[STATE CHANGE] avg call: ' + id + ' value ' + value);
     tasks.push({
         name: 'async',
         args: {
@@ -328,7 +328,7 @@ function newAvgValue(id, value) {
                                     getValue('temp.avg.' + args.id + '.dayMax', (err, tempMax) => {
                                         if (tempMax === null || tempMax < value) {
                                             setValue('temp.avg.' + args.id + '.dayMax', value, callback);
-                                            adapter.log.debug('[5 MINUTES] new max for "' + args.id  + ': ' + value);
+                                            adapter.log.debug('[STATE CHANGE] new max for "' + args.id  + ': ' + value);
                                         } else {
                                             callback && callback();
                                         }
@@ -406,7 +406,8 @@ function newCountValue(id, value) {
                                     name: 'async',
                                     args: {
                                         delta: statDP[args.id].impUnitPerImpulse * factor * price,
-                                        id: 'temp.sumGroup.' + statDP[args.id].sumGroup + '.' + nameObjects.sumGroup.temp[i]
+                                        id: 'temp.sumGroup.' + statDP[args.id].sumGroup + '.' + nameObjects.sumGroup.temp[i],
+                                        type: nameObjects.sumGroup.temp[i]
                                     },
                                     callback: (args, callback) =>
                                         getValue(args.id, (err, value, ts) => {
@@ -567,7 +568,8 @@ function newSumDeltaValue(id, value) {
                             name: 'async',
                             args: {
                                 delta: delta * factor * price,
-                                id: 'temp.sumGroup.' + statDP[args.id].sumGroup + '.' + nameObjects.sumGroup.temp[i]
+                                id: 'temp.sumGroup.' + statDP[args.id].sumGroup + '.' + nameObjects.sumGroup.temp[i],
+                                type: nameObjects.sumGroup.temp[i]
                             },
                             callback: (args, callback) =>
                                 getValue(args.id, (err, value, ts) => {
