@@ -243,7 +243,7 @@ function fiveMin() {
                             getValue('temp.fiveMin.' + args.id + '.dayMax5Min', (err, max) => {
                                 getValue(temp5MinID, (err, old) => {
                                     // Write actual state into counter object
-                                    setValue(temp5MinID, actual, () => {
+                                    setValueStat(temp5MinID, actual, () => {
                                         if (old === null) {
                                             return callback();
                                         }
@@ -251,13 +251,13 @@ function fiveMin() {
 
                                         adapter.log.debug('fiveMin; of : ' + args.id + ' with  min: ' + min + ' max: ' + max + ' actual: ' + actual + ' old: ' + old + ' delta: ' + delta);
 
-                                        setValue('temp.fiveMin.' + args.id + '.mean5Min', delta, () => {
+                                        setValueStat('temp.fiveMin.' + args.id + '.mean5Min', delta, () => {
                                             if (max === null || delta > max) {
-                                                setValue('temp.fiveMin.' + args.id + '.dayMax5Min', delta, callback);
+                                                setValueStat('temp.fiveMin.' + args.id + '.dayMax5Min', delta, callback);
                                                 callback = null;
                                             }
                                             if (min === null || delta < min) {
-                                                setValue('temp.fiveMin.' + args.id + '.dayMin5Min', delta, callback);
+                                                setValueStat('temp.fiveMin.' + args.id + '.dayMin5Min', delta, callback);
                                                 callback = null;
                                             }
                                             callback && callback();
@@ -291,24 +291,19 @@ function getValue(id, callback) {
 }
 
 // cached function 
+function setValueStat(id, val, callback) {
+    let ts = new Date();
+    ts.setMinutes(ts.getMinutes() - 1);
+    ts.setSeconds(59);
+    ts.setMilliseconds(0);
+    states[id] = val;
+    adapter.setForeignState(adapter.namespace + '.' + id, {val, ts, ack: true}, callback);
+}
+
+// cached function
 function setValue(id, val, callback) {
-    let ts;
-    if (typeof val === 'object') {
-        if (val.ts) {
-            let ts = new Date(val.ts);
-            ts.setMinutes(ts.getMinutes() - 1);
-            ts.setSeconds(59);
-            ts.setMilliseconds(0);
-            val.ack = true;
-            adapter.setForeignState(adapter.namespace + '.' + id, val, callback);
-        } else {
-            adapter.setForeignState(adapter.namespace + '.' + id, val.val, true, callback);
-        }
-        states[id] = val.val;
-    } else {
-        states[id] = val;
-        adapter.setForeignState(adapter.namespace + '.' + id, val, true, callback);
-    }
+    states[id] = val;
+    adapter.setForeignState(adapter.namespace + '.' + id, val, true, callback);
 }
 
 function newAvgValue(id, value) {
@@ -703,7 +698,7 @@ function copyValue(args, callback) {
     getValue(args.temp, (err, value) => {
         if (value !== null && value !== undefined) {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
-            setValue(args.save, value, () =>
+            setValueStat(args.save, value, () =>
                 setValue(args.temp, 0, callback)
             );
         } else {
@@ -714,10 +709,10 @@ function copyValue(args, callback) {
 }
 
 function copyValueRound(args, callback) {
-    getValue(args.temp, (err, value, ts) => {
+    getValue(args.temp, (err, value) => {
         if (value !== null && value !== undefined) {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
-            setValue(args.save, {val: Math.round(value * 100) / 100, ts}, () => // may be use Math.floor here
+            setValueStat(args.save, Math.round(value * 100) / 100, () => // may be use Math.floor here
                 setValue(args.temp, 0, callback)
             );
         } else {
@@ -731,7 +726,7 @@ function copyValue0(args, callback) {
     getValue(args.temp, (err, value, ts) => {
         value = value || 0;
         adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
-        setValue(args.save, {val: value, ts}, () =>
+        setValueStat(args.save, value, () =>
             setValue(args.temp, 0, callback)
         );
     });
@@ -741,7 +736,7 @@ function copyValue1000(args, callback) {
     getValue(args.temp, (err, value, ts) => {
         value = Math.floor((value || 0) / 1000);
         adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
-        setValue(args.save, {val: value, ts}, () =>
+        setValueStat(args.save, value, () =>
             setValue(args.temp, 0, callback)
         );
     });
@@ -821,7 +816,7 @@ function saveValues(timePeriod) {
                 args: {
                     temp: 'temp.avg.' + id + '.dayCount'
                 },
-                callback: (args, callback) => setValue(args.temp, 0, callback)
+                callback: (args, callback) => setValueStat(args.temp, 0, callback)
             });
 
             // just reset the counter
@@ -830,7 +825,7 @@ function saveValues(timePeriod) {
                 args: {
                     temp: 'temp.avg.' + id + '.daySum'
                 },
-                callback: (args, callback) => setValue(args.temp, 0, callback)
+                callback: (args, callback) => setValueStat(args.temp, 0, callback)
             });
         }
     }
