@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "statistics",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "news": {
-            "0.1.0": {
+            "0.1.1": {
                 "en": "adminv3 implemented",
                 "de": "adminv3 implementiert",
                 "ru": "adminv3 реализовано",

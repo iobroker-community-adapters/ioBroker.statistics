@@ -292,8 +292,23 @@ function getValue(id, callback) {
 
 // cached function 
 function setValue(id, val, callback) {
-    states[id] = val;
-    adapter.setForeignState(adapter.namespace + '.' + id, val, true, callback);
+    let ts;
+    if (typeof val === 'object') {
+        if (val.ts) {
+            let ts = new Date(val.ts);
+            ts.setMinutes(ts.getMinutes() - 1);
+            ts.setSeconds(59);
+            ts.setMilliseconds(0);
+            val.ack = true;
+            adapter.setForeignState(adapter.namespace + '.' + id, val, callback);
+        } else {
+            adapter.setForeignState(adapter.namespace + '.' + id, val.val, true, callback);
+        }
+        states[id] = val.val;
+    } else {
+        states[id] = val;
+        adapter.setForeignState(adapter.namespace + '.' + id, val, true, callback);
+    }
 }
 
 function newAvgValue(id, value) {
@@ -699,10 +714,10 @@ function copyValue(args, callback) {
 }
 
 function copyValueRound(args, callback) {
-    getValue(args.temp, (err, value) => {
+    getValue(args.temp, (err, value, ts) => {
         if (value !== null && value !== undefined) {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
-            setValue(args.save, Math.round(value * 100) / 100, () => // may be use Math.floor here
+            setValue(args.save, {val: Math.round(value * 100) / 100, ts}, () => // may be use Math.floor here
                 setValue(args.temp, 0, callback)
             );
         } else {
@@ -713,20 +728,20 @@ function copyValueRound(args, callback) {
 }
 
 function copyValue0(args, callback) {
-    getValue(args.temp, (err, value) => {
+    getValue(args.temp, (err, value, ts) => {
         value = value || 0;
         adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
-        setValue(args.save, value, () =>
+        setValue(args.save, {val: value, ts}, () =>
             setValue(args.temp, 0, callback)
         );
     });
 }
 
 function copyValue1000(args, callback) {
-    getValue(args.temp, (err, value) => {
+    getValue(args.temp, (err, value, ts) => {
         value = Math.floor((value || 0) / 1000);
         adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
-        setValue(args.save, value, () =>
+        setValue(args.save, {val: value, ts}, () =>
             setValue(args.temp, 0, callback)
         );
     });
@@ -756,6 +771,7 @@ function saveValues(timePeriod) {
 
     for (let t = 0; t < dayTypes.length; t++) {
         for (let s = 0; s < typeObjects[dayTypes[t]].length; s++) {
+            // ignore last5min
             if (nameObjects[dayTypes[t]].temp[day] === 'last5Min') continue;
             const id = typeObjects[dayTypes[t]][s];
             tasks.push({
@@ -868,7 +884,7 @@ function saveValues(timePeriod) {
 }
 
 function setInitial(type, id) {
-    //wenn nicht schon vom letzten Adapterstart Werte geloggt wurden, dann diese jetzt mit '0' befüllen, damit der read auf die Werte nicht auf undefined trifft.
+    // wenn nicht schon vom letzten Adapterstart Werte geloggt wurden, dann diese jetzt mit '0' befüllen, damit der read auf die Werte nicht auf undefined trifft.
     const nameObjectType = nameObjects[type];
     const objects = nameObjectType.temp;
     const isStart = !tasks.length;
@@ -1420,7 +1436,7 @@ function main() {
     );
 
     // Monthly at 1 of every month at 00:00
-    crons.monthSave = new CronJob('0 24 1 * *',
+    crons.monthSave = new CronJob('0 0 1 * *',
         () => saveValues('month'),
         () => adapter.log.debug('stopped month'), // This function is executed when the job stops
         true,

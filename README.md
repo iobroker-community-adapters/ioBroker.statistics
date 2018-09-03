@@ -34,7 +34,7 @@ after save or temp the original object is kept (unfortunately it is split by the
 * specify the configuration in the settings of the state (admin => objects)
 
 ## Changelog
-### 0.1.0 [2018-08-12]
+### 0.1.1 [2018-09-03]
 * (bluefox) total refactoring
 
 ### 0.0.3
