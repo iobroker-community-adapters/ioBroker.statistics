@@ -150,9 +150,10 @@ adapter.on('message', obj => {
         if (obj.command === 'import') {
             // e.g. send email or pushover or whatever
             console.log('got import command');
-
             // Send response in callback if required
             if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
+        } else if (obj.command === 'test') {
+            saveValues(obj.message || '15Min');
         }
     }
 });
@@ -1362,9 +1363,9 @@ function main() {
             for (let i = 0, l = doc.rows.length; i < l; i++) {
                 if (doc.rows[i].value) {
                     const id = doc.rows[i].id;
-                    const obj = doc.rows[i].value;
-                    if (!obj || !obj.common || !obj.common.custom || !obj.common.custom[adapter.namespace] || !obj.common.custom[adapter.namespace].enabled) continue;
-                    statDP[id] = obj.common.custom[adapter.namespace]; // all-inclusive assumption of all answers
+                    const custom = doc.rows[i].value;
+                    if (!custom || !custom[adapter.namespace] || !custom[adapter.namespace].enabled) continue;
+                    statDP[id] = custom[adapter.namespace]; // all-inclusive assumption of all answers
                     
                     objCount++;
                     adapter.log.info('[CREATION] enabled statistics for ' + id);
