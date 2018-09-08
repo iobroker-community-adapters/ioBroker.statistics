@@ -20,39 +20,39 @@ const CronJob = require('cron').CronJob;
 const adapter = utils.Adapter('statistics');
 
 let crons = {};
-const typeObjects = {}; // zum Merken der benutzen Objekte innerhalb der Typen(Berechnungen)
-const statDP = {};      // enthält die kompletten Datensätze (anstatt adapter.config)
+const typeObjects = {}; // to remember the used objects within the types (calculations)
+const statDP = {};      // contains the complete datasets (instead of adapter.config)
 const groups = {};
 let units = {};
 const tasks = [];
 const states = {}; // hold all states locally
 
 const nameObjects = {
-    count: { // Impulse zählen oder Schaltspiele zählen
+    count: { // Count impulses or counting operations
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'last5Min']
     },
-    sumCount: { // Aufsummierung analoger Werte (Verbrauch aus Impulsen) Multiplikation mit Preis = Kosten
+    sumCount: { // Addition of analogue values (consumption from pulses) Multiplication with price = costs
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
     },
-    sumDelta: { // Verbrauch aus fortlaufenden Größen () Multiplikation mit Preis = Kosten
+    sumDelta: { // Consumption from continuous quantities () Multiplication with price = costs
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'delta', 'last'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']//, 'last5Min']
     },
-    sumGroup: { // Summenverbrauch aus fortlaufenden Größen
+    sumGroup: { // Total consumption from consecutive quantities
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
     },
-    avg: { // Mittelwerte etc.
+    avg: { // Mean values etc.
         save: ['dayMin', 'dayMax', 'dayAvg'],
         temp: ['dayMin', 'dayMax', 'dayAvg', 'dayCount', 'daySum']
     },
-    timeCount: { // Betriebszeitzählung aus Statuswechsel
+    timeCount: { // Operating time counting from status change
         save: ['onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear', 'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear'],
         temp: ['onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear', 'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear', 'last01', 'last10']
     },
-    fiveMin: { // 5 Minuten werte etc. nur bei Impulsen sinnvoll
+    fiveMin: { // 5 minutes, etc. only useful with impulses
         save: ['mean5Min', 'dayMax5Min', 'dayMin5Min'],
         temp: ['mean5Min', 'dayMax5Min', 'dayMin5Min']
     },
@@ -71,7 +71,7 @@ function stop () {
 adapter.on('unload', callback => {
     try {
         adapter && adapter.log && adapter.log.info && adapter.log.info('cleaned everything up...');
-        // evtl. auch noch ein paar schedules löschen
+        // possibly also delete a few schedules
         stop();
         callback();
     } catch (e) {
@@ -116,7 +116,7 @@ adapter.on('objectChange', (id, obj) => {
 adapter.on('stateChange', (id, state) => {
     // Warning, state can be null if it was deleted
     adapter.log.debug('[STATE CHANGE] ======================= ' + id + ' =======================');
-    adapter.log.debug('[STATE CHANGE] stateChange ' + JSON.stringify(state));
+    adapter.log.debug('[STATE CHANGE] stateChange => ' + state.val + ' [' + state.ack + ']');
 
     // you can use the ack flag to detect if it is status (true) or command (false)
     if (state && state.ack) {
@@ -133,7 +133,7 @@ adapter.on('stateChange', (id, state) => {
         if (typeObjects.timeCount && typeObjects.timeCount.indexOf(id) !== -1) {
             newTimeCntValue(id, state);
         }
-        // 5min wird zyklisch behandelt
+        // 5min is treated cyclically
     }
 });
 
@@ -204,21 +204,21 @@ function fiveMin() {
     const isStart = !tasks.length;
 
     /**
-     * 5min Werte ermitteln
-     *
-     * derzeitiges min aus temp holen
-     * derzeitiges max aus temp holen
-     * aktuellen value aus dem überwachten Zähler
-     * alten value (vor 5min) aus dem dem überwachten zähler
-     *
-     * bestimmung delta und entscheidung ob neuer min/max abgespeichert wird
-     * aktueller Zählerstand wird in den altwert geschrieben
-     *
-     * typeObjects.fiveMin[t] enthält die objectId des überwachten Zählers
-     *
-     *
+     * Determine 5min values
+     *
+     * Get current min from temp
+     * Get current max from temp
+     * current value from the monitored counter
+     * old value (before 5min) from the monitored counter
+     *
+     * determination delta and decision whether new min / max is stored
+     * current counter reading is written in the old value
+     *
+     * typeObjects.fiveMin [t] contains the objectId of the monitored counter
+     *
      */
-    // alle subscribed objects durchlaufen und schreiben
+
+    // go through all subscribed objects and write
 
     if (typeObjects.fiveMin) {
         for (let t = 0; t < typeObjects.fiveMin.length; t++) {
@@ -309,7 +309,7 @@ function setValue(id, val, callback) {
 function newAvgValue(id, value) {
     const isStart = !tasks.length;
     /**
-     * vergleich zwischen letzten min/max und jetzt übermittelten value
+     * Comparison between last min / max and now transmitted value
      */
     value = parseFloat(value) || 0;
     adapter.log.debug('[STATE CHANGE] avg call: ' + id + ' value ' + value);
@@ -357,9 +357,9 @@ function newAvgValue(id, value) {
 function newCountValue(id, value) {
     const isStart = !tasks.length;
     /*
-    value mit Grenzwert oder state
-    Wechsel auf 1 -> Erhöhung um 1
-    Wert größer threshold -> Erhöhung um 1
+        value with limit or state
+        Change to 1 -> increase by 1
+        Value greater threshold -> increase by 1
     */
     adapter.log.debug('[STATE CHANGE] count call ' + id + ' with ' + value);
 
@@ -383,7 +383,7 @@ function newCountValue(id, value) {
                         }
                     });
                     
-                    // Berechnung des Verbrauchs (was ist ein Impuls in physikalischer Größe)
+                    // Calculation of consumption (what is a physical-sized pulse)
                     if (typeObjects.sumCount &&
                         typeObjects.sumCount.indexOf(args.id) !== -1 &&
                         statDP[args.id].impUnitPerImpulse) { // counter mit Verbrauch
@@ -497,12 +497,13 @@ function checkValue(value, ts, id, type) {
 function newSumDeltaValue(id, value) {
     const isStart = !tasks.length;
     /*
-    als fortlaufenden Zählerständen den Verbrauch je Zeitraum ermitteln
-    Gültigkeitsprüfung neuer Wert muß größer sein als alter
-    Substraktion mit letzten Wert Day
-    Subtraktion mit letzten Wert today -> delta für Sum
-    Delta auf alle Werte aufaddieren
-    eigene Werte anders behandeln (Datenpunktname)
+        determine the consumption per period as consecutive meter readings.
+
+             - Validity check new value must be greater than age
+             - Subtraction with last value Day
+             - Subtraction with last value today -> delta for sum
+             - Add delta to all values
+             - treat own values differently (datapoint name)
     */
 
     value = parseFloat(value) || 0;
@@ -527,8 +528,8 @@ function newSumDeltaValue(id, value) {
                     if (statDP[args.id].sumIgnoreMinus) {
                         delta = 0;
                     } else {
-                        // Zählerüberlauf!
-                        delta = value; // Differenz zwischen letzten Wert und Überlauf ist Fehlerquote
+                        // Counter overflow!
+                        delta = value; // Difference between last value and overflow is error rate
                     }
                 }
                 tasks.push({
@@ -614,12 +615,12 @@ function isFalse(val) {
 function newTimeCntValue(id, state) {
     const isStart = !tasks.length;
     /*
-    value mit threshold oder state
-    Wechsel auf 1 bei threshold 0 -> Zeit zwischen Ereignis seit letzter 0
-    Addition der Zeit
+    value with threshold or state
+    Change to 1 at threshold 0 -> time between event since last 0
+    Addition of time
 
-    Wechsel auf 0 bei threshold 1 -> Zeit zwischen Ereignis seit letzter 1
-    Addition der Zeit
+    Change to 0 at threshold 1 -> time between event since last 1
+    Addition of time
     */
     adapter.log.debug('timecount call ' + id + ' with ' + val);
 
@@ -698,6 +699,7 @@ function copyValue(args, callback) {
     getValue(args.temp, (err, value) => {
         if (value !== null && value !== undefined) {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
+			value = value || 0; // protect against NaN
             setValueStat(args.save, value, () =>
                 setValue(args.temp, 0, callback)
             );
@@ -759,7 +761,7 @@ function saveValues(timePeriod) {
         }
     }
 
-    const day = column.indexOf(timePeriod);  // nameObjects[day] enthält den zeitbezogenen Objektwert
+    const day = column.indexOf(timePeriod);  // nameObjects[day] contains the time-related object value
 
     // all values
     adapter.log.debug('[SAVE VALUES] saving ' + timePeriod + ' values');
@@ -879,7 +881,8 @@ function saveValues(timePeriod) {
 }
 
 function setInitial(type, id) {
-    // wenn nicht schon vom letzten Adapterstart Werte geloggt wurden, dann diese jetzt mit '0' befüllen, damit der read auf die Werte nicht auf undefined trifft.
+    // if values have not already been logged from the last adapter start,
+    // then fill them with '0' so that the read does not hit the values undefined.
     const nameObjectType = nameObjects[type];
     const objects = nameObjectType.temp;
     const isStart = !tasks.length;
@@ -912,7 +915,7 @@ function setInitial(type, id) {
                                     }
                                 });
                             } else {
-                                adapter.getForeignState(args.trueId, (er, value) => { // aktuelle Wert holen
+                                adapter.getForeignState(args.trueId, (er, value) => { // get current value
                                     if (value && value.val !== null) {
                                         adapter.log.debug('[SET INITIAL] ' + args.trueId + ' object ' + args.trueId + ' ' + args.name);
                                         adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + value.val);
@@ -924,7 +927,7 @@ function setInitial(type, id) {
                             }
                         } else {
                             if (args.name === 'last01') {
-                                adapter.getForeignState(args.trueId, (err, state) => { //aktuelle Wert holen
+                                adapter.getForeignState(args.trueId, (err, state) => { // get current value
                                     adapter.log.debug('[SET INITIAL] ' + args.trueId + ' object ' + args.trueId + ' ' + args.name);
                                     adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + state.lc);
                                     if (isFalse(state && state.val)) {
@@ -1004,9 +1007,6 @@ function defineObject(type, id, name, unit) {
             }
         }
     });
-
-    // wie bekommt man die Unit aus der Konfig für sumCount hinein?
-    // wie bekommt man die Unit aus der zu überwachenden Größe hinein?
 
     // states for the saved values
     const nameObjectType = nameObjects[type];
@@ -1096,7 +1096,7 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
         }
     }
 
-    // Funktion wird mit den custom objekten aufgerufen
+    // Function is called with the custom objects
     adapter.log.debug('[CREATION] ============================== ' + id + ' =============================');
     adapter.log.debug('[CREATION] setup of object ' + JSON.stringify(obj));
     const logName = obj.logName;
@@ -1123,7 +1123,7 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
         });
         subscribed = true;
     }
-    // 5minuten Werte Lassen sich nur ermitteln, wenn auch gezählt wird
+    // 5minutes Values can only be determined when counting
     adapter.log.debug('[CREATION] fiveMin = ' + obj.fiveMin + ',  count =  ' + obj.count);
     
     if (obj.fiveMin && obj.count) {
@@ -1192,7 +1192,7 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
         subscribed = true;
     }
     
-    // Umrechnung Impulse in Verbrauch ist nur sinnvoll wenn Impulse vorhanden
+    // Conversion pulses into consumption is only useful if pulses exist
     if (obj.sumCount && obj.count) {
         if (!typeObjects.sumCount || typeObjects.sumCount.indexOf(id) === -1) {
             typeObjects.sumCount = typeObjects.sumCount || [];
@@ -1236,9 +1236,9 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
         });
         subscribed = true;
     }
-    // sumGroup macht nur sinn wenn es auch die deltawerte gibt
+    // sumGroup only makes sense if there are also the delta values
     if (obj.sumGroup && (obj.sumDelta || (obj.sumCount && obj.count))) {
-        // sumgroupname für Objekterstellung übermitteln
+        // submit sumgroupname for object creation
         if (groups[obj.sumGroup] && groups[obj.sumGroup].config) {
             if (!typeObjects.sumGroup || typeObjects.sumGroup.indexOf(obj.sumGroup) === -1) {
                 typeObjects.sumGroup = typeObjects.sumGroup || [];
@@ -1352,19 +1352,19 @@ function getCronStat() {
 }
 
 function main() {
-    // typeObjects wird nach start des adapters neu aufgebaut
-    // beim löschen von Datenpunkten während der Laufzeit ist in den beiden arrays zu bereinigen
+    // typeObjects is rebuilt after starting the adapter
+    // deleting data points during runtime must be cleaned up in both arrays
 
-    // Einlesen der Einstellung (hier kommen auch andere Einstellung mit!)
+    // reading the setting (here come with other setting!)
     adapter.objects.getObjectView('custom', 'state', {}, (err, doc) => {
         let objCount = 0;
         if (doc && doc.rows) {
             for (let i = 0, l = doc.rows.length; i < l; i++) {
                 if (doc.rows[i].value) {
                     const id = doc.rows[i].id;
-                    const custom = doc.rows[i].value;
-                    if (!custom || !custom[adapter.namespace] || !custom[adapter.namespace].enabled) continue;
-                    statDP[id] = custom[adapter.namespace]; //pauschale Übernahme aller Antworten
+                    const obj = doc.rows[i].value;
+                    if (!obj || !obj.common || !obj.common.custom || !obj.common.custom[adapter.namespace] || !obj.common.custom[adapter.namespace].enabled) continue;
+                    statDP[id] = obj.common.custom[adapter.namespace]; // all-inclusive assumption of all answers
                     
                     objCount++;
                     adapter.log.info('[CREATION] enabled statistics for ' + id);
@@ -1448,7 +1448,7 @@ function main() {
 
     // New year
     crons.yearSave = new CronJob('0 0 1 0 *',
-        () => saveValues('year'), //Monate ist Wertebereich 0-11
+        () => saveValues('year'), // Months is value range 0-11
         () => adapter.log.debug('stopped yearSave'),
         true,
         timezone

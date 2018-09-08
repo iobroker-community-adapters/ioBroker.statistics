@@ -34,7 +34,7 @@ after save or temp the original object is kept (unfortunately it is split by the
 * specify the configuration in the settings of the state (admin => objects)
 
 ## Changelog
-### 0.1.1 [2018-09-03]
+### 0.1.2 [2018-09-08]
 * (bluefox) total refactoring
 
 ### 0.0.3
@@ -51,4 +51,5 @@ after save or temp the original object is kept (unfortunately it is split by the
 
 The MIT License (MIT)
 
-Copyright (c) 2018 foxthefox <foxthefox@wysiwis.net>
+Copyright (c) 2018 foxthefox <foxthefox@wysiwis.net>,
+                   bluefox <dogafox@gmail.com>
