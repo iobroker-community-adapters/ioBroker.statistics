@@ -298,7 +298,7 @@ function setValueStat(id, val, callback) {
     ts.setSeconds(59);
     ts.setMilliseconds(0);
     states[id] = val;
-    adapter.setForeignState(adapter.namespace + '.' + id, {val, ts, ack: true}, callback);
+    adapter.setForeignState(adapter.namespace + '.' + id, {val, ts: ts.getTime(), ack: true}, callback);
 }
 
 // cached function
