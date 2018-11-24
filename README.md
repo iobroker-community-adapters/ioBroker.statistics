@@ -28,6 +28,8 @@ The adapter subscribes to the configured objects and creates his own states in t
 
 after save or temp the original object is kept (unfortunately it is split by the "." in a deeper structure than needed.
 
+A german HowTo doc is available here: [howto_de](./docs/howto_de.md)
+
 ## Settings
 * specify the relevant groups in the instance configuration page (admin => instances => statistics config)
 * specify the configuration in the settings of the state (admin => objects)
