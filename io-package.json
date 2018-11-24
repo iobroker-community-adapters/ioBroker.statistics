@@ -54,6 +54,11 @@
         "type": "logic",
         "materialize": true,
         "supportCustoms": true,
+        "dependencies": [
+          {
+            "admin": ">=3.5.10"
+          }
+        ],
         "authors": [
             {
                 "name": "foxthefox",
