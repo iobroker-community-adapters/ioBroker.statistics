@@ -1,8 +1,5 @@
 gulpfile.js
-admin/i18n
-lib/i18
-lib/words.js
-ntasks
+tasks
 node_modules
 .idea
 .git
