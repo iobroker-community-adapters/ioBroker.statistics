@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "statistics",
-        "version": "0.0.3",
+        "version": "0.1.2",
         "news": {
-            "0.0.3": {
+            "0.1.2": {
                 "en": "adminv3 implemented",
                 "de": "adminv3 implementiert",
                 "ru": "adminv3 реализовано",
@@ -13,46 +13,30 @@
                 "it": "adminv3 implementato",
                 "es": "adminv3 implementado",
                 "pl": "Zaimplementowano adminv3"
-              },
-            "0.0.2": {
-                "en": "boilerplate running",
-                "de": "Grundgerüst läuft",
-                "ru": "плавный ход",
-                "pt": "boilerplate em execução",
-                "nl": "boilerplate running",
-                "fr": "passe-partout en cours d'exécution",
-                "it": "caldaia in funzione",
-                "es": "repetitivo corriendo",
-                "pl": "uruchomiona płyta główna"
-            },
-            "0.0.1": {
-                "en": "initial adapter",
-                "de": "Initiale Version",
-                "ru": "Первоначальный адаптер"
             }
         },
         "title": "statistics",
         "titleLang": {
-            "en": "statistics for iobroker objects",
-            "de": "Statistiken für Iobroker-Objekte",
-            "ru": "Статистика для iobroker объектов",
-            "pt": "estatísticas para objetos iobroker",
-            "nl": "statistieken voor iobroker-objecten",
-            "fr": "statistiques pour les objets iobroker",
-            "it": "statistiche per oggetti iobroker",
-            "es": "estadísticas para objetos iobroker",
-            "pl": "statystyki obiektów iobroker"
+            "en": "Statistics for states",
+            "de": "Statistiken für Zuständen",
+            "ru": "Статистика для состояний",
+            "pt": "Estatísticas",
+            "nl": "Statistieken voor objecten",
+            "fr": "Statistiques pour les objets",
+            "it": "Statistiche per oggetti",
+            "es": "Estadísticas para objetos",
+            "pl": "Statystyki obiektów"
         },
         "desc": {
-            "en": "ioBroker statistics Adapter",
-            "de": "ioBroker Statistik Adapter",
-            "ru": "ioBroker статистика Адаптер",
-            "pt": "Adaptador de estatísticas ioBroker",
-            "nl": "ioBroker statistieken Adapter",
-            "fr": "ioBroker statistiques Adaptateur",
-            "it": "Adattatore statistiche ioBroker",
-            "es": "Adaptador de estadísticas ioBroker",
-            "pl": "Adapter statystyk ioBroker"
+            "en": "Calculate statistics: day minimum, day maximum, day average, delta and so on for defined states",
+            "de": "Berechnen Sie Statistiken: Tag Minimum, Tag Maximum, Tag Durchschnitt, Delta und so weiter für definierte Staaten",
+            "ru": "Вычислить статистику: минимум дня, максимум дня, дневной средний, дельта и т. Д. Для определенных состояний",
+            "pt": "Calcular estatísticas: dia mínimo, dia máximo, dia médio, delta e assim por diante para estados definidos",
+            "nl": "Bereken statistieken: dag minimum, dag maximum, dag gemiddelde, delta en ga zo maar door voor gedefinieerde staten",
+            "fr": "Calculer les statistiques: jour minimum, jour maximum, moyenne journalière, delta et ainsi de suite pour les états définis",
+            "it": "Calcola statistiche: giorno minimo, giorno massimo, giorno medio, delta e così via per stati definiti",
+            "es": "Calcule las estadísticas: día mínimo, día máximo, día promedio, delta y así sucesivamente para estados definidos",
+            "pl": "Oblicz statystyki: dzień minimum, dzień maksimum, dzień średni, delta i tak dalej dla zdefiniowanych stanów"
         },
         "platform": "Javascript/Node.js",
         "mode": "daemon",
@@ -67,50 +51,39 @@
         ],
         "readme": "https://github.com/foxthefox/ioBroker.statistics/blob/master/README.md",
         "loglevel": "debug",
-        "type": "common adapters",
+        "type": "logic",
         "materialize": true,
         "supportCustoms": true,
         "authors": [
             {
                 "name": "foxthefox",
                 "email": "foxthefox@wysiwis.net"
+            },
+            {
+                "name": "bluefox",
+                "email": "dogafox@gmail.com"
             }
         ]
     },
 
-"native": {
-    "elcost": 0.28,
-    "gascost": 42,
-    "groups": [
-        {
-            "groupid": "energy",
-            "groupname": "total energy",
-            "groupcost": 0.28,
-            "groupcostunit": "€/kWh"
-        },
-        {
-            "groupid": "gas",
-            "groupname": "total gas",
-            "groupcost": 0.28,
-            "groupcostunit": "€/m³"
-        }
-    ],    
-    "stateobj": [
-        {
-            "logobject": "hm-rpc.1.CUX0600001.1.METER",
-            "logname": "Küche",
-            "count": false,
-            "sumcnt": false,
-            "impvalue": 1,
-            "impunit": "Imp/Unit",
-            "sumdelta": true,
-            "timecount": false,
-            "avg": false,
-            "fivemin": false,
-            "sumgroup": false,
-            "sumgroupname": "energy"
-        }
-    ]
-},
-"objects": []
+    "native": {
+        "impUnitPerImpulse": 1,
+        "impFactor": 1,
+        "timezone": "",
+        "groups": [
+            {
+                "id": "energy",
+                "name": "total energy",
+                "price": 0.28,
+                "priceUnit": "€/kWh"
+            },
+            {
+                "id": "gas",
+                "name": "total gas",
+                "price": 0.50,
+                "priceUnit": "€/m³"
+            }
+        ]
+    },
+    "objects": []
 }

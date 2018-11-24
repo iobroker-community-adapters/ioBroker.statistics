@@ -1,6 +1,6 @@
 {
   "name": "iobroker.statistics",
-  "version": "0.0.3",
+  "version": "0.1.2",
   "description": "ioBroker statistics Adapter",
   "author": {
     "name": "foxthefox",
@@ -8,6 +8,8 @@
   },
   "contributors": [
     {
+      "name": "Bluefox",
+      "email": "dogafox@gmail.com"
     }
   ],
   "homepage": "https://github.com/foxthefox/ioBroker.statistics",
@@ -22,13 +24,12 @@
     "url": "git+https://github.com/foxthefox/ioBroker.statistics.git"
   },
   "dependencies": {
-      "cron": "^1.3.0",
-      "async":"^2.6.0"
+    "cron": "^1.3.0"
   },
   "devDependencies": {
-      "gulp": "^3.9.1",
-      "mocha": "^4.1.0",
-      "chai": "^4.1.2"
+    "gulp": "^3.9.1",
+    "mocha": "^5.2.0",
+    "chai": "^4.1.2"
   },
   "main": "main.js",
   "scripts": {
@@ -37,6 +38,5 @@
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.statistics/issues"
   },
-  "readmeFilename": "README.md",
-  "readme": "![Logo](admin/statistics.png)\n# ioBroker.statistics\n=================\n\n"
+  "readmeFilename": "README.md"
 }

@@ -1,139 +1,20 @@
-systemDictionary = {
+/*global systemDictionary:true */
+'use strict';
 
-    "test1":                    {"en": "Test 2", "de": "Test 2", "ru": "Тест 2"},
-    "test2":                    {"en": "Test 2", "de": "Test 2", "ru": "Тест 2"},
-
-
-    "statistics adapter settings": {
-        "en": "statistics adapter settings",
-        "de": "Statistiken Adaptereinstellungen",
-        "ru": "настройки адаптера статистики",
-        "pt": "configurações do adaptador de estatísticas",
-        "nl": "statistieken adapterinstellingen",
-        "fr": "paramètres de l'adaptateur de statistiques",
-        "it": "impostazioni dell'adattatore statistiche",
-        "es": "configuración del adaptador de estadísticas",
-        "pl": "ustawienia adaptera statystyk"
-      },
-      "General": {
-        "en": "General",
-        "de": "Allgemeines",
-        "ru": "Генеральная",
-        "pt": "Geral",
-        "nl": "Algemeen",
-        "fr": "Général",
-        "it": "Generale",
-        "es": "General",
-        "pl": "Generał"
-      },
-      "Meter": {
-        "en": "Meter",
-        "de": "Meter",
-        "ru": "метр",
-        "pt": "Metro",
-        "nl": "Meter",
-        "fr": "Mètre",
-        "it": "metro",
-        "es": "Metro",
-        "pl": "Metr"
-      },
-      "Summen": {
-        "en": "Sums",
-        "de": "Summen",
-        "ru": "Суммы",
-        "pt": "Somas",
-        "nl": "sommen",
-        "fr": "Sommes",
-        "it": "Le somme",
-        "es": "Sumas",
-        "pl": "Sumy"
-      },
-      "Mittelwerte": {
-        "en": "avg value",
-        "de": "durchschnittlicher Wert",
-        "ru": "средняя стоимость",
-        "pt": "valor médio",
-        "nl": "gem. waarde",
-        "fr": "valeur moyenne",
-        "it": "valore medio",
-        "es": "valor medio",
-        "pl": "średnia wartość"
-      },
-      "JSON Import/Export": {
-        "en": "JSON Import/Export",
-        "de": "JSON-Import / Export",
-        "ru": "Импорт / Экспорт JSON",
-        "pt": "JSON Import / Export",
-        "nl": "JSON Import / Export",
-        "fr": "JSON Import / Export",
-        "it": "Importazione / esportazione JSON",
-        "es": "JSON Import / Export",
-        "pl": "Import / eksport JSON"
-      },
-      "sum configuration": {
-        "en": "sum configuration",
-        "de": "Summenkonfiguration",
-        "ru": "сумма конфигурации",
-        "pt": "configuração de soma",
-        "nl": "somconfiguratie",
-        "fr": "configuration de somme",
-        "it": "somma configurazione",
-        "es": "configuración suma",
-        "pl": "konfiguracja sumy"
-      },
-      "avg configuration": {
-        "en": "avg configuration",
-        "de": "durchschnittliche Konfiguration",
-        "ru": "конфигурация avg",
-        "pt": "configuração média",
-        "nl": "avg-configuratie",
-        "fr": "configuration avg",
-        "it": "configurazione AVG",
-        "es": "configuración promedio",
-        "pl": "średnia konfiguracja"
-      },
-      "import/export": {
-        "en": "import/export",
-        "de": "Import Export",
-        "ru": "импорт Экспорт",
-        "pt": "importação / exportação",
-        "nl": "import / export",
-        "fr": "importation / exportation",
-        "it": "import / export",
-        "es": "importación y exportación",
-        "pl": "import Eksport"
-      },
-      "on save adapter restarts with new config immediately": {
-        "en": "on save adapter restarts with new config immediately",
-        "de": "Beim Speichern wird der Adapter sofort mit der neuen Konfiguration neu gestartet",
-        "ru": "на перезаписываемом адаптере перезагружается с новой конфигурацией немедленно",
-        "pt": "on save adapter reinicia com nova configuração imediatamente",
-        "nl": "on save-adapter wordt onmiddellijk opnieuw opgestart met nieuwe config",
-        "fr": "sur l'adaptateur de sauvegarde redémarre avec la nouvelle config immédiatement",
-        "it": "su save adapter si riavvia immediatamente con la nuova configurazione",
-        "es": "en el adaptador de guardar se reinicia con nueva configuración de inmediato",
-        "pl": "na karcie save natychmiast uruchamia się z nową konfiguracją"
-      },
-      "elcost": {
-        "en": "electricity costs",
-        "de": "Stromkosten",
-        "ru": "стоимость электроэнергии",
-        "pt": "custos de eletricidade",
-        "nl": "elektriciteitskosten",
-        "fr": "les coûts d'électricité",
-        "it": "costi dell'elettricità",
-        "es": "costos de electricidad",
-        "pl": "koszty energii elektrycznej"
-      },  
-      "gas costs": {
-        "en": "gas costs",
-        "de": "Gaskosten",
-        "ru": "расходы на газ",
-        "pt": "custos de gás",
-        "nl": "gas kosten",
-        "fr": "les coûts du gaz",
-        "it": "costi del gas",
-        "es": "costos de gas",
-        "pl": "koszty gazu"
-      }
+var _systemDictionary = {
+    "E.g. Europe/Berlin. Leave it empty for default settings": {"en": "E.g. Europe/Berlin. Leave it empty for default settings", "de": "Z.B. Europa / Berlin. Lassen Sie es für die Standardeinstellungen leer", "ru": "Например. Европа / Берлин. Оставьте его пустым для настроек по умолчанию", "pt": "Por exemplo. Europa / Berlim. Deixe vazio para as configurações padrão", "nl": "Bijv. Europe / Berlin. Laat het leeg voor de standaardinstellingen", "fr": "Par exemple. Europe / Berlin. Laisser vide pour les paramètres par défaut", "it": "Per esempio. Europe / Berlin. Lascia vuoto per le impostazioni predefinite", "es": "P.ej. Europa / Berlín. Déjalo vacío para la configuración predeterminada", "pl": "Na przykład. Europa / Berlin. Pozostaw puste dla domyślnych ustawień"},
+    "Group": {                                       "en": "Group",                                           "de": "Gruppe",                                          "ru": "Группа",                                          "pt": "Grupo",                                           "nl": "Groep",                                           "fr": "Groupe",                                          "it": "Gruppo",                                          "es": "Grupo",                                           "pl": "Grupa"},
+    "Group name": {                                  "en": "Group name",                                      "de": "Gruppenname",                                     "ru": "Название группы",                                 "pt": "Nome do grupo",                                   "nl": "Groepsnaam",                                      "fr": "Nom de groupe",                                   "it": "Nome del gruppo",                                 "es": "Nombre del grupo",                                "pl": "Nazwa grupy"},
+    "Groups": {                                      "en": "Groups",                                          "de": "Gruppen",                                         "ru": "группы",                                          "pt": "Grupos",                                          "nl": "groepen",                                         "fr": "Groupes",                                         "it": "gruppi",                                          "es": "Grupos",                                          "pl": "Grupy"},
+    "Leave it empty for default settings": {         "en": "Leave it empty for default settings",             "de": "Lassen Sie es für die Standardeinstellungen leer", "ru": "Оставьте его пустым для настроек по умолчанию",   "pt": "Deixe vazio para as configurações padrão",        "nl": "Laat het leeg voor de standaardinstellingen",     "fr": "Laisser vide pour les paramètres par défaut",     "it": "Lascia vuoto per le impostazioni predefinite",    "es": "Déjalo vacío para la configuración predeterminada", "pl": "Pozostaw puste dla domyślnych ustawień"},
+    "One impulse is equal to this value": {          "en": "One impulse is equal to this value",              "de": "Ein Impuls entspricht diesem Wert",               "ru": "Один импульс равен этому значению",               "pt": "Um impulso é igual a este valor",                 "nl": "Eén impuls is gelijk aan deze waarde",            "fr": "Une impulsion est égale à cette valeur",          "it": "Un impulso è uguale a questo valore",             "es": "Un impulso es igual a este valor",                "pl": "Jeden impuls jest równy tej wartości"},
+    "Price": {                                       "en": "Price",                                           "de": "Preis",                                           "ru": "Цена",                                            "pt": "Preço",                                           "nl": "Prijs",                                           "fr": "Prix",                                            "it": "Prezzo",                                          "es": "Precio",                                          "pl": "Cena £"},
+    "Unit": {                                        "en": "Unit",                                            "de": "Einheit",                                         "ru": "Ед. изм",                                         "pt": "Unidade",                                         "nl": "Eenheid",                                         "fr": "Unité",                                           "it": "Unità",                                           "es": "Unidad",                                          "pl": "Jednostka"},
+    "Values will be added to groups with this factor by default": {"en": "Values will be added to groups with this factor by default", "de": "Werte werden standardmäßig zu Gruppen mit diesem Faktor hinzugefügt", "ru": "Значения будут добавлены к группам с этим коэффициентом по умолчанию", "pt": "Os valores serão adicionados aos grupos com esse fator por padrão", "nl": "Waarden worden standaard toegevoegd aan groepen met deze factor", "fr": "Les valeurs seront ajoutées aux groupes avec ce facteur par défaut", "it": "I valori verranno aggiunti ai gruppi con questo fattore per impostazione predefinita", "es": "Los valores se agregarán a los grupos con este factor de forma predeterminada", "pl": "Wartości będą domyślnie dodawane do grup z tym współczynnikiem"},
+    "sum group configuration": {                     "en": "sum groups",                                      "de": "Summengruppen",                                   "ru": "Группы сумм",                                     "pt": "configuração do grupo de soma",                   "nl": "som groep configuratie",                          "fr": "configuration du groupe de somme",                "it": "configurazione del gruppo somma",                 "es": "configuración de grupo de suma",                  "pl": "konfiguracja grupy sum"},
 };
+if (typeof module !== "undefined" && module.parent) {
+    module.exports = _systemDictionary;
+} else {
+   systemDictionary = _systemDictionary;
+}
