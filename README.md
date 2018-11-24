@@ -1,6 +1,5 @@
 ![Logo](admin/statistics.png)
 # ioBroker.statistics
-==================
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.statistics.svg)](https://www.npmjs.com/package/iobroker.statistics)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.statistics.svg)](https://www.npmjs.com/package/iobroker.statistics)
@@ -22,8 +21,8 @@ choose from the following settings:
 * sum up of grouped values
 
 The adapter subscribes to the configured objects and creates his own states in the statistics tree.
-2 separate trees are created:
 
+2 separate trees are created:
 * statistics.0/save -> final stored values of the time frame
 * statistics.0/temp -> temporary values through the day
 
@@ -34,6 +33,10 @@ after save or temp the original object is kept (unfortunately it is split by the
 * specify the configuration in the settings of the state (admin => objects)
 
 ## Changelog
+### 0.1.3
+* (foxthefox) german doc added
+* (foxthefox) ...
+
 ### 0.1.2 [2018-09-08]
 * (bluefox) total refactoring
 
