@@ -2,14 +2,14 @@ Wie konfiguriere ich statistics?
 
 ## Impulse
 
-![impulse](principles_pulses.PNG)
+![impulse](principle_pulses.PNG)
 
 ## Binärzustände
 
-![binary](principles_bzz.PNG)
+![binary](principle_bzz.PNG)
 
 
 ## Analogwerte
 
-![impulse](principles_sumdelta.PNG)
+![impulse](principle_sumdelta.PNG)
 
