@@ -1,4 +1,4 @@
-# Wie konfiguriere ich statistics?
+# Wie konfiguriere ich ioBroker.statistics?
 
 Der Adapter speichert für jedes aktive Objekt die Werte temporär in statistics.0.temp für die fortlaufende Bewertung.
 Zu vorgegebenen Zeiten (Tag, Woche, Monat, Quartal, Jahr) erfolgt die Übernahme der temporären Werte in die Struktur statistics.0.save.
