@@ -364,6 +364,9 @@ function newCountValue(id, value) {
     */
     adapter.log.debug('[STATE CHANGE] count call ' + id + ' with ' + value);
 
+    // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
+    // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
+
     if (isTrue(value)) {
         tasks.push({
             name: 'async',
