@@ -9,7 +9,8 @@
 
 ## Description
 This adapter will make the configuration of statistics more easier.
-The adapter only reacts on state changes (state.ack=true), not on commands!
+
+`The adapter only reacts on state changes (state.ack=true), not on commands!`
 
 choose from the following settings:
 
