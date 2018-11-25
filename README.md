@@ -37,7 +37,7 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 ## Changelog
 ### 0.1.3
 * (foxthefox) german doc added
-* (foxthefox) ...
+* (foxthefox) error corrections
 
 ### 0.1.2 [2018-09-08]
 * (bluefox) total refactoring
