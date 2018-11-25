@@ -1,8 +1,19 @@
 {
     "common": {
         "name": "statistics",
-        "version": "0.1.2",
+        "version": "0.1.3",
         "news": {
+              "0.1.3": {
+                "en": "german description and error corrections",
+                "de": "deutsche Beschreibung und Fehlerkorrekturen",
+                "ru": "немецкое описание и исправления ошибок",
+                "pt": "descrição alemã e correções de erros",
+                "nl": "Duitse beschrijving en foutencorrecties",
+                "fr": "description allemande et corrections d'erreur",
+                "it": "descrizione tedesca e correzioni di errori",
+                "es": "Descripción alemana y correcciones de errores.",
+                "pl": "niemiecki opis i korekty błędów"
+              },
             "0.1.2": {
                 "en": "adminv3 implemented",
                 "de": "adminv3 implementiert",
