@@ -9,10 +9,11 @@
 
 ## Description
 This adapter will make the configuration of statistics more easier.
+The adapter only reacts on state changes (state.ack=true), not on commands!
 
 choose from the following settings:
 
-* count impulses or on/off changes (Only for binary values)
+* count impulses or on/off changes (Only for binary values and positive edge)
 * calculate costs from the counted values (Only for binary values)
 * how long was status true/ON and how long false/OFF (Only for binary values)
 * delta between logged analogue values (Only for analog values)
