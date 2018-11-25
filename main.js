@@ -606,11 +606,11 @@ function newSumDeltaValue(id, value) {
 }
 
 function isTrue(val) {
-    return val === 1 || val === true || val === 'true' || val === 'on' || state === 'ON';
+    return val === 1 || val === '1' || val === true || val === 'true' || val === 'on' || val === 'ON';
 }
 
 function isFalse(val) {
-    return val === 0 || val === false || val === 'false' || val === 'off' || val === 'OFF' || val === 'standby'
+    return val === 0 || val === '0' || val === false || val === 'false' || val === 'off' || val === 'OFF' || val === 'standby'
 }
 
 function newTimeCntValue(id, state) {
