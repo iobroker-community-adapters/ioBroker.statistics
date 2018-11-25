@@ -623,7 +623,7 @@ function newTimeCntValue(id, state) {
     Change to 0 at threshold 1 -> time between event since last 1
     Addition of time
     */
-    adapter.log.debug('timecount call ' + id + ' with ' + val);
+    adapter.log.debug('timecount call ' + id + ' with ' + state.val); // !! val ist hier falsch da state komplett übergeben
 
     if (isTrue(state.val)) {
         tasks.push({
@@ -639,16 +639,16 @@ function newTimeCntValue(id, state) {
                         adapter.log.debug('[STATE CHANGE] 0->1 delta ' + delta + ' state ' + state.lc + ' last ' + last);
 
                         for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
-                            if (nameObjects.timeCount.temp[s].match(/\.off\w+$/)) {
+                            if (nameObjects.timeCount.temp[s].match(/\off\w+$/)) {
                                 tasks.push({
                                     name: 'async',
                                     args: {
                                         id: 'temp.timeCount.' + args.id + '.' + nameObjects.timeCount.temp[s]
                                     },
                                     callback: (args, callback) => {
-                                        getValue(args.id, (err, time) =>
+                                        getValue(args.id, (err, time) => {
                                             setValue(args.id, (time || 0) + delta, callback)
-                                        )
+                                        })
                                     }
                                 });
                             }
@@ -667,22 +667,22 @@ function newTimeCntValue(id, state) {
                 state
             },
             callback: (args, callback) => {
-                getValue('temp.timeCount.' + args.id + '.last01', (err, last) => {
+                getValue('temp.timeCount.' + args.id + '.last01', (err, last) => { 
                     const delta = last ? state.lc - last : 0;
                     setValue('temp.timeCount.' + args.id + '.last10', state.lc, () => {
-                        adapter.log.debug('[STATE CHANGE] 1->0 delta ' + delta + ' state ' + state.lc + ' last ' + last.lc);
+                        adapter.log.debug('[STATE CHANGE] 1->0 delta ' + delta + ' state ' + state.lc + ' last ' + last);
 
-                        for (let s = 0; s < nameObjects.timeCount.save.length; s++) {
-                            if (nameObjects.timeCount.save[s].match(/\.on\w+$/)) {
+                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
+                            if (nameObjects.timeCount.temp[s].match(/^\on\w+$/)) { // on auch in Month drin, deswegen ^
                                 tasks.push({
                                     name: 'async',
                                     args: {
-                                        id: 'temp.timeCount.' + args.id + '.' + nameObjects.timeCount.save[s]
+                                        id: 'temp.timeCount.' + args.id + '.' + nameObjects.timeCount.temp[s]
                                     },
                                     callback: (args, callback) => {
-                                        getValue(args.id, (err, time) =>
+                                        getValue(args.id, (err, time) =>{
                                             setValue(args.id, (time || 0) + delta, callback)
-                                        )
+                                        })
                                     }
                                 });
                             }
@@ -696,6 +696,8 @@ function newTimeCntValue(id, state) {
     isStart && processTasks();
 }
 
+// normales Umspeichern
+// hier evtl. noch bei avg und fiveMin den aktuellen Wert auf die temp Werte setzen
 function copyValue(args, callback) {
     getValue(args.temp, (err, value) => {
         if (value !== null && value !== undefined) {
@@ -711,6 +713,7 @@ function copyValue(args, callback) {
     });
 }
 
+// für gruppenwerte
 function copyValueRound(args, callback) {
     getValue(args.temp, (err, value) => {
         if (value !== null && value !== undefined) {
@@ -725,6 +728,7 @@ function copyValueRound(args, callback) {
     });
 }
 
+// avg Werte umspeichern und auf 0 setzen
 function copyValue0(args, callback) {
     getValue(args.temp, (err, value, ts) => {
         value = value || 0;
@@ -735,6 +739,7 @@ function copyValue0(args, callback) {
     });
 }
 
+// Betriebszeitzählung umspeichern und temp Werte auf 0 setzen
 function copyValue1000(args, callback) {
     getValue(args.temp, (err, value, ts) => {
         value = Math.floor((value || 0) / 1000);
@@ -767,6 +772,8 @@ function saveValues(timePeriod) {
     // all values
     adapter.log.debug('[SAVE VALUES] saving ' + timePeriod + ' values');
 
+    // Schleife für alle Werte die durch day-variable bestimmt sind, gilt durch copyToSave für 'count', 'sumCount', 'sumGroup', 'sumDelta'
+    // avg, timeCount /fivemin braucht extra Behandlung
     for (let t = 0; t < dayTypes.length; t++) {
         for (let s = 0; s < typeObjects[dayTypes[t]].length; s++) {
             // ignore last5min
@@ -783,6 +790,8 @@ function saveValues(timePeriod) {
         }
     }
 
+    // avg values sind nur Tageswerte, also nur bei 'day' auszuwerten
+    // Setzen auf den aktuellen Wert fehlt noch irgendwie ?
     if (timePeriod === 'day' && typeObjects.avg) {
         for (let s = 0; s < typeObjects.avg.length; s++) {
             const id = typeObjects.avg[s];
@@ -833,7 +842,8 @@ function saveValues(timePeriod) {
         }
     }
 
-    // saving the fiveMin max/min
+    // saving the dayly fiveMin max/min
+    // Setzen auf den aktuellen Wert fehlt noch irgendwie ?
     if (timePeriod === 'day' && typeObjects.fiveMin) {
         for (let s = 0; s < typeObjects.fiveMin.length; s++) {
             const id = typeObjects.fiveMin[s];
@@ -856,25 +866,29 @@ function saveValues(timePeriod) {
         }
     }
 
-    if (typeObjects.timeCount) {
-        for (let s = 0; s < typeObjects.timeCount.length; s++) {
-            const id = typeObjects.timeCount[s];
-            tasks.push({
-                name: 'async',
-                args: {
-                    temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day],
-                    save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day],
-                },
-                callback: copyValue1000
-            });
-            tasks.push({
-                name: 'async',
-                args: {
-                    temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 5],
-                    save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 5],
-                },
-                callback: copyValue1000
-            });
+    // timeCount hat andere Objektbezeichnungen und deswegen kann day aus timeperiod nicht benutzt werden
+    // day erst ab 2ter Stelle im Array (ohne 15min und hour soll benutzt werden) -> also (day > 1) und [day-2]
+    if (day > 1) {
+        if (typeObjects.timeCount) { // !! einfach nur timeCount ohne timePeriod??? damit nicht stündlich die 
+            for (let s = 0; s < typeObjects.timeCount.length; s++) {
+                const id = typeObjects.timeCount[s];
+                tasks.push({
+                    name: 'async',
+                    args: {
+                        temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day-2],
+                        save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day-2],
+                    },
+                    callback: copyValue1000
+                });
+                tasks.push({
+                    name: 'async',
+                    args: {
+                        temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3], // +5 ist offDay
+                        save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3],
+                    },
+                    callback: copyValue1000
+                });
+            }
         }
     }
 
@@ -1001,7 +1015,7 @@ function defineObject(type, id, name, unit) {
             common: {
                 name: 'Temporary value for ' + name,
                 role: 'sensor',
-                expert: true
+                // expert: true
             },
             native: {
                 addr: id
@@ -1048,7 +1062,7 @@ function defineObject(type, id, name, unit) {
             continue;
         }
         obj.native.addr = id;
-        obj.common.expert = true;
+        // obj.common.expert = true;
         if (unit && objects[s] !== 'dayCount') {
             obj.common.unit = unit;
         } else if (obj.common.unit !== undefined) {
@@ -1280,7 +1294,7 @@ function processTasks() {
             task.obj.type === 'state' &&
             units[task.obj.native.addr] === undefined &&
             nameObjects.timeCount.temp.indexOf(attr) === -1 &&
-            !task.id.match(/\.dayCount$/) &&
+            !task.id.match(/\.dayCount$/) &&       // !! Problem mit .?
             !task.id.startsWith('save.sumGroup.') &&
             !task.id.startsWith('temp.sumGroup.')) {
             adapter.getForeignObject(task.obj.native.addr, (err, obj) => {
@@ -1305,7 +1319,7 @@ function processTasks() {
                 });
             });
         } else {
-            if (task.obj.native.addr && !task.id.match(/\.dayCount$/)) {
+            if (task.obj.native.addr && !task.id.match(/\.dayCount$/)) { // !! Problem mit .?
                 if (units[task.obj.native.addr] !== undefined) {
                     if (units[task.obj.native.addr]) {
                         task.obj.common.unit = units[task.obj.native.addr];
