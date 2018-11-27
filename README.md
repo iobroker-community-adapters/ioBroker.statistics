@@ -25,8 +25,8 @@ choose from the following settings:
 The adapter subscribes to the configured objects and creates his own states in the statistics tree.
 
 2 separate trees are created:
-* statistics.0/save -> final stored values of the time frame
-* statistics.0/temp -> temporary values through the day
+* statistics.0/save -> final values of the time frame
+* statistics.0/temp -> temporary values up to the moment of transfer to save, then temp starts again
 
 after save or temp the original object is kept (unfortunately it is split by the "." in a deeper structure than needed.
 
