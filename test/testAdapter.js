@@ -105,14 +105,14 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     obj.common.custom[TEST_ID] = {
                         "enabled":              true,
                         "logName":              "counter",
-                        "count":                false,
-                        "sumCount":             false,
+                        "count":                true,
+                        "sumCount":             true,
                         "timeCount":            false,
                         "fiveMin":              true,
                         
                         "groupFactor":          1,
-                        "impUnit":              "",
-                        "impUnitPerImpulse":    "",
+                        "impUnit":              "1",
+                        "impUnitPerImpulse":    "cnt",
                         
                         "sumIgnoreMinus":       true,
                         "sumDelta":             true,
@@ -153,9 +153,9 @@ describe('Test ' + adapterShortName + ' adapter', function () {
 /**/
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
         setTimeout(() => {
-            objects.getObject(adapterShortName + '.save.sumDelta.' + TEST_ID + '.last', (err, obj) => {
+            objects.getObject(adapterShortName + '.save.count.' + TEST_ID + '.last01', (err, obj) => {
                 expect(obj).to.be.ok;
-                objects.getObject(adapterShortName + '.temp.sumDelta.' + TEST_ID + '.15Min', (err, obj) => {
+                objects.getObject(adapterShortName + '.temp.count.' + TEST_ID + '.15Min', (err, obj) => {
                     expect(obj).to.be.ok;
                 });
             });
