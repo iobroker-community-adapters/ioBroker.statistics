@@ -153,9 +153,9 @@ describe('Test ' + adapterShortName + ' adapter', function () {
 /**/
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
         setTimeout(() => {
-            objects.getObject(adapterShortName + '.save.count.' + TEST_ID + '.last01', (err, obj) => {
+            objects.getObject(adapterShortName + '.save.count.' + TEST_ID + '.15min', (err, obj) => {
                 expect(obj).to.be.ok;
-                objects.getObject(adapterShortName + '.temp.count.' + TEST_ID + '.15Min', (err, obj) => {
+                objects.getObject(adapterShortName + '.temp.count.' + TEST_ID + '.last01', (err, obj) => {
                     expect(obj).to.be.ok;
                 });
             });
