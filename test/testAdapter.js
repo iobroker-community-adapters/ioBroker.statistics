@@ -126,7 +126,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                             states.setState(TEST_ID, counter++, true);
                         }, 1000);
                         _done()
-                    });
+                    }).timeout(10000);
                 });
         });
     });
@@ -155,17 +155,15 @@ describe('Test ' + adapterShortName + ' adapter', function () {
 
         setTimeout(function(){
             objects.getObject(adapterShortName + '.save.count.' + TEST_ID + '.15min', (err, obj) => {
-                if (err) {console.log('1 '+err)}
-                else {
-                expect(obj).to.be.ok;
+                if (err) console.error('1 '+err);
+                expect(obj).to.exist;
+                //expect(obj).to.be.ok;
                     objects.getObject(adapterShortName + '.temp.count.' + TEST_ID + '.last01', (err, obj) => {
-                        if (err) {console.log('2' + err)}
-                        else {
-                        expect(obj).to.be.ok;
+                        if (err) console.error('2' + err);
+                        expect(obj).to.exist;    
+                        //expect(obj).to.be.ok;
                         done();
-                        }
                     });
-                }
             });
         }, 1000);
     }).timeout(5000);
