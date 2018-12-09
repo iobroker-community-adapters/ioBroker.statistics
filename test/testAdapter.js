@@ -152,16 +152,20 @@ describe('Test ' + adapterShortName + ' adapter', function () {
     }).timeout(60000);
 /**/
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
-        console.log('0 '+adapterShortName + '.save.count.' + TEST_ID + '.15min');
+
         setTimeout(function(){
             objects.getObject(adapterShortName + '.save.count.' + TEST_ID + '.15min', (err, obj) => {
-                console.log('1 '+adapterShortName + '.save.count.' + TEST_ID + '.15min');
-                console.log('2' + obj);
+                if (err) {console.log('1 '+err)}
+                else {
                 expect(obj).to.be.ok;
-                objects.getObject(adapterShortName + '.temp.count.' + TEST_ID + '.last01', (err, obj) => {
-                    expect(obj).to.be.ok;
-                    done();
-                });
+                    objects.getObject(adapterShortName + '.temp.count.' + TEST_ID + '.last01', (err, obj) => {
+                        if (err) {console.log('2' + err)}
+                        else {
+                        expect(obj).to.be.ok;
+                        done();
+                        }
+                    });
+                }
             });
         }, 1000);
     }).timeout(5000);
