@@ -126,7 +126,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                             states.setState(TEST_ID, counter++, true);
                         }, 1000);
                         _done()
-                    }).timeout(10000);
+                    });
                 });
         });
     });
