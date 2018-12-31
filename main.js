@@ -626,7 +626,7 @@ function newTimeCntValue(id, state) {
     Change to 0 at threshold 1 -> time between event since last 1
     Addition of time
     */
-    adapter.log.debug('timecount call ' + id + ' with ' + state.val); // !! val ist hier falsch da state komplett übergeben
+    adapter.log.debug('[STATE CHANGE] timecount call ' + id + ' with ' + state.val); // !! val ist hier falsch da state komplett übergeben
 
     if (isTrue(state.val)) {
         tasks.push({
@@ -637,7 +637,8 @@ function newTimeCntValue(id, state) {
             },
             callback: (args, callback) => {
                 getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
-                    const delta = last ? state.lc - last : 0;
+                    let delta = last ? state.lc - last : 0;
+		    if (delta < 0) {delta = 0};	
                     setValue('temp.timeCount.' + args.id + '.last01', state.lc, () => {
                         adapter.log.debug('[STATE CHANGE] 0->1 delta ' + delta + ' state ' + state.lc + ' last ' + last);
 
@@ -671,7 +672,8 @@ function newTimeCntValue(id, state) {
             },
             callback: (args, callback) => {
                 getValue('temp.timeCount.' + args.id + '.last01', (err, last) => { 
-                    const delta = last ? state.lc - last : 0;
+                    let delta = last ? state.lc - last : 0;
+		    if (delta < 0) {delta = 0};	
                     setValue('temp.timeCount.' + args.id + '.last10', state.lc, () => {
                         adapter.log.debug('[STATE CHANGE] 1->0 delta ' + delta + ' state ' + state.lc + ' last ' + last);
 
