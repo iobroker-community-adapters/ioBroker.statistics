@@ -100,10 +100,14 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                             type: 'number',
                             role: 'value',
                             custom: {}
-                        }
+                        },
+                        native: {},
+                        from: "system.adapter.javascript.0",
+                        _id: TEST_ID,   //javascript.0.counter
                     };
                     // obj.common.custom[adapterShortName + '.0'] = {
-                    obj.common.custom[TEST_ID] = {
+                    // obj.common.custom[TEST_ID] = {
+                    obj.common.custom['statistics.0'] = {
                         "enabled":              true,
                         "logName":              "counter",
                         "count":                true,
