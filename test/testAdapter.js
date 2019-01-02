@@ -94,10 +94,11 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     states  = _states;
 
                     const obj = {
+                        type: 'state',
                         common: {
                             name: 'Counter',
                             type: 'number',
-                            role: 'state',
+                            role: 'value',
                             custom: {}
                         }
                     };
@@ -120,7 +121,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         
                         "sumGroup":             "energy"
                     };
-                    console.log('aaa '+ JSON.stringify(obj.common.custom));
+                    console.log('aaa '+ JSON.stringify(obj));
                     objects.setObject(TEST_ID, obj, () => {
                         updateTimer = setInterval(() => {
                             states.setState(TEST_ID, counter++, true);
