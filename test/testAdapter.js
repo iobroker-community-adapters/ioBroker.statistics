@@ -102,15 +102,6 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                             custom: {}
                         },
                         native: {},
-                        from: "system.adapter.javascript.0",
-                        _id: TEST_ID,   //javascript.0.counter
-                        ts: 1546458113877,
-                          acl: {
-                            object: 1636,
-                            state: 1636,
-                            owner: "system.user.admin",
-                            ownerGroup: "system.group.administrator"
-                          }
                     };
                     // obj.common.custom[adapterShortName + '.0'] = {
                     // obj.common.custom[TEST_ID] = {
