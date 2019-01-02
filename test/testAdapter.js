@@ -167,6 +167,37 @@ describe('Test ' + adapterShortName + ' adapter', function () {
             });
         }, 1000);
     }).timeout(5000);
+    
+    it('Test ' + adapterShortName + ' adapter: Objects must exist', function (done) {
+        this.timeout(5000);
+        setTimeout(function() {
+            objects.getObject(adapterShortName + '.save.count.' + TEST_ID + '.15min', function (err, obj) {
+                if (err) console.error(err);
+                expect(obj).to.exist;
+                if (!obj) {
+                    console.error(adapterShortName + '.save.count.' + TEST_ID + '.15min' + ' not exist');
+                }
+                else {
+                    console.log(adapterShortName + '.save.count.' + TEST_ID + '.15min' + JSON.stringify(obj));
+                }
+                //expect(state.val).to.exist;
+                //expect(state.val).to.be.equal('');
+                objects.getObject(adapterShortName + '.temp.count.' + TEST_ID + '.last01', function (err, obj) {
+                    if (err) console.error(err);
+                    expect(obj).to.exist;
+                    if (!obj) {
+                        console.error(adapterShortName + '.temp.count.' + TEST_ID + '.last01' + 'not exists');
+                    }
+                    else {
+                        console.log(adapterShortName + '.temp.count.' + TEST_ID + '.last01' +  JSON.stringify(obj));
+                        //expect(state.val).to.exist;
+                        //expect(state.val).to.be.equal();
+                        done();
+                    }
+                });
+            });
+        }, 1000);
+    });
 
 /*
     PUT YOUR OWN TESTS HERE USING
