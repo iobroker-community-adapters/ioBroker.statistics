@@ -1127,9 +1127,9 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
     let subscribed = !!noSubscribe;
 
     if (!obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
-        obj.groupFactor = parseInt(adapter.config.groupFactor, 10) || 1;
+        obj.groupFactor = parseFloat(adapter.config.groupFactor) || 1;
     } else {
-        obj.groupFactor = parseInt(obj.groupFactor, 10) || 1;
+        obj.groupFactor = parseFloat(obj.groupFactor) || 1;
     }
 
     if (!obj.impUnitPerImpulse && obj.impUnitPerImpulse !== '0' && obj.impUnitPerImpulse !== 0) {
