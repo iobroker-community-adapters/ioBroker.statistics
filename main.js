@@ -30,7 +30,7 @@ const states = {}; // hold all states locally
 const nameObjects = {
     count: { // Count impulses or counting operations
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
-        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'last5Min']
+        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'last5Min', 'lastPulse']
     },
     sumCount: { // Addition of analogue values (consumption from pulses) Multiplication with price = costs
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
@@ -367,75 +367,77 @@ function newCountValue(id, value) {
     // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
     // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
 
-    if (isTrue(value)) {
+    if (isTrueNew(id, value)) {
         tasks.push({
             name: 'async',
             args: {id},
             callback: (args, callback) => {
                 for (let s = 0; s < nameObjects.count.temp.length; s++) {
-                    tasks.push({
-                        name: 'async',
-                        args: {
-                            id: 'temp.count.' + id + '.' + nameObjects.count.temp[s]
-                        },
-                        callback: (args, callback) => {
-                            getValue(args.id, (err, oldVal) => {
-                                oldVal = oldVal ? oldVal + 1 : 1;
-                                adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on 1 to ' + oldVal);
-                                setValue(args.id, oldVal, callback);
-                            });
-                        }
-                    });
-                    
-                    // Calculation of consumption (what is a physical-sized pulse)
-                    if (typeObjects.sumCount &&
-                        typeObjects.sumCount.indexOf(args.id) !== -1 &&
-                        statDP[args.id].impUnitPerImpulse) { // counter mit Verbrauch
-                        tasks.push({
-                            name: 'async',
-                            args: {
-                                id: 'temp.sumCount.' + args.id + '.' + nameObjects.count.temp[s],
-                                impUnitPerImpulse: statDP[args.id].impUnitPerImpulse
-                            },
-                            callback: (args, callback) => {
-                                getValue(args.id, (err, consumption) => {
-                                    const value = consumption ? consumption + args.impUnitPerImpulse : args.impUnitPerImpulse;
-                                    adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.impUnitPerImpulse + ' to ' + value);
-                                    setValue(args.id, value, callback)
-                                })
-                            }
-                        });
+			if ( nameObjects.count.temp[s] !== 'lastPulse'){
+			    tasks.push({
+				name: 'async',
+				args: {
+				    id: 'temp.count.' + id + '.' + nameObjects.count.temp[s]
+				},
+				callback: (args, callback) => {
+				    getValue(args.id, (err, oldVal) => {
+					oldVal = oldVal ? oldVal + 1 : 1;
+					adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on 1 to ' + oldVal);
+					setValue(args.id, oldVal, callback);
+				    });
+				}
+			    });
 
-                        // add consumption to group
-                        if (statDP[args.id].sumGroup &&
-                            groups[statDP[args.id].sumGroup] &&
-                            statDP[args.id].impUnitPerImpulse &&
-                            statDP[args.id].groupFactor
-                        ) {
-                            const factor = statDP[args.id].groupFactor;
-                            const price = groups[statDP[args.id].sumGroup].config.price;
+			    // Calculation of consumption (what is a physical-sized pulse)
+			    if (typeObjects.sumCount &&
+				typeObjects.sumCount.indexOf(args.id) !== -1 &&
+				statDP[args.id].impUnitPerImpulse) { // counter mit Verbrauch
+				tasks.push({
+				    name: 'async',
+				    args: {
+					id: 'temp.sumCount.' + args.id + '.' + nameObjects.count.temp[s],
+					impUnitPerImpulse: statDP[args.id].impUnitPerImpulse
+				    },
+				    callback: (args, callback) => {
+					getValue(args.id, (err, consumption) => {
+					    const value = consumption ? consumption + args.impUnitPerImpulse : args.impUnitPerImpulse;
+					    adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.impUnitPerImpulse + ' to ' + value);
+					    setValue(args.id, value, callback)
+					})
+				    }
+				});
 
-                            for (let i = 0; i < nameObjects.sumGroup.temp.length; i++) {
-                                tasks.push({
-                                    name: 'async',
-                                    args: {
-                                        delta: statDP[args.id].impUnitPerImpulse * factor * price,
-                                        id: 'temp.sumGroup.' + statDP[args.id].sumGroup + '.' + nameObjects.sumGroup.temp[i],
-                                        type: nameObjects.sumGroup.temp[i]
-                                    },
-                                    callback: (args, callback) =>
-                                        getValue(args.id, (err, value, ts) => {
-                                            if (ts) {
-                                                value = checkValue(value || 0, ts, args.id, args.type);
-                                            }
-                                            value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
-                                            adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
-                                            setValue(args.id, value, callback);
-                                        })
-                                });
-                            }
-                        }
-                    }
+				// add consumption to group
+				if (statDP[args.id].sumGroup &&
+				    groups[statDP[args.id].sumGroup] &&
+				    statDP[args.id].impUnitPerImpulse &&
+				    statDP[args.id].groupFactor
+				) {
+				    const factor = statDP[args.id].groupFactor;
+				    const price = groups[statDP[args.id].sumGroup].config.price;
+
+				    for (let i = 0; i < nameObjects.sumGroup.temp.length; i++) {
+					tasks.push({
+					    name: 'async',
+					    args: {
+						delta: statDP[args.id].impUnitPerImpulse * factor * price,
+						id: 'temp.sumGroup.' + statDP[args.id].sumGroup + '.' + nameObjects.sumGroup.temp[i],
+						type: nameObjects.sumGroup.temp[i]
+					    },
+					    callback: (args, callback) =>
+						getValue(args.id, (err, value, ts) => {
+						    if (ts) {
+							value = checkValue(value || 0, ts, args.id, args.type);
+						    }
+						    value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
+						    adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
+						    setValue(args.id, value, callback);
+						})
+					});
+				    }
+				}
+			    }
+			}	
                 }
                 callback();
             }
@@ -606,6 +608,21 @@ function newSumDeltaValue(id, value) {
     });
 
     isStart && processTasks();
+}
+
+function isTrueNew(id, val) { //detection if a count value is real or only from polling with same state
+    let newPulse = false;
+    getValue('temp.count.'+ id +'.lastPulse', (err, value) => {
+        setValue('temp.count.'+ id +'.lastPulse', val);
+        if (value === val) {
+            newPulse = false;
+            adapter.log.debug('new pulse false ? '+newPulse);
+        } else {
+            newPulse = isTrue(val);
+            adapter.log.debug('new pulse true ? '+ newPulse);
+        }
+    });
+    return newPulse;
 }
 
 function isTrue(val) {
@@ -976,6 +993,19 @@ function setInitial(type, id) {
                                         adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is true and last 10 get now as lastChange');
                                     } else {
                                         adapter.log.error('[SET INITIAL] ' + args.trueId + ' unknown state to be evaluated in timeCount');
+                                        callback();
+                                    }
+                                });
+			    } else
+			      if (args.name === 'lastPulse') {
+                                adapter.getForeignState(args.trueId, (err, state) => { // get actual values
+                                    adapter.log.debug('[SET INITIAL] ' + args.trueId + ' objects ' + args.trueId + ' ' + args.name);
+                                    adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + state.lc);
+                                    if (isTrue(state && state.val) || isFalse(state && state.val) ) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
+                                        setValue(args.id, state.val, callback);
+                                        adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state was '+ state.val +' and lastPulse get old time');
+                                    } else {
+                                        adapter.log.error('[SET INITIAL] ' + args.trueId + ' unknown state to be evaluated in count');
                                         callback();
                                     }
                                 });
