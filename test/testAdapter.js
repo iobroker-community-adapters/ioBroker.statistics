@@ -157,11 +157,11 @@ describe('Test ' + adapterShortName + ' adapter', function () {
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
 
         setTimeout(function(){
-            objects.getObject(adapterShortName + '0.save.count.' + TEST_ID + '.15min', (err, obj) => {
+            objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.15min', (err, obj) => {
                 if (err) console.error('1 '+err);
                 expect(obj).to.exist;
                 //expect(obj).to.be.ok;
-                    objects.getObject(adapterShortName + '0.temp.count.' + TEST_ID + '.last01', (err, obj) => {
+                    objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01', (err, obj) => {
                         if (err) console.error('2' + err);
                         expect(obj).to.exist;    
                         //expect(obj).to.be.ok;
@@ -174,26 +174,26 @@ describe('Test ' + adapterShortName + ' adapter', function () {
     it('Test ' + adapterShortName + ' adapter: Objects must exist', function (done) {
         this.timeout(5000);
         setTimeout(function() {
-            objects.getObject(adapterShortName + '0.save.count.' + TEST_ID + '.15min', function (err, obj) {
+            objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.15min', function (err, obj) {
                 if (err) console.error(err);
                 console.log('object?   ' + JSON.stringify(obj));
                 //expect(obj).to.exist;
                 if (!obj) {
-                    console.error(adapterShortName + '0.save.count.' + TEST_ID + '.15min' + ' not exist');
+                    console.error(adapterShortName + '.0.save.count.' + TEST_ID + '.15min' + ' not exist');
                 }
                 else {
-                    console.log(adapterShortName + '0.save.count.' + TEST_ID + '.15min' + JSON.stringify(obj));
+                    console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.15min' + JSON.stringify(obj));
                 }
                 //expect(state.val).to.exist;
                 //expect(state.val).to.be.equal('');
-                objects.getObject(adapterShortName + '0.temp.count.' + TEST_ID + '.last01', function (err, obj) {
+                objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01', function (err, obj) {
                     if (err) console.error(err);
                     expect(obj).to.exist;
                     if (!obj) {
-                        console.error(adapterShortName + '0.temp.count.' + TEST_ID + '.last01' + 'not exists');
+                        console.error(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01' + 'not exists');
                     }
                     else {
-                        console.log(adapterShortName + '0.temp.count.' + TEST_ID + '.last01' +  JSON.stringify(obj));
+                        console.log(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01' +  JSON.stringify(obj));
                         //expect(state.val).to.exist;
                         //expect(state.val).to.be.equal();
                         done();
