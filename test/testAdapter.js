@@ -102,7 +102,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                             custom: {}
                         },
                         native: {},
-                        lc: 1546252747743,
+                        
                     };
                     // obj.common.custom[adapterShortName + '.0'] = {
                     // obj.common.custom[TEST_ID] = {
@@ -126,9 +126,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     };
                     console.log('obj= '+ JSON.stringify(obj));
                     objects.setObject(TEST_ID, obj, () => {
-                        updateTimer = setInterval(() => {
-                            states.setState(TEST_ID, counter++, true);
-                        }, 1000);
+                        states.setState(TEST_ID, {val: false, ack: true, lc: 1546252747743});
                         _done()
                     });
                 });
