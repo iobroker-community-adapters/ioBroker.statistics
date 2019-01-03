@@ -115,14 +115,14 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         "fiveMin":              false,
                         
                         "groupFactor":          1,
-                        "impUnit":              "1",
+                        "impUnit":              "",
                         "impUnitPerImpulse":    "cnt",
                         
                         "sumIgnoreMinus":       true,
                         "sumDelta":             false,
                         "avg":                  false,
                         
-                        "sumGroup":             "energy"
+                        "sumGroup":             ""
                     };
                     console.log('obj= '+ JSON.stringify(obj));
                     objects.setObject(TEST_ID, obj, () => {
@@ -151,8 +151,8 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     done();
                 });
         });
-    }).timeout(60000);
-/**/
+    }).timeout(70000);
+/*
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
         console.log('objects   '  + JSON.stringify(objects));
 
@@ -171,6 +171,8 @@ describe('Test ' + adapterShortName + ' adapter', function () {
             });
         }, 1000);
     }).timeout(5000);
+    
+    */
     
     it('Test ' + adapterShortName + ' adapter: Objects must exist', function (done) {
         this.timeout(5000);
