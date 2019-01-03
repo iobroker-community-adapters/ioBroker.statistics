@@ -137,6 +137,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         ENABLE THIS WHEN ADAPTER RUNS IN DEAMON MODE TO CHECK THAT IT HAS STARTED SUCCESSFULLY
     */
     it('Test ' + adapterShortName + ' adapter: Check if adapter started', done => {
+        setTimeout(function(){
         checkConnectionOfAdapter(res => {
             if (res) console.log(res);
             expect(res).not.to.be.equal('Cannot check connection');
@@ -151,6 +152,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     done();
                 });
         });
+            }, 1000);
     }).timeout(70000);
 /*
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
