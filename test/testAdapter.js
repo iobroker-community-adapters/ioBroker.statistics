@@ -152,7 +152,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     done();
                 });
         });
-            }, 1000);
+            }, 5000);
     }).timeout(70000);
 /*
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
