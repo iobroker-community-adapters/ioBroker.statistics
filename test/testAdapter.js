@@ -109,9 +109,9 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         "enabled":              true,
                         "logName":              "counter",
                         "count":                true,
-                        "sumCount":             true,
-                        "timeCount":            false,
-                        "fiveMin":              true,
+                        "sumCount":             false,
+                        "timeCount":            true,
+                        "fiveMin":              false,
                         
                         "groupFactor":          1,
                         "impUnit":              "1",
@@ -155,6 +155,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
     }).timeout(60000);
 /**/
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
+        console.log('objects   '  + JSON.stringify(objects));
 
         setTimeout(function(){
             objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.15min', (err, obj) => {
