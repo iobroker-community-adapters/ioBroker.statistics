@@ -102,6 +102,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                             custom: {}
                         },
                         native: {},
+                        lc: 1546252747743,
                     };
                     // obj.common.custom[adapterShortName + '.0'] = {
                     // obj.common.custom[TEST_ID] = {
