@@ -127,7 +127,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     console.log('obj= '+ JSON.stringify(obj));
                     objects.setObject(TEST_ID, obj, () => {
                         states.setState(TEST_ID, {val: false, ack: true, lc: 1546252747743});
-                       // _done()
+                        _done()
                     });
                 });
         });
@@ -152,14 +152,14 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                 });
         });
     }).timeout(70000);
-/*
+
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
         console.log('objects   '  + JSON.stringify(objects));
 
         setTimeout(function(){
             objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.15min', (err, obj) => {
                 if (err) console.error('1 '+err);
-                console.log('object?   ' + JSON.stringify(obj));
+                console.log('object?   ' + JSON.stringify(obj)); //object should be in {}
                 //expect(obj).to.exist;
                 //expect(obj).to.be.ok;
                     objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01', (err, obj) => {
@@ -172,8 +172,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         }, 1000);
     }).timeout(5000);
     
-    */
-    /*
+    
     it('Test ' + adapterShortName + ' adapter: Objects must exist', function (done) {
         this.timeout(5000);
         setTimeout(function() {
@@ -205,7 +204,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
             });
         }, 1000);
     });
-*/
+
 /*
     PUT YOUR OWN TESTS HERE USING
     it('Testname', function ( done) {
