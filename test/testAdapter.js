@@ -127,7 +127,11 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     console.log('obj= '+ JSON.stringify(obj));
                     objects.setObject(TEST_ID, obj, () => {
                         states.setState(TEST_ID, {val: false, ack: true, lc: 1546252747743});
-                        _done()
+                        //_done()
+                           setTimeout(function() {
+                                            _done();
+                            }, 3000);
+                        
                     });
                 });
         });
