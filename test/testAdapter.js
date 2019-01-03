@@ -128,11 +128,15 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     objects.setObject(TEST_ID, obj, () => {
                         states.setState(TEST_ID, {val: false, ack: true, lc: 1546252747743});
                         //_done()
-                           setTimeout(function() {
-                                            _done();
-                            }, 3000);
+
                         
                     });
+                        var startTime = Date.now();
+                        setTimeout(function () {
+                            var endTime = Date.now();
+                            alert("timeOut was: " + (endTime - startTime) + "ms");
+                            _done();
+                        }, 3000);
                 });
         });
     });
