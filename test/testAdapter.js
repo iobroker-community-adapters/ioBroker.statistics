@@ -175,7 +175,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
     }).timeout(5000);
     
     */
-    
+    /*
     it('Test ' + adapterShortName + ' adapter: Objects must exist', function (done) {
         this.timeout(5000);
         setTimeout(function() {
@@ -207,7 +207,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
             });
         }, 1000);
     });
-
+*/
 /*
     PUT YOUR OWN TESTS HERE USING
     it('Testname', function ( done) {
