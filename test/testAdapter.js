@@ -111,7 +111,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         "logName":              "counter",
                         "count":                true,
                         "sumCount":             false,
-                        "timeCount":            true,
+                        "timeCount":            false,
                         "fiveMin":              false,
                         
                         "groupFactor":          1,
