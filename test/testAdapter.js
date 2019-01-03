@@ -132,10 +132,18 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                 });
         });
     });
+    
+    it('Test ' + adapterShortName + ' adapter: Objects must exist', function (done) {
+        this.timeout(3000);
+        setTimeout(function() {
+                        done();
+        }, 3000);
+    });
 
     /*
         ENABLE THIS WHEN ADAPTER RUNS IN DEAMON MODE TO CHECK THAT IT HAS STARTED SUCCESSFULLY
     */
+    /*
     it('Test ' + adapterShortName + ' adapter: Check if adapter started', done => {
         checkConnectionOfAdapter(res => {
             if (res) console.log(res);
@@ -204,7 +212,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
             });
         }, 1000);
     });
-
+    */
 /*
     PUT YOUR OWN TESTS HERE USING
     it('Testname', function ( done) {
