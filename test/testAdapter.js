@@ -127,25 +127,28 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     console.log('obj= '+ JSON.stringify(obj));
                     objects.setObject(TEST_ID, obj, () => {
                         states.setState(TEST_ID, {val: false, ack: true, lc: 1546252747743});
-                        //_done()
-
-                        
+                        //_done()      
                     });
                         var startTime = Date.now();
+                        console.log('jetzt ' + startTime);
                         setTimeout(function () {
                             var endTime = Date.now();
-                            alert("timeOut was: " + (endTime - startTime) + "ms");
+                            console.log("timeOut was: " + (endTime - startTime) + "ms");
                             _done();
                         }, 3000);
                 });
         });
     });
     
-    it('Test ' + adapterShortName + ' adapter: Objects must exist', function (done) {
+    it('Test ' + adapterShortName + ' adapter: empty test', function (done) {
         this.timeout(3000);
-        setTimeout(function() {
-                        done();
-        }, 3000);
+                        var startTime = Date.now();
+                        console.log('jetzt it' + startTime);
+                        setTimeout(function () {
+                            var endTime = Date.now();
+                            console.log("timeOut it was: " + (endTime - startTime) + "ms");
+                            _done();
+                        }, 3000);
     });
 
     /*
