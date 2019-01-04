@@ -135,13 +135,13 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                             var endTime = Date.now();
                             console.log("timeOut was: " + (endTime - startTime) + "ms");
                             _done();
-                        }, 3000);
+                        }, 30000);
                 });
         });
     });
     
     it('Test ' + adapterShortName + ' adapter: empty test', function (done) {
-        this.timeout(3000);
+        this.timeout(300);
                         var startTime = Date.now();
                         console.log('jetzt it' + startTime);
                         setTimeout(function () {
