@@ -109,7 +109,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     obj.common.custom['statistics.0'] = {
                         "enabled":              true,
                         "logName":              "counter",
-                        "count":                true,
+                        "count":                false,
                         "sumCount":             false,
                         "timeCount":            false,
                         "fiveMin":              false,
@@ -120,7 +120,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         
                         "sumIgnoreMinus":       true,
                         "sumDelta":             false,
-                        "avg":                  false,
+                        "avg":                  true,
                         
                         "sumGroup":             ""
                     };
