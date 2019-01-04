@@ -223,7 +223,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
             });
         }, 1000);
     });
-    */
+    
 /*
     PUT YOUR OWN TESTS HERE USING
     it('Testname', function ( done) {
