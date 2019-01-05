@@ -194,24 +194,24 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         setTimeout(function() {
             objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.15Min', function (err, obj) {
                 if (err) console.error(err);
-                if (!state) {
+                if (!obj) {
                     console.error(adapterShortName + '.0.save.count.' + TEST_ID + '.15Min' + ' not exist');
                 }
                 else {
-                    console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.15Min' + JSON.stringify(state));
+                    console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.15Min' + JSON.stringify(obj));
                 }
-                expect(state).to.exist;
-                expect(state).to.be.ok;
+                expect(obj).to.exist;
+                expect(obj).to.be.ok;
                 objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.year', function (err, obj) {
                     if (err) console.error(err);
                     if (!obj) {
                         console.error(adapterShortName + '.0.temp.count.' + TEST_ID + '.year' + 'not exists');
                     }
                     else {
-                        console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.year' + JSON.stringify(state));
+                        console.log(adapterShortName + '.0.temp.count.' + TEST_ID + '.year' + JSON.stringify(obj));
                     }
-                        expect(state).to.exist;
-                        expect(state).to.be.ok;
+                        expect(obj).to.exist;
+                        expect(obj).to.be.ok;
                         done();
                 });
             });
