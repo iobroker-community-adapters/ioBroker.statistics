@@ -140,22 +140,11 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                 });
         });
     });
-    
-    it('Test ' + adapterShortName + ' adapter: empty test', function (done) {
-        this.timeout(300);
-                        var startTime = Date.now();
-                        console.log('jetzt2 it' + startTime);
-                        setTimeout(function () {
-                            var endTime = Date.now();
-                            console.log("timeOut2 it was: " + (endTime - startTime) + "ms");
-                            _done();
-                        }, 3000);
-    });
 
     /*
         ENABLE THIS WHEN ADAPTER RUNS IN DEAMON MODE TO CHECK THAT IT HAS STARTED SUCCESSFULLY
     */
-    /*
+
     it('Test ' + adapterShortName + ' adapter: Check if adapter started', done => {
         checkConnectionOfAdapter(res => {
             if (res) console.log(res);
@@ -172,21 +161,22 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                 });
         });
     }).timeout(70000);
-*/
+
 
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
         console.log('objects   '  + JSON.stringify(objects));
 
         setTimeout(function(){
-            objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.dayMin', (err, obj) => {
+            objects.getForeignObject(TEST_ID, (err, obj) => {
+            //objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.dayMin', (err, obj) => {
                 if (err) console.error('1 '+err);
-                console.log('object?   ' + JSON.stringify(obj)); //object should be in {}
+                adapter.log.error('object?   ' + JSON.stringify(obj)); //object should be in {}
                 //expect(obj).to.exist;
                 //expect(obj).to.be.ok;
                     //objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.dayMax', (err, obj) => {
                     objects.getForeignObject(TEST_ID, (err, obj) => {
                         if (err) console.error('2' + err);
-                        console.log('Fobject?   ' + JSON.stringify(obj)); //object should be in {}
+                        adapter.log.error('Fobject?   ' + JSON.stringify(obj)); //object should be in {}
                         //expect(obj).to.exist;    
                         //expect(obj).to.be.ok;
                         done();
