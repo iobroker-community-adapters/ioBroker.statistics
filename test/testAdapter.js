@@ -98,7 +98,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         common: {
                             name: 'Counter',
                             type: 'number',
-                            role: 'state',
+                            role: 'value',
                             custom: {}
                         },
                         native: {},
@@ -159,7 +159,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         console.log('objects   '  + JSON.stringify(objects));
 
         setTimeout(function(){
-            objects.getForeignObject('javascript.0.counter', (err, obj) => {
+            objects.getForeignState('javascript.0.counter', (err, obj) => {
             //objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.dayMin', (err, obj) => {
                 if (err) console.error('1 '+err);
                 adapter.log.error('1object?   ' + JSON.stringify(obj)); //object should be in {}
