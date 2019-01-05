@@ -127,16 +127,8 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     console.log('obj= '+ JSON.stringify(obj));
                     objects.setObject(TEST_ID, obj, () => {
                         states.setState(TEST_ID, {val: false, ack: true, lc: 1546252747743});
-                        console.log('0object?   ' + JSON.stringify(objects));
-                        //_done()      
+                        _done()      
                     });
-                        var startTime = Date.now();
-                        console.log('jetzt ' + startTime);
-                        setTimeout(function () {
-                            var endTime = Date.now();
-                            console.log("timeOut was: " + (endTime - startTime) + "ms");
-                            _done();
-                        }, 30000);
                 });
         });
     });
@@ -149,14 +141,14 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         checkConnectionOfAdapter(res => {
             if (res) console.log(res);
             expect(res).not.to.be.equal('Cannot check connection');
-            objects.setObject('system.adapter.test.0', {
+            objects.setObject('system.adapter.statistics.0', {
                     common: {
 
                     },
                     type: 'instance'
                 },
                 () => {
-                    states.subscribeMessage('system.adapter.test.0');
+                    states.subscribeMessage('system.adapter.statistics.0');
                     done();
                 });
         });
@@ -167,14 +159,14 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         console.log('objects   '  + JSON.stringify(objects));
 
         setTimeout(function(){
-            objects.getForeignObject(TEST_ID, (err, obj) => {
+            objects.getForeignObject('javascript.0.counter', (err, obj) => {
             //objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.dayMin', (err, obj) => {
                 if (err) console.error('1 '+err);
-                adapter.log.error('object?   ' + JSON.stringify(obj)); //object should be in {}
-                //expect(obj).to.exist;
+                adapter.log.error('1object?   ' + JSON.stringify(obj)); //object should be in {}
+                expect(obj).to.exist;
                 //expect(obj).to.be.ok;
                     //objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.dayMax', (err, obj) => {
-                    objects.getForeignObject(TEST_ID, (err, obj) => {
+                    objects.getForeignObject('javascript.0.counter', (err, obj) => {
                         if (err) console.error('2' + err);
                         adapter.log.error('Fobject?   ' + JSON.stringify(obj)); //object should be in {}
                         //expect(obj).to.exist;    
