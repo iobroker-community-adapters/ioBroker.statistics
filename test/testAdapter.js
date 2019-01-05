@@ -156,11 +156,11 @@ describe('Test ' + adapterShortName + ' adapter', function () {
 
     it('Test ' + adapterShortName + ' adapter: statistisized Objects must exist', done => {
         setTimeout(function(){
-            objects.getObject('javascript.0.counter', (err, obj) => {
+            objects.getObject(TEST_ID, (err, obj) => {
                 if (err) console.error('1 '+err);
                 expect(obj).to.exist;
                 expect(obj).to.be.ok;
-                    objects.getObject('javascript.0.counter', (err, obj) => {
+                    objects.getObject(TEST_ID, (err, obj) => {
                         if (err) console.error('2' + err);
                         expect(obj).to.exist;    
                         expect(obj).to.be.ok;
@@ -172,12 +172,12 @@ describe('Test ' + adapterShortName + ' adapter', function () {
  
    it('Test ' + adapterShortName + ' adapter: Objects must exist for avg', done => {
         setTimeout(function(){
-            objects.getObject('statistics.0.save.avg.javascript.0.counter.dayMin', (err, obj) => {
+            objects.getObject(adapterShortName + '0.save.avg.' + TEST_ID + '.dayMin', (err, obj) => {
                 if (err) console.error('avg '+err);
                 console.log(' avg1 da  '+JSON.stringify(obj));
                 expect(obj).to.exist;
                 expect(obj).to.be.ok;
-                    objects.getObject('statistics.0.save.avg.javascript.0.counter.dayMax', (err, obj) => {
+                    objects.getObject(adapterShortName + '0.save.avg.' + TEST_ID + '.dayMax', (err, obj) => {
                         console.log(' avg2 da   '+JSON.stringify(obj));
                         if (err) console.error('avg' + err);
                         expect(obj).to.exist;    
@@ -192,10 +192,8 @@ describe('Test ' + adapterShortName + ' adapter', function () {
     it('Test ' + adapterShortName + ' adapter: Objects must exist for count', function (done) {
         this.timeout(5000);
         setTimeout(function() {
-            objects.getObject('statistics.0.save.count.javascript.0.counter.15min', function (err, obj) {
-                console.log(' count1 da   '+JSON.stringify(obj));
+            objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.15min', function (err, obj) {
                 if (err) console.error(err);
-                expect(obj).to.exist;
                 if (!state) {
                     console.error(adapterShortName + '.0.save.count.' + TEST_ID + '.15min' + ' not exist');
                 }
@@ -204,19 +202,17 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                 }
                 expect(state).to.exist;
                 expect(state).to.be.ok;
-                objects.getObject('statistics.0.save.count.javascript.0.counter.last01', function (err, obj) {
-                    console.log(' count2 da   '+JSON.stringify(obj));
+                objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.year', function (err, obj) {
                     if (err) console.error(err);
-                    expect(obj).to.exist;
                     if (!obj) {
-                        console.error(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01' + 'not exists');
+                        console.error(adapterShortName + '.0.temp.count.' + TEST_ID + '.year' + 'not exists');
                     }
                     else {
-                        console.log(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01' +  JSON.stringify(obj));
-                        expect(obj.val).to.exist;
-                        //expect(state.val).to.be.equal();
-                        done();
+                        console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.year' + JSON.stringify(state));
                     }
+                        expect(state).to.exist;
+                        expect(state).to.be.ok;
+                        done();
                 });
             });
         }, 1000);
