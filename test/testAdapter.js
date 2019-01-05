@@ -159,10 +159,10 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         setTimeout(function(){
             objects.getObject('javascript.0.counter', (err, obj) => {
                 if (err) console.error('1 '+err);
-                console.log(' js0counter   '+JSON.stringify(obj));
+                console.log(' jv da  '+JSON.stringify(obj));
                 //expect(obj).to.exist;
                 //expect(obj).to.be.ok;
-                    states.getState('statistics.0.save.avg.javascript.0.counter.dayMax', (err, obj) => {
+                    objects.getObject('statistics.0.save.avg.javascript.0.counter.dayMax', (err, obj) => {
                         console.log(' stat da   '+JSON.stringify(obj));
                         if (err) console.error('2' + err);
                         expect(obj).to.exist;    
