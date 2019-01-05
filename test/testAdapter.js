@@ -98,7 +98,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         common: {
                             name: 'Counter',
                             type: 'number',
-                            role: 'value',
+                            role: 'state',
                             custom: {}
                         },
                         native: {},
@@ -127,6 +127,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     console.log('obj= '+ JSON.stringify(obj));
                     objects.setObject(TEST_ID, obj, () => {
                         states.setState(TEST_ID, {val: false, ack: true, lc: 1546252747743});
+                        console.log('0object?   ' + JSON.stringify(objects));
                         //_done()      
                     });
                         var startTime = Date.now();
