@@ -120,7 +120,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         
                         "sumIgnoreMinus":       true,
                         "sumDelta":             false,
-                        "avg":                  false,
+                        "avg":                  true,
                         
                         "sumGroup":             ""
                     };
@@ -134,6 +134,8 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         setTimeout(function () {
                             var endTime = Date.now();
                             console.log("timeOut was: " + (endTime - startTime) + "ms");
+                            console.log('object?   ' + JSON.stringify(objects));
+                            console.log('_object?   ' + JSON.stringify(_objects));
                             _done();
                         }, 30000);
                 });
@@ -143,12 +145,12 @@ describe('Test ' + adapterShortName + ' adapter', function () {
     it('Test ' + adapterShortName + ' adapter: empty test', function (done) {
         this.timeout(300);
                         var startTime = Date.now();
-                        console.log('jetzt it' + startTime);
+                        console.log('jetzt2 it' + startTime);
                         setTimeout(function () {
                             var endTime = Date.now();
-                            console.log("timeOut it was: " + (endTime - startTime) + "ms");
-                            console.log('object?   ' + JSON.stringify(objects));
-                            console.log('_object?   ' + JSON.stringify(_objects));
+                            console.log("timeOut2 it was: " + (endTime - startTime) + "ms");
+                            console.log('2object?   ' + JSON.stringify(objects));
+                            console.log('2_object?   ' + JSON.stringify(_objects));
                             _done();
                         }, 3000);
     });
