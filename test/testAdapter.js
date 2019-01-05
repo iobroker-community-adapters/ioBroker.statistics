@@ -192,13 +192,13 @@ describe('Test ' + adapterShortName + ' adapter', function () {
     it('Test ' + adapterShortName + ' adapter: Objects must exist for count', function (done) {
         this.timeout(5000);
         setTimeout(function() {
-            objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.15min', function (err, obj) {
+            objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.15Min', function (err, obj) {
                 if (err) console.error(err);
                 if (!state) {
-                    console.error(adapterShortName + '.0.save.count.' + TEST_ID + '.15min' + ' not exist');
+                    console.error(adapterShortName + '.0.save.count.' + TEST_ID + '.15Min' + ' not exist');
                 }
                 else {
-                    console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.15min' + JSON.stringify(state));
+                    console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.15Min' + JSON.stringify(state));
                 }
                 expect(state).to.exist;
                 expect(state).to.be.ok;
