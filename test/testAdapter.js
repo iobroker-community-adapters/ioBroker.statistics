@@ -120,7 +120,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         
                         "sumIgnoreMinus":       true,
                         "sumDelta":             false,
-                        "avg":                  true,
+                        "avg":                  false,
                         
                         "sumGroup":             ""
                     };
