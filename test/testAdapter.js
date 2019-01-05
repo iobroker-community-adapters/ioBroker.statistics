@@ -135,8 +135,6 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         setTimeout(function () {
                             var endTime = Date.now();
                             console.log("timeOut was: " + (endTime - startTime) + "ms");
-                            console.log('object?   ' + JSON.stringify(objects));
-                            console.log('_object?   ' + JSON.stringify(_objects));
                             _done();
                         }, 30000);
                 });
@@ -150,8 +148,6 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         setTimeout(function () {
                             var endTime = Date.now();
                             console.log("timeOut2 it was: " + (endTime - startTime) + "ms");
-                            console.log('2object?   ' + JSON.stringify(objects));
-                            console.log('2_object?   ' + JSON.stringify(_objects));
                             _done();
                         }, 3000);
     });
@@ -177,7 +173,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         });
     }).timeout(70000);
 */
-    /*
+
     it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
         console.log('objects   '  + JSON.stringify(objects));
 
@@ -187,8 +183,10 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                 console.log('object?   ' + JSON.stringify(obj)); //object should be in {}
                 //expect(obj).to.exist;
                 //expect(obj).to.be.ok;
-                    objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.dayMax', (err, obj) => {
+                    //objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.dayMax', (err, obj) => {
+                    objects.getForeignObject(TEST_ID, (err, obj) => {
                         if (err) console.error('2' + err);
+                        console.log('Fobject?   ' + JSON.stringify(obj)); //object should be in {}
                         //expect(obj).to.exist;    
                         //expect(obj).to.be.ok;
                         done();
@@ -197,7 +195,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         }, 1000);
     }).timeout(5000);
     
-    
+  /*  
     it('Test ' + adapterShortName + ' adapter: Objects must exist', function (done) {
         this.timeout(5000);
         setTimeout(function() {
