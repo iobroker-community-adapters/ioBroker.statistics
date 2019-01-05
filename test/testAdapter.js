@@ -157,11 +157,13 @@ describe('Test ' + adapterShortName + ' adapter', function () {
 
     it('Test ' + adapterShortName + ' adapter: Objects must exist avg', done => {
         setTimeout(function(){
-            states.getState(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMin', (err, obj) => {
+            objects.getObject('javascript.0.counter', (err, obj) => {
                 if (err) console.error('1 '+err);
+                console.log(' js0counter   '+JSON.stringify(obj));
                 //expect(obj).to.exist;
                 //expect(obj).to.be.ok;
-                    states.getState(adapterShortName + '.0.temp.avg.' + TEST_ID + '.dayMax', (err, obj) => {
+                    states.getState('statistics.0.save.avg.javascript.0.counter.dayMax', (err, obj) => {
+                        console.log(' stat da   '+JSON.stringify(obj));
                         if (err) console.error('2' + err);
                         expect(obj).to.exist;    
                         expect(obj).to.be.ok;
