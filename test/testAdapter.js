@@ -174,14 +174,14 @@ describe('Test ' + adapterShortName + ' adapter', function () {
     it('Test ' + adapterShortName + ' adapter: Objects must exist count', function (done) {
         this.timeout(5000);
         setTimeout(function() {
-            states.getState(adapterShortName + '.0.save.count.' + TEST_ID + '.15min', function (err, obj) {
+            states.getState(adapterShortName + '.0.save.count.' + TEST_ID + '.15min', function (err, state) {
                 if (err) console.error(err);
-                expect(obj).to.exist;
-                if (!obj) {
+                expect(state).to.exist;
+                if (!state) {
                     console.error(adapterShortName + '.0.save.count.' + TEST_ID + '.15min' + ' not exist');
                 }
                 else {
-                    console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.15min' + JSON.stringify(obj));
+                    console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.15min' + JSON.stringify(state));
                 }
                 expect(state.val).to.exist;
                 //expect(state.val).to.be.equal('');
@@ -193,7 +193,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     }
                     else {
                         console.log(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01' +  JSON.stringify(obj));
-                        expect(state.val).to.exist;
+                        expect(obj.val).to.exist;
                         //expect(state.val).to.be.equal();
                         done();
                     }
