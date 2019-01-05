@@ -174,7 +174,6 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         setTimeout(function(){
             objects.getObject(adapterShortName + '0.save.avg.' + TEST_ID + '.dayMin', (err, obj) => {
                 if (err) console.error('avg '+err);
-                console.log(' avg1 da  '+JSON.stringify(obj));
                 expect(obj).to.exist;
                 expect(obj).to.be.ok;
                     objects.getObject(adapterShortName + '0.save.avg.' + TEST_ID + '.dayMax', (err, obj) => {
@@ -210,9 +209,9 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     else {
                         console.log(adapterShortName + '.0.temp.count.' + TEST_ID + '.year' + JSON.stringify(obj));
                     }
-                        expect(obj).to.exist;
-                        expect(obj).to.be.ok;
-                        done();
+                    expect(obj).to.exist;
+                    expect(obj).to.be.ok;
+                    done();
                 });
             });
         }, 1000);
