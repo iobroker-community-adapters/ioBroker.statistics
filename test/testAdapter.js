@@ -109,9 +109,9 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     obj.common.custom['statistics.0'] = {
                         "enabled":              true,
                         "logName":              "counter",
-                        "count":                false,
+                        "count":                true,
                         "sumCount":             false,
-                        "timeCount":            false,
+                        "timeCount":            true,
                         "fiveMin":              false,
                         
                         "groupFactor":          1,
@@ -155,44 +155,37 @@ describe('Test ' + adapterShortName + ' adapter', function () {
     }).timeout(70000);
 
 
-    it('Test ' + adapterShortName + ' adapter: Objects must exist', done => {
-        console.log('objects   '  + JSON.stringify(objects));
-
+    it('Test ' + adapterShortName + ' adapter: Objects must exist avg', done => {
         setTimeout(function(){
-            states.getState('javascript.0.counter', (err, obj) => {
-            //objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.dayMin', (err, obj) => {
+            states.getState(adapterShortName + '.0.save.count.' + TEST_ID + '.dayMin', (err, obj) => {
                 if (err) console.error('1 '+err);
-                console.log('1object?   ' + JSON.stringify(obj)); //object should be in {}
                 expect(obj).to.exist;
-                //expect(obj).to.be.ok;
-                    objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.dayMax', (err, obj) => {
+                expect(obj).to.be.ok;
+                    states.getState(adapterShortName + '.0.temp.count.' + TEST_ID + '.dayMax', (err, obj) => {
                         if (err) console.error('2' + err);
-                        console.log('Fobject?   ' + JSON.stringify(obj)); //object should be in {}
-                        //expect(obj).to.exist;    
-                        //expect(obj).to.be.ok;
+                        expect(obj).to.exist;    
+                        expect(obj).to.be.ok;
                         done();
                     });
             });
         }, 1000);
     }).timeout(5000);
     
-  /*  
-    it('Test ' + adapterShortName + ' adapter: Objects must exist', function (done) {
+    it('Test ' + adapterShortName + ' adapter: Objects must exist count', function (done) {
         this.timeout(5000);
         setTimeout(function() {
-            objects.getObject(adapterShortName + '.0.save.count.' + TEST_ID + '.15min', function (err, obj) {
+            states.getState(adapterShortName + '.0.save.count.' + TEST_ID + '.15min', function (err, obj) {
                 if (err) console.error(err);
-                console.log('object?   ' + JSON.stringify(obj));
-                //expect(obj).to.exist;
+                expect(obj).to.exist;
                 if (!obj) {
                     console.error(adapterShortName + '.0.save.count.' + TEST_ID + '.15min' + ' not exist');
                 }
                 else {
                     console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.15min' + JSON.stringify(obj));
                 }
-                //expect(state.val).to.exist;
+                expect(state.val).to.exist;
                 //expect(state.val).to.be.equal('');
-                objects.getObject(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01', function (err, obj) {
+                states.getState(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01', function (err, obj) {
                     if (err) console.error(err);
                     expect(obj).to.exist;
                     if (!obj) {
@@ -200,7 +193,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     }
                     else {
                         console.log(adapterShortName + '.0.temp.count.' + TEST_ID + '.last01' +  JSON.stringify(obj));
-                        //expect(state.val).to.exist;
+                        expect(state.val).to.exist;
                         //expect(state.val).to.be.equal();
                         done();
                     }
@@ -208,7 +201,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
             });
         }, 1000);
     });
-    */
+
 /*
     PUT YOUR OWN TESTS HERE USING
     it('Testname', function ( done) {
