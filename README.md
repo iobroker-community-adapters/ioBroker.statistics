@@ -3,7 +3,7 @@
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.statistics.svg)](https://www.npmjs.com/package/iobroker.statistics)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.statistics.svg)](https://www.npmjs.com/package/iobroker.statistics)
-[![Build Status](https://travis-ci.org/foxthefox/iobroker.statistics.svg?branch=master)](https://travis-ci.org/foxthefox/iobroker.statistics)
+[![Build Status](https://travis-ci.org/foxthefox/iobroker.statistics.svg?branch=master)](https://travis-ci.org/foxthefox/ioBroker.statistics)
 
 [![NPM](https://nodei.co/npm/iobroker.statistics.png?downloads=true)](https://nodei.co/npm/iobroker.statistics/)
 
