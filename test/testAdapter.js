@@ -172,12 +172,11 @@ describe('Test ' + adapterShortName + ' adapter', function () {
    it('Test ' + adapterShortName + ' adapter: Objects must exist for avg', done => {
         setTimeout(function(){
             objects.getObject(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMin', (err, obj) => {
-                if (err) console.error('avg1 '+err);
+                if (err) console.error('avg dayMin '+err);
                 expect(obj).to.exist;
                 expect(obj).to.be.ok;
                     objects.getObject(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMax', (err, obj) => {
-                        console.log(' avg2 da   '+JSON.stringify(obj));
-                        if (err) console.error('avg2' + err);
+                        if (err) console.error('avg dayMax ' + err);
                         expect(obj).to.exist;    
                         expect(obj).to.be.ok;
                         done();
@@ -195,7 +194,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     console.error(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMin' + ' not exist');
                 }
                 else {
-                    console.log(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMin' + JSON.stringify(obj));
+                    console.log(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMin' + ' => OK');
                 }
                 expect(obj).to.exist;
                 expect(obj).to.be.ok;
@@ -225,7 +224,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     console.error(adapterShortName + '.0.save.count.' + TEST_ID + '.15Min' + ' not exist');
                 }
                 else {
-                    console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.15Min' + JSON.stringify(obj));
+                    console.log(adapterShortName + '.0.save.count.' + TEST_ID + '.15Min' +  ' => OK');
                 }
                 expect(obj).to.exist;
                 expect(obj).to.be.ok;
@@ -235,7 +234,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         console.error(adapterShortName + '.0.temp.count.' + TEST_ID + '.year' + 'not exists');
                     }
                     else {
-                        console.log(adapterShortName + '.0.temp.count.' + TEST_ID + '.year' + JSON.stringify(obj));
+                        console.log(adapterShortName + '.0.temp.count.' + TEST_ID + '.year' +  ' => OK');
                     }
                     expect(obj).to.exist;
                     expect(obj).to.be.ok;
