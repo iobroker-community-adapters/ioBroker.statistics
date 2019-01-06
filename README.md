@@ -28,7 +28,7 @@ The adapter subscribes to the configured objects and creates his own states in t
 * statistics.0.save -> final values of the time frame
 * statistics.0.temp -> temporary values up to the moment of transfer to save, then temp starts again
 
-The structure of the state is: statistics.0.{save|temp}.{kind of stat}.{original observed state}.{state of statistical value}
+The structure of the state is: `statistics.0.{save|temp}.{kind of stat}.{original observed state}.{state of statistical value}`
 
 A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 
