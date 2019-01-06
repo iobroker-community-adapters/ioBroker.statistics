@@ -1,6 +1,7 @@
 # Wie konfiguriere ich ioBroker.statistics?
 
 Der Adapter speichert für jedes aktive Objekt die Werte temporär in statistics.0.temp für die fortlaufende Bewertung.
+
 Zu vorgegebenen Zeiten (Tag, Woche, Monat, Quartal, Jahr) erfolgt die Übernahme der temporären Werte in die Struktur statistics.0.save.
 
 Für bestimmte Werte sind auch 5min Zwischenwerte ermittelt, wie es z.B. bei den 433MHz Steckdosen von ELV der Fall ist, die einen Verbrauchswert alle 5min übermitteln.
@@ -36,3 +37,11 @@ Dies kann auch auf Verbräuche angewendet werden, die aus Impulszählung entsteh
 
 ![impulse](principle_sumdelta.PNG)
 
+## sinnvolle Kombinationen für state-Konfiguration
+### analoger state
+|avg|delta|...|Description|
+|--------|-------|:-:|--------|
+
+### binärer state
+|count|delta|...|Description|
+|--------|-------|:-:|--------|
