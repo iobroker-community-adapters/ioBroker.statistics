@@ -210,7 +210,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         console.error(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMax' + 'not exists');
                     }
                     else {
-                        console.log(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMax' + JSON.stringify(obj));
+                        console.log(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMax' + ' => OK');
                     }
                     expect(obj).to.exist;
                     expect(obj).to.be.ok;
