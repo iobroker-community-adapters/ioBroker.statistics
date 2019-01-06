@@ -126,6 +126,12 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     console.log('obj= '+ JSON.stringify(obj));
                     objects.setObject(TEST_ID, obj, () => {
                         states.setState(TEST_ID, {val: false, ack: true, lc: 1546252747743});
+                        updateTimer = setInterval(() => {
+                            states.setState(TEST_ID, counter++, true);
+                        }, 1000);
+                        setTimeout(function(){
+                            clearInterval(updateTimer);
+                        }, 10000);                     
                         _done()      
                     });
                 });
