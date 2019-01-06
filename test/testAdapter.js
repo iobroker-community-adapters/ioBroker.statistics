@@ -105,7 +105,6 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                         
                     };
                     // obj.common.custom[adapterShortName + '.0'] = {
-                    // obj.common.custom[TEST_ID] = {
                     obj.common.custom['statistics.0'] = {
                         "enabled":              true,
                         "logName":              "counter",
@@ -152,7 +151,7 @@ describe('Test ' + adapterShortName + ' adapter', function () {
                     done();
                 });
         });
-    }).timeout(70000);
+    }).timeout(50000);
 
     it('Test ' + adapterShortName + ' adapter: statistisized Objects must exist', done => {
         setTimeout(function(){
@@ -172,13 +171,13 @@ describe('Test ' + adapterShortName + ' adapter', function () {
  
    it('Test ' + adapterShortName + ' adapter: Objects must exist for avg', done => {
         setTimeout(function(){
-            objects.getObject(adapterShortName + '0.save.avg.' + TEST_ID + '.dayMin', (err, obj) => {
-                if (err) console.error('avg '+err);
+            objects.getObject(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMin', (err, obj) => {
+                if (err) console.error('avg1 '+err);
                 expect(obj).to.exist;
                 expect(obj).to.be.ok;
-                    objects.getObject(adapterShortName + '0.save.avg.' + TEST_ID + '.dayMax', (err, obj) => {
+                    objects.getObject(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMax', (err, obj) => {
                         console.log(' avg2 da   '+JSON.stringify(obj));
-                        if (err) console.error('avg' + err);
+                        if (err) console.error('avg2' + err);
                         expect(obj).to.exist;    
                         expect(obj).to.be.ok;
                         done();
@@ -186,6 +185,35 @@ describe('Test ' + adapterShortName + ' adapter', function () {
             });
         }, 1000);
     }).timeout(5000);
+    
+   it('Test ' + adapterShortName + ' adapter: Objects must exist for avg', function (done) {
+        this.timeout(5000);
+        setTimeout(function() {
+            objects.getObject(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMin', function (err, obj) {
+                if (err) console.error(err);
+                if (!obj) {
+                    console.error(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMin' + ' not exist');
+                }
+                else {
+                    console.log(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMin' + JSON.stringify(obj));
+                }
+                expect(obj).to.exist;
+                expect(obj).to.be.ok;
+                objects.getObject(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMax', function (err, obj) {
+                    if (err) console.error(err);
+                    if (!obj) {
+                        console.error(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMax' + 'not exists');
+                    }
+                    else {
+                        console.log(adapterShortName + '.0.save.avg.' + TEST_ID + '.dayMax' + JSON.stringify(obj));
+                    }
+                    expect(obj).to.exist;
+                    expect(obj).to.be.ok;
+                    done();
+                });
+            });
+        }, 1000);
+});
     
     
     it('Test ' + adapterShortName + ' adapter: Objects must exist for count', function (done) {
