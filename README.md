@@ -37,6 +37,11 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 * specify the configuration in the settings of the state (admin => objects)
 
 ## Changelog
+
+### 0.1.4 [2019-01-07]
+* (foxthefox) license added in io-package.json
+* (foxthefox) ReadMe updated
+
 ### 0.1.3 [2019-01-06]
 * first npm release
 * (foxthefox) german doc added
