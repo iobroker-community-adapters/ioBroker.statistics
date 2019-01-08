@@ -87,7 +87,7 @@
         "loglevel": "debug",
         "type": "misc-data",
         "materialize": true,
-        "compact" = true,
+        "compact": true,
         "supportCustoms": true,
         "dependencies": [
           {
