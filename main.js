@@ -19,6 +19,30 @@ const CronJob = require('cron').CronJob;
 
 const adapter = utils.Adapter('statistics');
 
+/*
+const adapter = new utils.Adapter({
+  name: 'statistics',
+  stateChange: function () {...},
+  ...
+});
+
+
+let adapter;
+function startAdapter(options) {
+  options = options || {};
+  Object.assign(options, {
+       name: 'statistics',
+       stateChange: function () {...},
+       ...
+  });
+  adapter = new utils.Adapter(options);
+
+  return adapter;
+});
+
+adapter.terminate ? adapter.terminate() : process.exit()
+*/
+
 let crons = {};
 const typeObjects = {}; // to remember the used objects within the types (calculations)
 const statDP = {};      // contains the complete datasets (instead of adapter.config)
@@ -1507,3 +1531,12 @@ function main() {
     // subscribe to objects, so the settings in the object are arriving to the adapter
     adapter.subscribeForeignObjects('*');
 }
+/*
+// If started as allInOne/compact mode => return function to create instance
+if (module && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();   
+}
+*/
