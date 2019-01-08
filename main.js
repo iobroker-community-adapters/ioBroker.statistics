@@ -13,35 +13,11 @@
 'use strict';
 
 // you have to require the utils module and call adapter function
-const utils = require('./lib/utils'); // Get common adapter utils
+const utils = require('@iobroker/adapter-core'); // Get common adapter utils
 const stateObjects = require('./lib/objects');
 const CronJob = require('cron').CronJob;
 
-const adapter = utils.Adapter('statistics');
-
-/*
-const adapter = new utils.Adapter({
-  name: 'statistics',
-  stateChange: function () {...},
-  ...
-});
-
-
 let adapter;
-function startAdapter(options) {
-  options = options || {};
-  Object.assign(options, {
-       name: 'statistics',
-       stateChange: function () {...},
-       ...
-  });
-  adapter = new utils.Adapter(options);
-
-  return adapter;
-});
-
-adapter.terminate ? adapter.terminate() : process.exit()
-*/
 
 let crons = {};
 const typeObjects = {}; // to remember the used objects within the types (calculations)
@@ -91,100 +67,104 @@ function stop () {
     }
 }
 
-// is called when adapter shuts down - callback has to be called under any circumstances!
-adapter.on('unload', callback => {
-    try {
-        adapter && adapter.log && adapter.log.info && adapter.log.info('cleaned everything up...');
-        // possibly also delete a few schedules
-        stop();
-        callback();
-    } catch (e) {
-        callback();
-    }
+function startAdapter(options) {
+  options = options || {};
+  Object.assign(options, {
+       name: 'statistics',
+        // is called when adapter shuts down - callback has to be called under any circumstances!
+        unload: callback => {
+            try {
+                adapter && adapter.log && adapter.log.info && adapter.log.info('cleaned everything up...');
+                // possibly also delete a few schedules
+                stop();
+                callback();
+            } catch (e) {
+                callback();
+            }
+        
+        },
+        objectChange: (id, obj) => {
+            // Warning, obj can be null if it was deleted
+            // adapter.log.debug('received objectChange '+ id + ' obj  '+JSON.stringify(obj));
+            //nur das verarbeiten was auch diesen Adapter interessiert
+            if (obj && obj.common && obj.common.custom && obj.common.custom[adapter.namespace] && obj.common.custom[adapter.namespace].enabled) {
+                //hier sollte nur ein Datenpunkt angekommen sein
+                adapter.log.debug('received objectChange for stat' + id + ' ' + obj.common.custom);
+                // old but changhed
+                if (statDP[id]) {
+                    //adapter.log.info('neu aber anderes Setting ' + id);
+                    statDP[id] = obj.common.custom[adapter.namespace];
+                    removeObject(id);
+                    setupObjects([id], null, undefined, true);
+                    adapter.log.debug('saved typeObjects update1 ' + JSON.stringify(typeObjects));
+                } else {
+                    //adapter.log.info('ganz neu ' + id);  
+                    statDP[id] = obj.common.custom[adapter.namespace];
+                    setupObjects([id]);
+                    adapter.log.info('enabled logging of ' + id);
+                    adapter.log.debug('saved typeObjects update2 ' + JSON.stringify(typeObjects));
+                }
+            } else if (statDP[id]) {
+                //adapter.log.info('alt aber disabled id' + id );
+                adapter.unsubscribeForeignStates(id);
+                delete statDP[id];
+                adapter.log.info('disabled logging of ' + id);
+                removeObject(id);
+                adapter.log.debug('saved typeObjects update3 ' + JSON.stringify(typeObjects));
+            }
+        },
+        // is called if a subscribed state changes
+        stateChange: (id, state) => {
+            // Warning, state can be null if it was deleted
+            adapter.log.debug('[STATE CHANGE] ======================= ' + id + ' =======================');
+            adapter.log.debug('[STATE CHANGE] stateChange => ' + state.val + ' [' + state.ack + ']');
+        
+            // you can use the ack flag to detect if it is status (true) or command (false)
+            if (state && state.ack) {
+                if (typeObjects.sumDelta && typeObjects.sumDelta.indexOf(id) !== -1) {
+                    newSumDeltaValue(id, state.val);
+                } else
+                if (typeObjects.avg && typeObjects.avg.indexOf(id) !== -1) {
+                    newAvgValue(id, state.val);
+                }
+        
+                if (typeObjects.count && typeObjects.count.indexOf(id) !== -1) {
+                    newCountValue(id, state.val);
+                }
+                if (typeObjects.timeCount && typeObjects.timeCount.indexOf(id) !== -1) {
+                    newTimeCntValue(id, state);
+                }
+                // 5min is treated cyclically
+            }
+        },
+        // Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
+        message: obj => {
+            if (typeof obj === 'object' && obj.message) {
+                if (obj.command === 'export') {
+                    // e.g. send email or pushover or whatever
+                    console.log('got export command');
+        
+                    // Send response in callback if required
+                    if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
+                } else
+                if (obj.command === 'import') {
+                    // e.g. send email or pushover or whatever
+                    console.log('got import command');
+                    // Send response in callback if required
+                    if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
+                } else if (obj.command === 'test') {
+                    saveValues(obj.message || '15Min');
+                }
+            }
+        },
+        // is called when databases are connected and adapter received configuration.
+        // start here!
+        ready: main()
+  });
+  adapter = new utils.Adapter(options);
 
-});
-
-// is called if a subscribed object changes
-adapter.on('objectChange', (id, obj) => {
-    // Warning, obj can be null if it was deleted
-    // adapter.log.debug('received objectChange '+ id + ' obj  '+JSON.stringify(obj));
-    //nur das verarbeiten was auch diesen Adapter interessiert
-    if (obj && obj.common && obj.common.custom && obj.common.custom[adapter.namespace] && obj.common.custom[adapter.namespace].enabled) {
-        //hier sollte nur ein Datenpunkt angekommen sein
-        adapter.log.debug('received objectChange for stat' + id + ' ' + obj.common.custom);
-        // old but changhed
-        if (statDP[id]) {
-            //adapter.log.info('neu aber anderes Setting ' + id);
-            statDP[id] = obj.common.custom[adapter.namespace];
-            removeObject(id);
-            setupObjects([id], null, undefined, true);
-            adapter.log.debug('saved typeObjects update1 ' + JSON.stringify(typeObjects));
-        } else {
-            //adapter.log.info('ganz neu ' + id);  
-            statDP[id] = obj.common.custom[adapter.namespace];
-            setupObjects([id]);
-            adapter.log.info('enabled logging of ' + id);
-            adapter.log.debug('saved typeObjects update2 ' + JSON.stringify(typeObjects));
-        }
-    } else if (statDP[id]) {
-        //adapter.log.info('alt aber disabled id' + id );
-        adapter.unsubscribeForeignStates(id);
-        delete statDP[id];
-        adapter.log.info('disabled logging of ' + id);
-        removeObject(id);
-        adapter.log.debug('saved typeObjects update3 ' + JSON.stringify(typeObjects));
-    }
-});
-
-// is called if a subscribed state changes
-adapter.on('stateChange', (id, state) => {
-    // Warning, state can be null if it was deleted
-    adapter.log.debug('[STATE CHANGE] ======================= ' + id + ' =======================');
-    adapter.log.debug('[STATE CHANGE] stateChange => ' + state.val + ' [' + state.ack + ']');
-
-    // you can use the ack flag to detect if it is status (true) or command (false)
-    if (state && state.ack) {
-        if (typeObjects.sumDelta && typeObjects.sumDelta.indexOf(id) !== -1) {
-            newSumDeltaValue(id, state.val);
-        } else
-        if (typeObjects.avg && typeObjects.avg.indexOf(id) !== -1) {
-            newAvgValue(id, state.val);
-        }
-
-        if (typeObjects.count && typeObjects.count.indexOf(id) !== -1) {
-            newCountValue(id, state.val);
-        }
-        if (typeObjects.timeCount && typeObjects.timeCount.indexOf(id) !== -1) {
-            newTimeCntValue(id, state);
-        }
-        // 5min is treated cyclically
-    }
-});
-
-// Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
-adapter.on('message', obj => {
-    if (typeof obj === 'object' && obj.message) {
-        if (obj.command === 'export') {
-            // e.g. send email or pushover or whatever
-            console.log('got export command');
-
-            // Send response in callback if required
-            if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-        } else
-        if (obj.command === 'import') {
-            // e.g. send email or pushover or whatever
-            console.log('got import command');
-            // Send response in callback if required
-            if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-        } else if (obj.command === 'test') {
-            saveValues(obj.message || '15Min');
-        }
-    }
-});
-
-// is called when databases are connected and adapter received configuration.
-// start here!
-adapter.on('ready', main);
+  return adapter;
+};
 
 function removeObject(id) {
     for (const key in typeObjects) {
@@ -206,7 +186,7 @@ function removeObject(id) {
     }
 }
 
-process.on('SIGINT', stop);
+// to be removed in compact? process.on('SIGINT', stop);
 
 function timeConverter(timestamp) {
     const a = new Date(timestamp);
@@ -1531,7 +1511,7 @@ function main() {
     // subscribe to objects, so the settings in the object are arriving to the adapter
     adapter.subscribeForeignObjects('*');
 }
-/*
+
 // If started as allInOne/compact mode => return function to create instance
 if (module && module.parent) {
     module.exports = startAdapter;
@@ -1539,4 +1519,3 @@ if (module && module.parent) {
     // or start the instance directly
     startAdapter();   
 }
-*/
