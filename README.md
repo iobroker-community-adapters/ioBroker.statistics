@@ -37,6 +37,8 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 * specify the configuration in the settings of the state (admin => objects)
 
 ## Changelog
+### 0.2.0 [2019-01-08]
+* (foxthefox) compact mode
 
 ### 0.1.4 [2019-01-07]
 * (foxthefox) license added in io-package.json
