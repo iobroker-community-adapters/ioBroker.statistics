@@ -159,7 +159,7 @@ function startAdapter(options) {
         },
         // is called when databases are connected and adapter received configuration.
         // start here!
-        ready: main()
+        ready: () => {main()}
   });
   adapter = new utils.Adapter(options);
 
