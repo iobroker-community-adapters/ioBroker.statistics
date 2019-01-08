@@ -41,6 +41,7 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 ### 0.1.4 [2019-01-07]
 * (foxthefox) license added in io-package.json
 * (foxthefox) ReadMe updated
+* (foxthefox) type = misc-data
 
 ### 0.1.3 [2019-01-06]
 * first npm release
