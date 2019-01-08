@@ -1,8 +1,19 @@
 {
     "common": {
         "name": "statistics",
-        "version": "0.1.4",
+        "version": "0.2.0",
         "news": {
+              "0.2.0": {
+                "en": "compact mode added",
+                "de": "Kompaktmodus hinzugefügt",
+                "ru": "добавлен компактный режим",
+                "pt": "modo compacto adicionado",
+                "nl": "compacte modus toegevoegd",
+                "fr": "mode compact ajouté",
+                "it": "modalità compatta aggiunta",
+                "es": "modo compacto agregado",
+                "pl": "dodano tryb kompaktowy"
+              },
               "0.1.4": {
                 "en": "license in io-package.json, Readme updated",
                 "de": "Lizenz in io-package.json, Liesmich aktualisiert",
@@ -76,6 +87,7 @@
         "loglevel": "debug",
         "type": "misc-data",
         "materialize": true,
+        "compact" = true,
         "supportCustoms": true,
         "dependencies": [
           {
