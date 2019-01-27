@@ -44,7 +44,11 @@ const nameObjects = {
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
     },
-    avg: { // Mean values etc.
+    minmax: { // Max 
+        save: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin','dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax'],
+        temp: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin','dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax']
+    },
+    avg: { // Mean values on daily basis
         save: ['dayMin', 'dayMax', 'dayAvg'],
         temp: ['dayMin', 'dayMax', 'dayAvg', 'dayCount', 'daySum']
     },
@@ -127,7 +131,9 @@ function startAdapter(options) {
                 if (typeObjects.avg && typeObjects.avg.indexOf(id) !== -1) {
                     newAvgValue(id, state.val);
                 }
-        
+                if (typeObjects.minmax && typeObjects.minmax.indexOf(id) !== -1) {
+                    newMinMaxValue(id, state.val);
+                }
                 if (typeObjects.count && typeObjects.count.indexOf(id) !== -1) {
                     newCountValue(id, state.val);
                 }
@@ -332,7 +338,7 @@ function newAvgValue(id, value) {
                         sum = sum ? sum + value : value;
                         setValue('temp.avg.' + args.id + '.daySum', sum, () => {
 
-                            setValue('temp.avg.' + args.id + '.dayAvg', sum / count, () => {
+                            setValue('temp.avg.' + args.id + '.dayAvg', (sum / count).toFixed(4), () => {
 
                                 getValue('temp.avg.' + args.id + '.dayMin', (err, tempMin) => {
                                     if (tempMin === null || tempMin > value) {
@@ -350,6 +356,86 @@ function newAvgValue(id, value) {
                                     });
                                 });
                             })
+                        });
+                    });
+                });
+            });
+        }
+    });
+    isStart && processTasks();
+}
+function newMinMaxValue(id, value) {
+    const isStart = !tasks.length;
+    /**
+     * Comparison between last min / max and now transmitted value
+     */
+    value = parseFloat(value) || 0;
+    adapter.log.debug('[STATE CHANGE] minmax call: ' + id + ' value ' + value);
+    tasks.push({
+        name: 'async',
+        args: {
+            id,
+            value
+        }, callback: (args, callback) => {
+            getValue('temp.minmax.' + args.id + '.yearMin', (err, tempMin) => {
+                if (tempMin === null || tempMin > value) {
+                    setValue('temp.minmax.' + args.id + '.yearMin', value);
+                    adapter.log.debug('[STATE CHANGE] new year min for "' + args.id  + ': ' + value);
+                }
+                getValue('temp.minmax.' + args.id + '.yearMax', (err, tempMax) => {
+                    if (tempMax === null || tempMax < value) {
+                        setValue('temp.minmax.' + args.id + '.yearMax', value);
+                        adapter.log.debug('[STATE CHANGE] new year max for "' + args.id  + ': ' + value);
+                    }
+                    getValue('temp.minmax.' + args.id + '.quarterMin', (err, tempMin) => {
+                        if (tempMin === null || tempMin > value) {
+                            setValue('temp.minmax.' + args.id + '.quarterMin', value);
+                            adapter.log.debug('[STATE CHANGE] new quarter min for "' + args.id  + ': ' + value);
+                        }
+                        getValue('temp.minmax.' + args.id + '.quarterMax', (err, tempMax) => {
+                            if (tempMax === null || tempMax < value) {
+                                setValue('temp.minmax.' + args.id + '.quarterMax', value);
+                                adapter.log.debug('[STATE CHANGE] new quarter max for "' + args.id  + ': ' + value);
+                            }
+                            getValue('temp.minmax.' + args.id + '.monthMin', (err, tempMin) => {
+                                if (tempMin === null || tempMin > value) {
+                                    setValue('temp.minmax.' + args.id + '.monthMin', value);
+                                    adapter.log.debug('[STATE CHANGE] new month min for "' + args.id  + ': ' + value);
+                                }
+                                getValue('temp.minmax.' + args.id + '.monthMax', (err, tempMax) => {
+                                    if (tempMax === null || tempMax < value) {
+                                        setValue('temp.minmax.' + args.id + '.monthMax', value);
+                                        adapter.log.debug('[STATE CHANGE] new month max for "' + args.id  + ': ' + value);
+                                    }
+                                    getValue('temp.minmax.' + args.id + '.weekMin', (err, tempMin) => {
+                                        if (tempMin === null || tempMin > value) {
+                                            setValue('temp.minmax.' + args.id + '.weekMin', value);
+                                            adapter.log.debug('[STATE CHANGE] new week min for "' + args.id  + ': ' + value);
+                                        }
+                                        getValue('temp.minmax.' + args.id + '.weekMax', (err, tempMax) => {
+                                            if (tempMax === null || tempMax < value) {
+                                                setValue('temp.minmax.' + args.id + '.weekMax', value);
+                                                adapter.log.debug('[STATE CHANGE] new week max for "' + args.id  + ': ' + value);
+                                            }
+                                            getValue('temp.minmax.' + args.id + '.dayMin', (err, tempMin) => {
+                                                if (tempMin === null || tempMin > value) {
+                                                    setValue('temp.minmax.' + args.id + '.dayMin', value);
+                                                    adapter.log.debug('[STATE CHANGE] new day min for "' + args.id  + ': ' + value);
+                                                }
+
+                                                getValue('temp.minmax.' + args.id + '.dayMax', (err, tempMax) => {
+                                                    if (tempMax === null || tempMax < value) {
+                                                        setValue('temp.minmax.' + args.id + '.dayMax', value, callback);
+                                                        adapter.log.debug('[STATE CHANGE] new day max for "' + args.id  + ': ' + value);
+                                                    } else {
+                                                        callback && callback();
+                                                    }
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
                         });
                     });
                 });
@@ -406,7 +492,7 @@ function newCountValue(id, value) {
 					getValue(args.id, (err, consumption) => {
 					    const value = consumption ? consumption + args.impUnitPerImpulse : args.impUnitPerImpulse;
 					    adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.impUnitPerImpulse + ' to ' + value);
-					    setValue(args.id, value, callback)
+					    setValue(args.id, value.toFixed(2), callback)
 					})
 				    }
 				});
@@ -435,7 +521,7 @@ function newCountValue(id, value) {
 						    }
 						    value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
 						    adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
-						    setValue(args.id, value, callback);
+						    setValue(args.id, value.toFixed(4), callback);
 						})
 					});
 				    }
@@ -568,7 +654,7 @@ function newSumDeltaValue(id, value) {
 
                                 value = (value || 0) + args.delta;
                                 adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
-                                setValue(args.id, value, callback);
+                                setValue(args.id, value.toFixed(4), callback);
                             })
                     });
                 }
@@ -600,7 +686,7 @@ function newSumDeltaValue(id, value) {
                                     }
                                     value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
                                     adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
-                                    setValue(args.id, value, callback);
+                                    setValue(args.id, value.toFixed(4), callback);
                                 })
                         });
                     }
@@ -1315,6 +1401,28 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
         } else {
             adapter.log.error('[CREATION] No group config found for ' + obj.sumGroup);
         }
+    }
+    if (obj.minmax) {
+        if (!typeObjects.minmax || typeObjects.minmax.indexOf(id) === -1) {
+            typeObjects.minmax = typeObjects.minmax || [];
+            typeObjects.minmax.push(id);
+        }
+
+        defineObject('minmax', id, logName); //type, id, name
+        tasks.push({
+            name: 'setObjectNotExists',
+            subscribe: !subscribed && id,
+            id: 'save.minmax',
+            obj: {
+                type: 'channel',
+                common: {
+                    name: 'Min Max',
+                    role: 'sensor'
+                },
+                native: {}
+            }
+        });
+        subscribed = true;
     }
     setImmediate(setupObjects, ids, callback, isStart);
 }
