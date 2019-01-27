@@ -72,14 +72,23 @@
             <div class="col s4">
             </div>
             <div class="input-field col s4">
-                <input class="sum-delta sum" data-field="sumDelta" type="checkbox" data-default="false" />
-                <span class="translate">Counter in delta consumption</span>
-                <p class="translate">Convert consecutive meter readings into consumption values</p>
+                <input data-field="minmax" type="checkbox" data-default="false" />
+                <span class="translate">MinMax Values</span>
+                <p class="translate">MinMax Day-/Week-/Month-/Quarter-/Annual-values</p>
             </div>
             <div class="input-field col s4">
                 <input data-field="avg" type="checkbox" data-default="false"/>
-                <span class="translate">Average values / daily values</span>
-                <p class="translate">Day-/Week-/Month-/Quarter-/Annual-values</p>
+                <span class="translate">MinMAx and Average values / daily values</span>
+                <p class="translate">Day-values</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s4">
+            </div>
+            <div class="input-field col s4">
+                <input class="sum-delta sum" data-field="sumDelta" type="checkbox" data-default="false" />
+                <span class="translate">Counter in delta consumption</span>
+                <p class="translate">Convert consecutive meter readings into consumption values</p>
             </div>
         </div>
         <div class="row">
@@ -170,6 +179,7 @@
                 sumIgnoreMinus: true,
                 sumDelta:   false,
                 avg:        false,
+                minmax:     false,
                 sumGroup:   ''
             };
         }
