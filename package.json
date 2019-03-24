@@ -29,12 +29,12 @@
   },
   "devDependencies": {
     "gulp": "^3.9.1",
-    "mocha": "^5.2.0",
+    "mocha": "^6.0.2",
     "chai": "^4.1.2"
   },
   "main": "main.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha"
+    "test": "node node_modules/mocha/bin/mocha --exit"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.statistics/issues"
