@@ -62,7 +62,7 @@
         },
         "desc": {
             "en": "Calculate statistics: day minimum, day maximum, day average, delta and so on for defined states",
-            "de": "Berechnen Sie Statistiken: Tag Minimum, Tag Maximum, Tag Durchschnitt, Delta und so weiter für definierte Staaten",
+            "de": "Berechnen Sie Statistiken: Tagesminimum, Tagesmaximum, Tagesdurchschnitt, Delta und so weiter für vordefinierte Status",
             "ru": "Вычислить статистику: минимум дня, максимум дня, дневной средний, дельта и т. Д. Для определенных состояний",
             "pt": "Calcular estatísticas: dia mínimo, dia máximo, dia médio, delta e assim por diante para estados definidos",
             "nl": "Bereken statistieken: dag minimum, dag maximum, dag gemiddelde, delta en ga zo maar door voor gedefinieerde staten",
