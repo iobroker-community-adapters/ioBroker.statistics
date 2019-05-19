@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "statistics",
-        "version": "0.2.0",
+        "version": "0.2.1",
         "news": {
+              "0.2.1": {
+                "en": "correction of timecount",
+                "de": "Korrektur der Zeitzählung",
+                "ru": "исправление времени",
+                "pt": "correção de contagem de tempo",
+                "nl": "correctie van tijdcount",
+                "fr": "correction du décompte",
+                "it": "correzione del timecount",
+                "es": "corrección de la cuenta de tiempo",
+                "pl": "korekta licznika czasu",
+                "zh-cn": "修正时间计数"
+              },
               "0.2.0": {
                 "en": "compact mode added",
                 "de": "Kompaktmodus hinzugefügt",
