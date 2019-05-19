@@ -137,6 +137,7 @@ function startAdapter(options) {
                 // 5min is treated cyclically
             }
         },
+	/** for future use, when message is needed
         // Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
         message: obj => {
             if (typeof obj === 'object' && obj.message) {
@@ -157,6 +158,7 @@ function startAdapter(options) {
                 }
             }
         },
+	 **/
         // is called when databases are connected and adapter received configuration.
         // start here!
         ready: () => {main()}
