@@ -37,6 +37,10 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 * specify the configuration in the settings of the state (admin => objects)
 
 ## Changelog
+
+### 0.2.1
+* (foxthefox) correction, timecount value was milliseconds instead seconds
+
 ### 0.2.0 [2019-01-08]
 * (foxthefox) compact mode
 
