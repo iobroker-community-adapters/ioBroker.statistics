@@ -334,7 +334,7 @@ function newAvgValue(id, value) {
                         sum = sum ? sum + value : value;
                         setValue('temp.avg.' + args.id + '.daySum', sum, () => {
 
-                            setValue('temp.avg.' + args.id + '.dayAvg', sum / count, () => {
+                            setValue('temp.avg.' + args.id + '.dayAvg', parseFloat(sum / count).toFixed(2), () => {
 
                                 getValue('temp.avg.' + args.id + '.dayMin', (err, tempMin) => {
                                     if (tempMin === null || tempMin > value) {
@@ -435,7 +435,7 @@ function newCountValue(id, value) {
 						    if (ts) {
 							value = checkValue(value || 0, ts, args.id, args.type);
 						    }
-						    value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
+						    value = parseFloat(Math.round(((value || 0) + args.delta) * 10000) / 10000).toFixed(2);
 						    adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
 						    setValue(args.id, value, callback);
 						})
@@ -600,7 +600,7 @@ function newSumDeltaValue(id, value) {
                                     if (ts) {
                                         value = checkValue(value || 0, ts, args.id, args.type);
                                     }
-                                    value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
+                                    value = parseFloat(Math.round(((value || 0) + args.delta) * 10000) / 10000).toFixed(2);
                                     adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                     setValue(args.id, value, callback);
                                 })
@@ -662,7 +662,7 @@ function newTimeCntValue(id, state) {
                 getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
                     let delta = last ? state.lc - last : 0;
 		    if (delta < 0) {delta = 0}
-		    else {delta = delta/1000}
+		    else {delta = parseFloat(delta/1000).toFixed(0)}
                     setValue('temp.timeCount.' + args.id + '.last01', state.lc, () => {
                         adapter.log.debug('[STATE CHANGE] 0->1 delta ' + delta + ' state ' + state.lc + ' last ' + last);
 
@@ -698,7 +698,7 @@ function newTimeCntValue(id, state) {
                 getValue('temp.timeCount.' + args.id + '.last01', (err, last) => { 
                     let delta = last ? state.lc - last : 0;
 		    if (delta < 0) {delta = 0}	
-	            else {delta = delta/1000}
+	            else {delta = parseFloat(delta/1000).toFixed(0)}
                     setValue('temp.timeCount.' + args.id + '.last10', state.lc, () => {
                         adapter.log.debug('[STATE CHANGE] 1->0 delta ' + delta + ' state ' + state.lc + ' last ' + last);
 
