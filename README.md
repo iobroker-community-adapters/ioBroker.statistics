@@ -41,6 +41,7 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 ### 0.2.1
 * (foxthefox) correction, timecount value was milliseconds instead seconds, toFixed(0)
 * (foxthefox) other calculations with 2 decimal places after comma, toFixed(2)
+* (foxthefox) min/max for day/week/month/quarter/year
 
 ### 0.2.0 [2019-01-08]
 * (foxthefox) compact mode
