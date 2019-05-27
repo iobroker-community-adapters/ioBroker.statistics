@@ -44,6 +44,10 @@ const nameObjects = {
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
     },
+    minmax: { // Min/Max timeframe 
+        save: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin','dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax'],
+        temp: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin','dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax']
+    },
     avg: { // Mean values etc.
         save: ['dayMin', 'dayMax', 'dayAvg'],
         temp: ['dayMin', 'dayMax', 'dayAvg', 'dayCount', 'daySum']
@@ -127,7 +131,9 @@ function startAdapter(options) {
                 if (typeObjects.avg && typeObjects.avg.indexOf(id) !== -1) {
                     newAvgValue(id, state.val);
                 }
-        
+                if (typeObjects.minmax && typeObjects.minmax.indexOf(id) !== -1) {
+                    //newMinMaxValue(id, state.val);
+                }
                 if (typeObjects.count && typeObjects.count.indexOf(id) !== -1) {
                     newCountValue(id, state.val);
                 }
