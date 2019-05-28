@@ -340,7 +340,7 @@ function newAvgValue(id, value) {
                         sum = sum ? sum + value : value;
                         setValue('temp.avg.' + args.id + '.daySum', sum, () => {
 
-                            setValue('temp.avg.' + args.id + '.dayAvg', parseFloat(sum / count).toFixed(2), () => {
+                            setValue('temp.avg.' + args.id + '.dayAvg', Math.round(sum / count), () => {
 
                                 getValue('temp.avg.' + args.id + '.dayMin', (err, tempMin) => {
                                     if (tempMin === null || tempMin > value) {
@@ -522,7 +522,7 @@ function newCountValue(id, value) {
 						    if (ts) {
 							value = checkValue(value || 0, ts, args.id, args.type);
 						    }
-						    value = parseFloat(Math.round(((value || 0) + args.delta) * 10000) / 10000).toFixed(2);
+						    value = Math.round((((value || 0) + args.delta) * 10000) / 10000));
 						    adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
 						    setValue(args.id, value, callback);
 						})
@@ -687,7 +687,7 @@ function newSumDeltaValue(id, value) {
                                     if (ts) {
                                         value = checkValue(value || 0, ts, args.id, args.type);
                                     }
-                                    value = parseFloat(Math.round(((value || 0) + args.delta) * 10000) / 10000).toFixed(2);
+                                    value = Math.round((((value || 0) + args.delta) * 10000) / 10000);
                                     adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                     setValue(args.id, value, callback);
                                 })
