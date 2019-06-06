@@ -522,7 +522,7 @@ function newCountValue(id, value) {
 						    if (ts) {
 							value = checkValue(value || 0, ts, args.id, args.type);
 						    }
-						    value = Math.round((((value || 0) + args.delta) * 10000) / 10000));
+						    value = Math.round((((value || 0) + args.delta) * 10000) / 10000);
 						    adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
 						    setValue(args.id, value, callback);
 						})
