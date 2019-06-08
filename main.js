@@ -324,47 +324,49 @@ function newAvgValue(id, value) {
     /**
      * Comparison between last min / max and now transmitted value
      */
-    value = parseFloat(value) || 0;
-    adapter.log.debug('[STATE CHANGE] avg call: ' + id + ' value ' + value);
-    tasks.push({
-        name: 'async',
-        args: {
-            id,
-            value
-        }, callback: (args, callback) => {
-            getValue('temp.avg.' + args.id + '.dayCount', (err, count) => {
-                count = count ? count + 1 : 1;
-                setValue('temp.avg.' + args.id + '.dayCount', count, () => {
+    value = parseFloat(value) // || 0; if NaN we should not put a zero inside, better to skip everything
+	if (!isNaN(value)){
+    	adapter.log.debug('[STATE CHANGE] avg call: ' + id + ' value ' + value);
+	    tasks.push({
+		name: 'async',
+		args: {
+		    id,
+		    value
+		}, callback: (args, callback) => {
+		    getValue('temp.avg.' + args.id + '.dayCount', (err, count) => {
+			count = count ? count + 1 : 1;
+			setValue('temp.avg.' + args.id + '.dayCount', count, () => {
 
-                    getValue('temp.avg.' + args.id + '.daySum', (err, sum) => {
-                        sum = sum ? sum + value : value;
-                        setValue('temp.avg.' + args.id + '.daySum', sum, () => {
+			    getValue('temp.avg.' + args.id + '.daySum', (err, sum) => {
+				sum = sum ? sum + value : value;
+				setValue('temp.avg.' + args.id + '.daySum', sum, () => {
 
-                            setValue('temp.avg.' + args.id + '.dayAvg', Math.round(sum / count), () => {
+				    setValue('temp.avg.' + args.id + '.dayAvg', Math.round(sum / count), () => {
 
-                                getValue('temp.avg.' + args.id + '.dayMin', (err, tempMin) => {
-                                    if (tempMin === null || tempMin > value) {
-                                        setValue('temp.avg.' + args.id + '.dayMin', value);
-                                        adapter.log.debug('[5 MINUTES] new min for "' + args.id  + ': ' + value);
-                                    }
+					getValue('temp.avg.' + args.id + '.dayMin', (err, tempMin) => {
+					    if (tempMin === null || tempMin > value) {
+						setValue('temp.avg.' + args.id + '.dayMin', value);
+						adapter.log.debug('[STATE CHANGE] new min for "' + args.id  + ': ' + value);
+					    }
 
-                                    getValue('temp.avg.' + args.id + '.dayMax', (err, tempMax) => {
-                                        if (tempMax === null || tempMax < value) {
-                                            setValue('temp.avg.' + args.id + '.dayMax', value, callback);
-                                            adapter.log.debug('[STATE CHANGE] new max for "' + args.id  + ': ' + value);
-                                        } else {
-                                            callback && callback();
-                                        }
-                                    });
-                                });
-                            })
-                        });
-                    });
-                });
-            });
-        }
-    });
-    isStart && processTasks();
+					    getValue('temp.avg.' + args.id + '.dayMax', (err, tempMax) => {
+						if (tempMax === null || tempMax < value) {
+						    setValue('temp.avg.' + args.id + '.dayMax', value, callback);
+						    adapter.log.debug('[STATE CHANGE] new max for "' + args.id  + ': ' + value);
+						} else {
+						    callback && callback();
+						}
+					    });
+					});
+				    })
+				});
+			    });
+			});
+		    });
+		}
+	    });
+	    isStart && processTasks();
+	}
 }
 
 function newMinMaxValue(id, value) {
@@ -373,79 +375,81 @@ function newMinMaxValue(id, value) {
      * Comparison between last min / max and now transmitted value
      */
     value = parseFloat(value) || 0;
-    adapter.log.debug('[STATE CHANGE] minmax call: ' + id + ' value ' + value);
-    tasks.push({
-        name: 'async',
-        args: {
-            id,
-            value
-        }, callback: (args, callback) => {
-            getValue('temp.minmax.' + args.id + '.yearMin', (err, tempMin) => {
-                if (tempMin === null || tempMin > value) {
-                    setValue('temp.minmax.' + args.id + '.yearMin', value);
-                    adapter.log.debug('[STATE CHANGE] new year min for "' + args.id  + ': ' + value);
-                }
-                getValue('temp.minmax.' + args.id + '.yearMax', (err, tempMax) => {
-                    if (tempMax === null || tempMax < value) {
-                        setValue('temp.minmax.' + args.id + '.yearMax', value);
-                        adapter.log.debug('[STATE CHANGE] new year max for "' + args.id  + ': ' + value);
-                    }
-                    getValue('temp.minmax.' + args.id + '.quarterMin', (err, tempMin) => {
-                        if (tempMin === null || tempMin > value) {
-                            setValue('temp.minmax.' + args.id + '.quarterMin', value);
-                            adapter.log.debug('[STATE CHANGE] new quarter min for "' + args.id  + ': ' + value);
-                        }
-                        getValue('temp.minmax.' + args.id + '.quarterMax', (err, tempMax) => {
-                            if (tempMax === null || tempMax < value) {
-                                setValue('temp.minmax.' + args.id + '.quarterMax', value);
-                                adapter.log.debug('[STATE CHANGE] new quarter max for "' + args.id  + ': ' + value);
-                            }
-                            getValue('temp.minmax.' + args.id + '.monthMin', (err, tempMin) => {
-                                if (tempMin === null || tempMin > value) {
-                                    setValue('temp.minmax.' + args.id + '.monthMin', value);
-                                    adapter.log.debug('[STATE CHANGE] new month min for "' + args.id  + ': ' + value);
-                                }
-                                getValue('temp.minmax.' + args.id + '.monthMax', (err, tempMax) => {
-                                    if (tempMax === null || tempMax < value) {
-                                        setValue('temp.minmax.' + args.id + '.monthMax', value);
-                                        adapter.log.debug('[STATE CHANGE] new month max for "' + args.id  + ': ' + value);
-                                    }
-                                    getValue('temp.minmax.' + args.id + '.weekMin', (err, tempMin) => {
-                                        if (tempMin === null || tempMin > value) {
-                                            setValue('temp.minmax.' + args.id + '.weekMin', value);
-                                            adapter.log.debug('[STATE CHANGE] new week min for "' + args.id  + ': ' + value);
-                                        }
-                                        getValue('temp.minmax.' + args.id + '.weekMax', (err, tempMax) => {
-                                            if (tempMax === null || tempMax < value) {
-                                                setValue('temp.minmax.' + args.id + '.weekMax', value);
-                                                adapter.log.debug('[STATE CHANGE] new week max for "' + args.id  + ': ' + value);
-                                            }
-                                            getValue('temp.minmax.' + args.id + '.dayMin', (err, tempMin) => {
-                                                if (tempMin === null || tempMin > value) {
-                                                    setValue('temp.minmax.' + args.id + '.dayMin', value);
-                                                    adapter.log.debug('[STATE CHANGE] new day min for "' + args.id  + ': ' + value);
-                                                }
+    if (!isNaN(value)){
+	    adapter.log.debug('[STATE CHANGE] minmax call: ' + id + ' value ' + value);
+	    tasks.push({
+		name: 'async',
+		args: {
+		    id,
+		    value
+		}, callback: (args, callback) => {
+		    getValue('temp.minmax.' + args.id + '.yearMin', (err, tempMin) => {
+			if (tempMin === null || tempMin > value) {
+			    setValue('temp.minmax.' + args.id + '.yearMin', value);
+			    adapter.log.debug('[STATE CHANGE] new year min for "' + args.id  + ': ' + value);
+			}
+			getValue('temp.minmax.' + args.id + '.yearMax', (err, tempMax) => {
+			    if (tempMax === null || tempMax < value) {
+				setValue('temp.minmax.' + args.id + '.yearMax', value);
+				adapter.log.debug('[STATE CHANGE] new year max for "' + args.id  + ': ' + value);
+			    }
+			    getValue('temp.minmax.' + args.id + '.quarterMin', (err, tempMin) => {
+				if (tempMin === null || tempMin > value) {
+				    setValue('temp.minmax.' + args.id + '.quarterMin', value);
+				    adapter.log.debug('[STATE CHANGE] new quarter min for "' + args.id  + ': ' + value);
+				}
+				getValue('temp.minmax.' + args.id + '.quarterMax', (err, tempMax) => {
+				    if (tempMax === null || tempMax < value) {
+					setValue('temp.minmax.' + args.id + '.quarterMax', value);
+					adapter.log.debug('[STATE CHANGE] new quarter max for "' + args.id  + ': ' + value);
+				    }
+				    getValue('temp.minmax.' + args.id + '.monthMin', (err, tempMin) => {
+					if (tempMin === null || tempMin > value) {
+					    setValue('temp.minmax.' + args.id + '.monthMin', value);
+					    adapter.log.debug('[STATE CHANGE] new month min for "' + args.id  + ': ' + value);
+					}
+					getValue('temp.minmax.' + args.id + '.monthMax', (err, tempMax) => {
+					    if (tempMax === null || tempMax < value) {
+						setValue('temp.minmax.' + args.id + '.monthMax', value);
+						adapter.log.debug('[STATE CHANGE] new month max for "' + args.id  + ': ' + value);
+					    }
+					    getValue('temp.minmax.' + args.id + '.weekMin', (err, tempMin) => {
+						if (tempMin === null || tempMin > value) {
+						    setValue('temp.minmax.' + args.id + '.weekMin', value);
+						    adapter.log.debug('[STATE CHANGE] new week min for "' + args.id  + ': ' + value);
+						}
+						getValue('temp.minmax.' + args.id + '.weekMax', (err, tempMax) => {
+						    if (tempMax === null || tempMax < value) {
+							setValue('temp.minmax.' + args.id + '.weekMax', value);
+							adapter.log.debug('[STATE CHANGE] new week max for "' + args.id  + ': ' + value);
+						    }
+						    getValue('temp.minmax.' + args.id + '.dayMin', (err, tempMin) => {
+							if (tempMin === null || tempMin > value) {
+							    setValue('temp.minmax.' + args.id + '.dayMin', value);
+							    adapter.log.debug('[STATE CHANGE] new day min for "' + args.id  + ': ' + value);
+							}
 
-                                                getValue('temp.minmax.' + args.id + '.dayMax', (err, tempMax) => {
-                                                    if (tempMax === null || tempMax < value) {
-                                                        setValue('temp.minmax.' + args.id + '.dayMax', value, callback);
-                                                        adapter.log.debug('[STATE CHANGE] new day max for "' + args.id  + ': ' + value);
-                                                    } else {
-                                                        callback && callback();
-                                                    }
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
-            });
-        }
-    });
-    isStart && processTasks();
+							getValue('temp.minmax.' + args.id + '.dayMax', (err, tempMax) => {
+							    if (tempMax === null || tempMax < value) {
+								setValue('temp.minmax.' + args.id + '.dayMax', value, callback);
+								adapter.log.debug('[STATE CHANGE] new day max for "' + args.id  + ': ' + value);
+							    } else {
+								callback && callback();
+							    }
+							});
+						    });
+						});
+					    });
+					});
+				    });
+				});
+			    });
+			});
+		    });
+		}
+	    });
+	    isStart && processTasks();
+    }
 }
 
 function newCountValue(id, value) {
@@ -605,7 +609,7 @@ function newSumDeltaValue(id, value) {
              - treat own values differently (datapoint name)
     */
 
-    value = parseFloat(value) || 0;
+    value = parseFloat(value) || 0; //here we can probably leave the 0, if undefined then we have 0
 
     tasks.push({
         name: 'async',
