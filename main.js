@@ -132,7 +132,7 @@ function startAdapter(options) {
                     newAvgValue(id, state.val);
                 }
                 if (typeObjects.minmax && typeObjects.minmax.indexOf(id) !== -1) {
-                    //newMinMaxValue(id, state.val);
+                    newMinMaxValue(id, state.val);
                 }
                 if (typeObjects.count && typeObjects.count.indexOf(id) !== -1) {
                     newCountValue(id, state.val);
@@ -1033,6 +1033,34 @@ function saveValues(timePeriod) {
         }
     }
 
+    // minmax hat andere Objektbezeichnungen und deswegen kann day aus timeperiod nicht benutzt werden
+    // day erst ab 2ter Stelle im Array (ohne 15min und hour soll benutzt werden) -> also (day > 1) und [day-2]
+    if (day > 1) {
+        if (typeObjects.minmax) { // !! einfach nur minmax ohne timePeriod??? damit nicht stündlich die 
+            for (let s = 0; s < typeObjects.minmax.length; s++) {
+                const id = typeObjects.minmax[s];
+                tasks.push({
+                    name: 'async',
+                    args: {
+                        temp: 'temp.minmax.' + id + '.' + nameObjects.minmax.temp[day-2],
+                        save: 'save.minmax.' + id + '.' + nameObjects.minmax.temp[day-2],
+			actual: id,
+                    },
+                    callback: copyValueActMinMax
+                });
+                tasks.push({
+                    name: 'async',
+                    args: {
+                        temp: 'temp.timeCount.' + id + '.' + nameObjects.minmax.temp[day + 3], // +5 ist offDay
+                        save: 'save.timeCount.' + id + '.' + nameObjects.minmax.temp[day + 3],
+			actual: id,    
+                    },
+                    callback: copyValueActMinMax
+                });
+            }
+        }
+    }
+	
     isStart && processTasks();
 }
 
