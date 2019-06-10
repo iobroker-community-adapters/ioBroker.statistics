@@ -839,12 +839,12 @@ function copyValueActMinMax(args, callback) {
         if (value !== null && value !== undefined) {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
 	    value = value || 0; // protect against NaN
-            setValueStat(args.save, value, () =>
+            setValueStat(args.save, value, () => {
 		getValue(args.actual, (err, actual) => {
 		    adapter.log.debug('[SET DAILY START MINMAX] Process ' + args.temp + ' = ' + actual);
 		    setValue(args.temp, actual, callback)
 	    	});
-            );
+	    });
         } else {
             adapter.log.debug('[SAVE VALUES & SET DAILY START MINMAX] Process ' + args.temp + ' => no value found');
             callback && callback();
