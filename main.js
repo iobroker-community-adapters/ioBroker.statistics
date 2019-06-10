@@ -1320,6 +1320,30 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
         });
         subscribed = true;
     }
+	
+    //	minmax over time
+    if (obj.minmax) {
+        if (!typeObjects.minmax || typeObjects.minmax.indexOf(id) === -1) {
+            typeObjects.minmax = typeObjects.minmax || [];
+            typeObjects.minmax.push(id);
+        }
+
+        defineObject('minmax', id, logName); //type, id, name
+        tasks.push({
+            name: 'setObjectNotExists',
+            subscribe: !subscribed && id,
+            id: 'save.minmax',
+            obj: {
+                type: 'channel',
+                common: {
+                    name: 'MinMax values',
+                    role: 'sensor'
+                },
+                native: {}
+            }
+        });
+        subscribed = true;
+    }
     // 5minutes Values can only be determined when counting
     adapter.log.debug('[CREATION] fiveMin = ' + obj.fiveMin + ',  count =  ' + obj.count);
     
