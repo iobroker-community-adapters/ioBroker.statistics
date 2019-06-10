@@ -817,8 +817,7 @@ function newTimeCntValue(id, state) {
     isStart && processTasks();
 }
 
-// normales Umspeichern
-// hier evtl. noch bei avg und fiveMin den aktuellen Wert auf die temp Werte setzen
+// normales Umspeichern, temp wird auf 0 gesetzt!!
 function copyValue(args, callback) {
     getValue(args.temp, (err, value) => {
         if (value !== null && value !== undefined) {
@@ -834,18 +833,20 @@ function copyValue(args, callback) {
     });
 }
 
-// Setzen der Ausgangspunkte für Min/Max
-// als extra funktion
+// Setzen der Ausgangspunkte für Min/Maxmit aktuelle Wert, anstatt mit 0
 function copyValueActMinMax(args, callback) {
     getValue(args.temp, (err, value) => {
         if (value !== null && value !== undefined) {
-            adapter.log.debug('[SET DAILY START MINMAX] Process ' + args.temp + ' = ' + value);
-			value = value || 0; // protect against NaN
+            adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
+	    value = value || 0; // protect against NaN
             setValueStat(args.save, value, () =>
-                setValue(args.temp, 0, callback)
+		getValue(args.actual, (err, actual) => {
+		    adapter.log.debug('[SET DAILY START MINMAX] Process ' + args.temp + ' = ' + actual);
+		    setValue(args.temp, actual, callback)
+	    	});
             );
         } else {
-            adapter.log.debug('[SET DAILY START MINMAX] Process ' + args.temp + ' => no value found');
+            adapter.log.debug('[SAVE VALUES & SET DAILY START MINMAX] Process ' + args.temp + ' => no value found');
             callback && callback();
         }
     });
@@ -938,8 +939,9 @@ function saveValues(timePeriod) {
                 args: {
                     temp: 'temp.avg.' + id + '.dayMin',
                     save: 'save.avg.' + id + '.dayMin',
+		    actual: id,
                 },
-                callback: copyValue
+                callback: copyValueActMinMAx
             });
 
             tasks.push({
@@ -947,8 +949,9 @@ function saveValues(timePeriod) {
                 args: {
                     temp: 'temp.avg.' + id + '.dayMax',
                     save: 'save.avg.' + id + '.dayMax',
+		    actual: id,
                 },
-                callback: copyValue
+                callback: copyValueActMinMAx
             });
 
             tasks.push({
@@ -959,28 +962,7 @@ function saveValues(timePeriod) {
                 },
                 callback: copyValue0
             });
-		
-	   // moving act temp to dayMin as starting point
-	   // hopefully the temp->save is already copied
-            tasks.push({
-                name: 'async',
-                args: {
-                    temp: id, //act value
-                    save: 'temp.avg.' + id + '.dayMin',
-                },
-                callback: copyValueActMinMAx
-            });
-		
-	   // moving act temp to dayMax as starting point
-	   // hopefully the temp->save is already copied
-            tasks.push({
-                name: 'async',
-                args: {
-                    temp: id, //act value
-                    save: 'temp.avg.' + id + '.dayMax',
-                },
-                callback: copyValueActMinMAx
-            });		
+			
             // just reset the counter
             tasks.push({
                 name: 'async',
