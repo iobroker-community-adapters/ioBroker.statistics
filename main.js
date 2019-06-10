@@ -834,6 +834,23 @@ function copyValue(args, callback) {
     });
 }
 
+// Setzen der Ausgangspunkte für Min/Max
+// als extra funktion
+function copyValueActMinMax(args, callback) {
+    getValue(args.temp, (err, value) => {
+        if (value !== null && value !== undefined) {
+            adapter.log.debug('[SET DAILY START MINMAX] Process ' + args.temp + ' = ' + value);
+			value = value || 0; // protect against NaN
+            setValueStat(args.save, value, () =>
+                setValue(args.temp, 0, callback)
+            );
+        } else {
+            adapter.log.debug('[SET DAILY START MINMAX] Process ' + args.temp + ' => no value found');
+            callback && callback();
+        }
+    });
+}
+
 // für gruppenwerte
 function copyValueRound(args, callback) {
     getValue(args.temp, (err, value) => {
@@ -912,7 +929,7 @@ function saveValues(timePeriod) {
     }
 
     // avg values sind nur Tageswerte, also nur bei 'day' auszuwerten
-    // Setzen auf den aktuellen Wert fehlt noch irgendwie ?
+    // Setzen auf den aktuellen Wert fehlt noch irgendwie ? jetz copyValueActMinMAx
     if (timePeriod === 'day' && typeObjects.avg) {
         for (let s = 0; s < typeObjects.avg.length; s++) {
             const id = typeObjects.avg[s];
@@ -942,7 +959,28 @@ function saveValues(timePeriod) {
                 },
                 callback: copyValue0
             });
-
+		
+	   // moving act temp to dayMin as starting point
+	   // hopefully the temp->save is already copied
+            tasks.push({
+                name: 'async',
+                args: {
+                    temp: id, //act value
+                    save: 'temp.avg.' + id + '.dayMin',
+                },
+                callback: copyValueActMinMAx
+            });
+		
+	   // moving act temp to dayMax as starting point
+	   // hopefully the temp->save is already copied
+            tasks.push({
+                name: 'async',
+                args: {
+                    temp: id, //act value
+                    save: 'temp.avg.' + id + '.dayMax',
+                },
+                callback: copyValueActMinMAx
+            });		
             // just reset the counter
             tasks.push({
                 name: 'async',
