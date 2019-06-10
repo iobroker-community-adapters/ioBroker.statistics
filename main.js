@@ -1109,7 +1109,18 @@ function setInitial(type, id) {
                                     }
                                 });
                             }
-                        } else {
+                        } else if (args.type === 'minmax') {
+			       adapter.getForeignState(args.trueId, (er, value) => { // get current value
+                                    if (value && value.val !== null) {
+                                        adapter.log.debug('[SET INITIAL] ' + args.trueId + ' object ' + args.trueId + ' ' + args.name);
+                                        adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + value.val);
+                                        setValue(args.id, value.val, callback);
+                                    } else {
+                                        callback();
+                                    }
+                                });
+				
+			} else {
                             if (args.name === 'last01') {
                                 adapter.getForeignState(args.trueId, (err, state) => { // get current value
                                     adapter.log.debug('[SET INITIAL] ' + args.trueId + ' object ' + args.trueId + ' ' + args.name);
