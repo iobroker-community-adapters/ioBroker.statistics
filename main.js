@@ -753,7 +753,7 @@ function newTimeCntValue(id, state) {
                 getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
                     let delta = last ? state.lc - last : 0;
 		    if (delta < 0) {delta = 0}
-		    else {delta = Math.round(delta/1000)}
+		    else {delta = parseInt(delta/1000)}
                     setValue('temp.timeCount.' + args.id + '.last01', state.lc, () => {
                         adapter.log.debug('[STATE CHANGE] 0->1 delta ' + delta + ' state ' + state.lc + ' last ' + last);
 
@@ -766,6 +766,7 @@ function newTimeCntValue(id, state) {
                                     },
                                     callback: (args, callback) => {
                                         getValue(args.id, (err, time) => {
+					    adapter.log.debug('[STATE CHANGE] 0->1 new val ' + ((time || 0) + delta) + ' for ' args.id );
                                             setValue(args.id, (time || 0) + delta, callback)
                                         })
                                     }
@@ -789,7 +790,7 @@ function newTimeCntValue(id, state) {
                 getValue('temp.timeCount.' + args.id + '.last01', (err, last) => { 
                     let delta = last ? state.lc - last : 0;
 		    if (delta < 0) {delta = 0}	
-	            else {delta = Math.round(delta/1000)}
+	            else {delta = parseInt(delta/1000)}
                     setValue('temp.timeCount.' + args.id + '.last10', state.lc, () => {
                         adapter.log.debug('[STATE CHANGE] 1->0 delta ' + delta + ' state ' + state.lc + ' last ' + last);
 
@@ -802,6 +803,7 @@ function newTimeCntValue(id, state) {
                                     },
                                     callback: (args, callback) => {
                                         getValue(args.id, (err, time) =>{
+					    adapter.log.debug('[STATE CHANGE] 1->0 new val ' + ((time || 0) + delta) + ' for ' args.id );
                                             setValue(args.id, (time || 0) + delta, callback)
                                         })
                                     }
