@@ -941,7 +941,7 @@ function saveValues(timePeriod) {
                     save: 'save.avg.' + id + '.dayMin',
 		    actual: id,
                 },
-                callback: copyValueActMinMAx
+                callback: copyValueActMinMax
             });
 
             tasks.push({
@@ -951,7 +951,7 @@ function saveValues(timePeriod) {
                     save: 'save.avg.' + id + '.dayMax',
 		    actual: id,
                 },
-                callback: copyValueActMinMAx
+                callback: copyValueActMinMax
             });
 
             tasks.push({
