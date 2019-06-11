@@ -766,6 +766,7 @@ function newTimeCntValue(id, state) {
                                     },
                                     callback: (args, callback) => {
                                         getValue(args.id, (err, time) => {
+					    adapter.log.error('0->1 getValue'+ err);
 					    adapter.log.debug('[STATE CHANGE] 0->1 new val ' + ((time || 0) + delta) + ' for ' args.id );
                                             setValue(args.id, (time || 0) + delta, callback)
                                         })
@@ -803,6 +804,7 @@ function newTimeCntValue(id, state) {
                                     },
                                     callback: (args, callback) => {
                                         getValue(args.id, (err, time) =>{
+					    adapter.log.error('1->0 getValue'+ err);
 					    adapter.log.debug('[STATE CHANGE] 1->0 new val ' + ((time || 0) + delta) + ' for ' args.id );
                                             setValue(args.id, (time || 0) + delta, callback)
                                         })
