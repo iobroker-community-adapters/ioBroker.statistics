@@ -845,7 +845,7 @@ function copyValueActMinMax(args, callback) {
 	    value = value || 0; // protect against NaN
             setValueStat(args.save, value, () => {
 		getValue(args.actual, (err, actual) => {
-		    adapter.log.debug('[SET DAILY START MINMAX] Process ' + args.temp + ' = ' + actual);
+		    adapter.log.debug('[SET DAILY START MINMAX] Process ' + args.temp + ' = ' + actual + ' from ' + args.actual);
 		    setValue(args.temp, actual, callback)
 	    	});
 	    });
