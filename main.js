@@ -1456,7 +1456,7 @@ function isFalse(val) {
 
 
 
-function newTimeCntValue(id, state) {
+function newTimeCntValue(id, state, callback) {
 
     const isStart = !tasks.length;
 
@@ -1773,6 +1773,8 @@ function newTimeCntValue(id, state) {
     }
 
     isStart && processTasks();
+
+    callback && callback();
 
 }
 
@@ -2176,7 +2178,21 @@ function saveValues(timePeriod) {
 
                 //aufruf von newTimeCntValue(id, "last") damit wird gleicher Zustand getriggert und last01 oder last10 zu Mitternacht neu gesetzt
 
-                getValue('temp.timeCount.' + id + '.last', (err, last) => {
+                adapter.getForeignState(adapter.namespace + '.temp.timeCount.' + id + '.last', (err, last) => { //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
+
+                    //evtl. status ermitteln und dann setForeignState nochmals den Zustand schreiben um anzutriggern und aktuelle Zeit zu verwenden (bzw. 00:00:00)
+
+                    let ts = new Date();
+
+                    ts.setMinutes(ts.getMinutes() - 1);
+
+                    ts.setSeconds(59);
+
+                    ts.setMilliseconds(0);
+
+                    last.lc = ts.getTime()
+
+                    adapter.log.debug('timecnt  ....'+ JSON.stringify(last))
 
                     newTimeCntValue(id, last, () => {
 
