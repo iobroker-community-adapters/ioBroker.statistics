@@ -38,11 +38,13 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 
 ## Changelog
 
-### 0.2.1
-* (foxthefox) correction, timecount value was milliseconds instead seconds, toFixed(0)
-* (foxthefox) other calculations with 2 decimal places after comma, toFixed(2)
+### 0.2.1 [2019-06-15]
+* (foxthefox) correction, timecount value was milliseconds instead seconds
+* (foxthefox) other calculations with 2 decimal places after comma
 * (foxthefox) min/max for day/week/month/quarter/year
 * (foxthefox) set of daily min/max starting point from actual value
+* (foxthefox) fixing the PR with dayMin 0 at 00:00
+* (foxthefox) improvement for timecount when receiving status updates and no real status change
 
 ### 0.2.0 [2019-01-08]
 * (foxthefox) compact mode
