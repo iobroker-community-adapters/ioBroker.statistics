@@ -19,6 +19,7 @@ choose from the following settings:
 * how long was status true/ON and how long false/OFF (Only for binary values)
 * delta between logged analogue values (Only for analog values)
 * daily max, min and average (Not for delta calculations)
+* min/max over the year
 * counts within 5 min and daily max, min and average of it (Not for delta calculations)
 * sum up of grouped values
 
