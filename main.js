@@ -726,7 +726,7 @@ function newTimeCntValue(id, state, callback) {
                             else { delta = parseInt(delta / 1000) }
                             adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                             setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.lc );
+                                adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.lc + '  '+ timeConverter(state.lc) );
                                 setValue('temp.timeCount.' + args.id + '.last01', state.lc, () => {
                                     adapter.log.debug('[STATE CHANGE] 0->1 delta ' + delta + ' state ' + timeConverter(state.lc) + ' last ' + timeConverter(last));
                                     for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
@@ -757,7 +757,7 @@ function newTimeCntValue(id, state, callback) {
                             else { delta = parseInt(delta / 1000) }
                             adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                             setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.lc );
+                                adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.lc + '  '+ timeConverter(state.lc));
                                 setValue('temp.timeCount.' + args.id + '.last01', state.lc, () => {
                                     adapter.log.debug('[STATE EQUAL] 1->1 delta ' + delta + ' state ' + timeConverter(state.lc) + ' last ' + timeConverter(last));
                                     for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
@@ -801,7 +801,7 @@ function newTimeCntValue(id, state, callback) {
                                 else { delta = parseInt(delta / 1000) }
                                 adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                                 setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.lc );
+                                    adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.lc + '  '+ timeConverter(state.lc));
                                     setValue('temp.timeCount.' + args.id + '.last10', state.lc, () => {
                                         adapter.log.debug('[STATE CHANGE] 1->0 delta ' + delta + ' state ' + timeConverter(state.lc) + ' last ' + timeConverter(last));
                                         for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
@@ -832,7 +832,7 @@ function newTimeCntValue(id, state, callback) {
                                 else { delta = parseInt(delta / 1000) }
                                 adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                                 setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.lc );
+                                    adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.lc + '  '+ timeConverter(state.lc) );
                                     setValue('temp.timeCount.' + args.id + '.last10', state.lc, () => {
                                         adapter.log.debug('[STATE EQUAL] 0->0 delta ' + delta + ' state ' + timeConverter(state.lc) + ' last ' + timeConverter(last));
                                         for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
