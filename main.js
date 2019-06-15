@@ -324,7 +324,8 @@ function newAvgValue(id, value) {
                 id,
                 value
             }, callback: (args, callback) => {
-                setValue('temp.avg.' + args.id + 'last', value); //memorize current value to have it available when date change for actual=starting point of new time frame
+                adapter.log.debug('[STATE CHANGE] new last for "' + 'temp.avg.' + args.id + '.last' + ': ' + value);
+                setValue('temp.avg.' + args.id + '.last', value); //memorize current value to have it available when date change for actual=starting point of new time frame
                 getValue('temp.avg.' + args.id + '.dayCount', (err, count) => {
                     count = count ? count + 1 : 1;
                     setValue('temp.avg.' + args.id + '.dayCount', count, () => {
@@ -370,7 +371,8 @@ function newMinMaxValue(id, value) {
                 id,
                 value
             }, callback: (args, callback) => {
-                setValue('temp.minmax.' + args.id + 'last', value); //memorize current value to have it available when date change for actual=starting point of new time frame
+                adapter.log.debug('[STATE CHANGE] new last for "' + 'temp.minmax.' + args.id + '.last' + ': ' + value);
+                setValue('temp.minmax.' + args.id + '.last', value); //memorize current value to have it available when date change for actual=starting point of new time frame
                 getValue('temp.minmax.' + args.id + '.yearMin', (err, tempMin) => {
                     if (tempMin === null || tempMin > value) {
                         setValue('temp.minmax.' + args.id + '.yearMin', value);
