@@ -700,7 +700,7 @@ function isTrue(val) {
 function isFalse(val) {
     return val === 0 || val === '0' || val === false || val === 'false' || val === 'off' || val === 'OFF' || val === 'standby'
 }
-function newTimeCntValue(id, state, callback) {
+function newTimeCntValue(id, state) {
     const isStart = !tasks.length;
     /*
     value with threshold or state
@@ -708,6 +708,7 @@ function newTimeCntValue(id, state, callback) {
     Addition of time
     Change to 0 at threshold 1 -> time between event since last 1
     Addition of time
+    no change but retrigger counts up the time of respective state
     */
     adapter.log.debug('[STATE CHANGE] timecount call ' + id + ' with ' + state.val); // !! val ist hier falsch da state komplett übergeben
     if (isTrue(state.val)) {
@@ -721,14 +722,14 @@ function newTimeCntValue(id, state, callback) {
                 getValue('temp.timeCount.' + args.id + '.last', (err, actual) => { //Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
                     if (!isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für OFF-Zeitraum von 1->0 bis jetzt 0->1
                         getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
-                            let delta = last ? state.lc - last : 0; // wenn last true dann delta, ansonsten 0
+                            let delta = last ? state.ts - last : 0; // wenn last true dann delta, ansonsten 0
                             if (delta < 0) { delta = 0 }
                             else { delta = parseInt(delta / 1000) }
                             adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                             setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.lc + '  '+ timeConverter(state.lc) );
-                                setValue('temp.timeCount.' + args.id + '.last01', state.lc, () => {
-                                    adapter.log.debug('[STATE CHANGE] 0->1 delta ' + delta + ' state ' + timeConverter(state.lc) + ' last ' + timeConverter(last));
+                                adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.ts + '  '+ timeConverter(state.ts) );
+                                setValue('temp.timeCount.' + args.id + '.last01', state.ts, () => {
+                                    adapter.log.debug('[STATE CHANGE] 0->1 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
                                     for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
                                         if (nameObjects.timeCount.temp[s].match(/\off\w+$/)) {
                                             tasks.push({
@@ -752,14 +753,14 @@ function newTimeCntValue(id, state, callback) {
                     }
                     else { // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update ON-Zeitraum von letzten 0->1 bis jetzt 0->1
                         getValue('temp.timeCount.' + args.id + '.last01', (err, last) => {
-                            let delta = last ? state.lc - last : 0; // wenn last true dann delta, ansonsten 0
+                            let delta = last ? state.ts - last : 0; // wenn last true dann delta, ansonsten 0
                             if (delta < 0) { delta = 0 }
                             else { delta = parseInt(delta / 1000) }
                             adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                             setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.lc + '  '+ timeConverter(state.lc));
-                                setValue('temp.timeCount.' + args.id + '.last01', state.lc, () => {
-                                    adapter.log.debug('[STATE EQUAL] 1->1 delta ' + delta + ' state ' + timeConverter(state.lc) + ' last ' + timeConverter(last));
+                                adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.ts + '  '+ timeConverter(state.ts));
+                                setValue('temp.timeCount.' + args.id + '.last01', state.ts, () => {
+                                    adapter.log.debug('[STATE EQUAL] 1->1 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
                                     for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
                                         if (nameObjects.timeCount.temp[s].match(/^\on\w+$/)) { // ^ wegen on in Month
                                             tasks.push({
@@ -796,14 +797,14 @@ function newTimeCntValue(id, state, callback) {
                     getValue('temp.timeCount.' + args.id + '.last', (err, actual) => { //Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
                         if (isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für ON-Zeitraum von 0->1 bis jetzt 1->0
                             getValue('temp.timeCount.' + args.id + '.last01', (err, last) => {
-                                let delta = last ? state.lc - last : 0;
+                                let delta = last ? state.ts - last : 0;
                                 if (delta < 0) { delta = 0 }
                                 else { delta = parseInt(delta / 1000) }
                                 adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                                 setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.lc + '  '+ timeConverter(state.lc));
-                                    setValue('temp.timeCount.' + args.id + '.last10', state.lc, () => {
-                                        adapter.log.debug('[STATE CHANGE] 1->0 delta ' + delta + ' state ' + timeConverter(state.lc) + ' last ' + timeConverter(last));
+                                    adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.ts + '  '+ timeConverter(state.ts));
+                                    setValue('temp.timeCount.' + args.id + '.last10', state.ts, () => {
+                                        adapter.log.debug('[STATE CHANGE] 1->0 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
                                         for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
                                             if (nameObjects.timeCount.temp[s].match(/^\on\w+$/)) { // on auch in Month drin, deswegen ^
                                                 tasks.push({
@@ -827,14 +828,14 @@ function newTimeCntValue(id, state, callback) {
                         }
                         else { // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update OFF-Zeitraum von letzten 1->0 bis jetzt 1->0
                             getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
-                                let delta = last ? state.lc - last : 0;
+                                let delta = last ? state.ts - last : 0;
                                 if (delta < 0) { delta = 0 }
                                 else { delta = parseInt(delta / 1000) }
                                 adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                                 setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.lc + '  '+ timeConverter(state.lc) );
-                                    setValue('temp.timeCount.' + args.id + '.last10', state.lc, () => {
-                                        adapter.log.debug('[STATE EQUAL] 0->0 delta ' + delta + ' state ' + timeConverter(state.lc) + ' last ' + timeConverter(last));
+                                    adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.ts + '  '+ timeConverter(state.ts) );
+                                    setValue('temp.timeCount.' + args.id + '.last10', state.ts, () => {
+                                        adapter.log.debug('[STATE EQUAL] 0->0 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
                                         for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
                                             if (nameObjects.timeCount.temp[s].match(/\off\w+$/)) {
                                                 tasks.push({
@@ -861,7 +862,6 @@ function newTimeCntValue(id, state, callback) {
             });
         }
     isStart && processTasks();
-    callback && callback();
 }
 // normales Umspeichern, temp wird auf 0 gesetzt!!
 function copyValue(args, callback) {
@@ -934,6 +934,26 @@ function copyValue1000(args, callback) {
         );
     });
 }
+
+function setTimeCountMidnight() {
+    if (typeObjects.timeCount) {
+        for (let s = 0; s < typeObjects.timeCount.length; s++) {
+            const id = typeObjects.timeCount[s];
+            //bevor umgespeichert wird, muß noch ein Aufruf mit actual erfolgen, damit die restliche Zeit vom letzten Signalwechsel bis Mitternacht erfolgt
+            //aufruf von newTimeCntValue(id, "last") damit wird gleicher Zustand getriggert und last01 oder last10 zu Mitternacht neu gesetzt
+            adapter.getForeignState(adapter.namespace + '.temp.timeCount.' + id + '.last', (err, last) => { //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
+                //evtl. status ermitteln und dann setForeignState nochmals den Zustand schreiben um anzutriggern und aktuelle Zeit zu verwenden (bzw. 00:00:00)
+                let ts = new Date();
+                //ts.setMinutes(ts.getMinutes() - 1);
+                //ts.setSeconds(59);
+                //ts.setMilliseconds(0);
+                last.ts = ts.getTime()
+                newTimeCntValue(id, last);
+            });
+        }
+    }
+}
+
 
 const column = ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'];
 const copyToSave = ['count', 'sumCount', 'sumGroup', 'sumDelta'];
@@ -1050,38 +1070,24 @@ function saveValues(timePeriod) {
     // timeCount hat andere Objektbezeichnungen und deswegen kann day aus timeperiod nicht benutzt werden
     // day erst ab 2ter Stelle im Array (ohne 15min und hour soll benutzt werden) -> also (day > 1) und [day-2]
     if (day > 1) {
-        if (typeObjects.timeCount) { // !! einfach nur timeCount ohne timePeriod??? damit nicht stündlich die 
+        if (typeObjects.timeCount) {
             for (let s = 0; s < typeObjects.timeCount.length; s++) {
                 const id = typeObjects.timeCount[s];
-                //bevor umgespeichert wird, muß noch ein Aufruf mit actual erfolgen, damit die restliche Zeit vom letzten Signalwechsel bis Mitternacht erfolgt
-                //aufruf von newTimeCntValue(id, "last") damit wird gleicher Zustand getriggert und last01 oder last10 zu Mitternacht neu gesetzt
-                adapter.getForeignState(adapter.namespace + '.temp.timeCount.' + id + '.last', (err, last) => { //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
-                    //evtl. status ermitteln und dann setForeignState nochmals den Zustand schreiben um anzutriggern und aktuelle Zeit zu verwenden (bzw. 00:00:00)
-                    let ts = new Date();
-                    ts.setMinutes(ts.getMinutes() - 1);
-                    ts.setSeconds(59);
-                    ts.setMilliseconds(0);
-                    last.lc = ts.getTime()
-                    adapter.log.debug('timecnt  ....' + JSON.stringify(last))
-                    newTimeCntValue(id, last, () => {
-                        //ursprung ohne Mitternachtsaufruf
-                        tasks.push({
-                            name: 'async',
-                            args: {
-                                temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2], // 0 ist onDay
-                                save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2],
-                            },
-                            callback: copyValue1000
-                        });
-                        tasks.push({
-                            name: 'async',
-                            args: {
-                                temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3], // +5 ist offDay
-                                save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3],
-                            },
-                            callback: copyValue1000
-                        });
-                    });
+                tasks.push({
+                    name: 'async',
+                    args: {
+                        temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2], // 0 ist onDay
+                        save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2],
+                    },
+                    callback: copyValue1000
+                });
+                tasks.push({
+                    name: 'async',
+                    args: {
+                        temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3], // +5 ist offDay
+                        save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3],
+                    },
+                    callback: copyValue1000
                 });
             }
         }
@@ -1686,7 +1692,15 @@ function main() {
         true,
         timezone
     );
-
+    
+    // daily um 23:59:58
+    crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',                       
+        () => setTimeCountMidnight(),
+        () => adapter.log.debug('stopped timecount midnight trigger'), // This function is executed when the job stops
+        true,
+        timezone
+    );
+    
     // daily um 00:00
     crons.daySave = new CronJob('0 0 * * *',
         () => saveValues('day'),
