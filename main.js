@@ -255,7 +255,7 @@ function fiveMin() {
                                         adapter.log.debug('[STATE CHANGE] fiveMin; of : ' + args.id + ' with  min: ' + min + ' max: ' + max + ' actual: ' + actual + ' old: ' + old + ' delta: ' + delta);
                                         setValueStat('temp.fiveMin.' + args.id + '.mean5Min', delta, () => {
                                             if (max === null || delta > max) {
-                                                adapter.log.debug('[STATE CHANGE] new Max ' + 'temp.fiveMin.' + args.id + '.dayMax5Min'+ ': ' + delta));
+                                                adapter.log.debug('[STATE CHANGE] new Max ' + 'temp.fiveMin.' + args.id + '.dayMax5Min'+ ': ' + delta);
                                                 setValueStat('temp.fiveMin.' + args.id + '.dayMax5Min', delta, callback);
                                                 callback = null;
                                             }
@@ -722,7 +722,7 @@ function newTimeCntValue(id, state, callback) {
                             let delta = last ? state.lc - last : 0; // wenn last true dann delta, ansonsten 0
                             if (delta < 0) { delta = 0 }
                             else { delta = parseInt(delta / 1000) }
-                            adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val));
+                            adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                             setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                 adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.lc );
                                 setValue('temp.timeCount.' + args.id + '.last01', state.lc, () => {
@@ -753,7 +753,7 @@ function newTimeCntValue(id, state, callback) {
                             let delta = last ? state.lc - last : 0; // wenn last true dann delta, ansonsten 0
                             if (delta < 0) { delta = 0 }
                             else { delta = parseInt(delta / 1000) }
-                            adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val));
+                            adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                             setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                 adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.lc );
                                 setValue('temp.timeCount.' + args.id + '.last01', state.lc, () => {
@@ -797,7 +797,7 @@ function newTimeCntValue(id, state, callback) {
                                 let delta = last ? state.lc - last : 0;
                                 if (delta < 0) { delta = 0 }
                                 else { delta = parseInt(delta / 1000) }
-                                adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val));
+                                adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                                 setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                     adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.lc );
                                     setValue('temp.timeCount.' + args.id + '.last10', state.lc, () => {
@@ -828,7 +828,7 @@ function newTimeCntValue(id, state, callback) {
                                 let delta = last ? state.lc - last : 0;
                                 if (delta < 0) { delta = 0 }
                                 else { delta = parseInt(delta / 1000) }
-                                adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val));
+                                adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                                 setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                     adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.lc );
                                     setValue('temp.timeCount.' + args.id + '.last10', state.lc, () => {
