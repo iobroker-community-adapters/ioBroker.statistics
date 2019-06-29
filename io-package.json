@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "statistics",
-        "version": "0.2.1",
+        "version": "0.2.2",
         "news": {
+              "0.2.2": {
+                "en": "adapter warns when invalid values arrive",
+                "de": "Der Adapter warnt, wenn ungültige Werte eintreffen",
+                "ru": "адаптер предупреждает, когда поступают недопустимые значения",
+                "pt": "adaptador avisa quando valores inválidos chegam",
+                "nl": "adapter waarschuwt wanneer ongeldige waarden aankomen",
+                "fr": "l'adaptateur avertit quand des valeurs invalides arrivent",
+                "it": "adattatore avvisa quando arrivano valori non validi",
+                "es": "adaptador advierte cuando llegan valores inválidos",
+                "pl": "adapter ostrzega, gdy nadejdą nieprawidłowe wartości",
+                "zh-cn": "适配器在无效值到达时发出警告"
+              },
               "0.2.1": {
                 "en": "correction of timecount",
                 "de": "Korrektur der Zeitzählung",
