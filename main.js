@@ -122,7 +122,7 @@ function startAdapter(options) {
             adapter.log.debug('[STATE CHANGE] stateChange => ' + state.val + ' [' + state.ack + ']');
             
             // you can use the ack flag to detect if it is status (true) or command (false)
-            if (state && state.ack) {
+            if (state && state.ack && (state.val !== null) && (state.val !== undefined) && (state.val !== NaN) ) {
                 if (typeObjects.sumDelta && typeObjects.sumDelta.indexOf(id) !== -1) {
                     newSumDeltaValue(id, state.val);
                 } else
