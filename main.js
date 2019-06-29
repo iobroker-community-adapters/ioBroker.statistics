@@ -122,23 +122,28 @@ function startAdapter(options) {
             adapter.log.debug('[STATE CHANGE] stateChange => ' + state.val + ' [' + state.ack + ']');
             
             // you can use the ack flag to detect if it is status (true) or command (false)
-            if (state && state.ack && (state.val !== null) && (state.val !== undefined) && (state.val !== NaN) ) {
-                if (typeObjects.sumDelta && typeObjects.sumDelta.indexOf(id) !== -1) {
-                    newSumDeltaValue(id, state.val);
-                } else
-                    if (typeObjects.avg && typeObjects.avg.indexOf(id) !== -1) {
-                        newAvgValue(id, state.val);
+            if (state && state.ack ) {
+                if( (state.val === null) && (state.val === undefined) && (state.val === NaN) ){
+                    adapter.log.error('[STATE CHANGE] wrong value => ' + state.val + ' on ' + id ' check your other adapters ');   
+                }
+                else{
+                    if (typeObjects.sumDelta && typeObjects.sumDelta.indexOf(id) !== -1) {
+                        newSumDeltaValue(id, state.val);
+                    } else
+                        if (typeObjects.avg && typeObjects.avg.indexOf(id) !== -1) {
+                            newAvgValue(id, state.val);
+                        }
+                    if (typeObjects.minmax && typeObjects.minmax.indexOf(id) !== -1) {
+                        newMinMaxValue(id, state.val);
                     }
-                if (typeObjects.minmax && typeObjects.minmax.indexOf(id) !== -1) {
-                    newMinMaxValue(id, state.val);
+                    if (typeObjects.count && typeObjects.count.indexOf(id) !== -1) {
+                        newCountValue(id, state.val);
+                    }
+                    if (typeObjects.timeCount && typeObjects.timeCount.indexOf(id) !== -1) {
+                        newTimeCntValue(id, state);
+                    }
+                    // 5min is treated cyclically
                 }
-                if (typeObjects.count && typeObjects.count.indexOf(id) !== -1) {
-                    newCountValue(id, state.val);
-                }
-                if (typeObjects.timeCount && typeObjects.timeCount.indexOf(id) !== -1) {
-                    newTimeCntValue(id, state);
-                }
-                // 5min is treated cyclically
             }
         },
         /** for future use, when message is needed
