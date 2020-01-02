@@ -44,7 +44,7 @@ const nameObjects = {
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
     },
-    minmax: { // Min/Max timeframe 
+    minmax: { // Min/Max timeframe
         save: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax'],
         temp: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax', 'last']
     },
@@ -100,7 +100,7 @@ function startAdapter(options) {
                     setupObjects([id], null, undefined, true);
                     adapter.log.debug('saved typeObjects update1 ' + JSON.stringify(typeObjects));
                 } else {
-                    //adapter.log.info('ganz neu ' + id);  
+                    //adapter.log.info('ganz neu ' + id);
                     statDP[id] = obj.common.custom[adapter.namespace];
                     setupObjects([id]);
                     adapter.log.info('enabled logging of ' + id);
@@ -120,11 +120,11 @@ function startAdapter(options) {
             // Warning, state can be null if it was deleted
             adapter.log.debug('[STATE CHANGE] ======================= ' + id + ' =======================');
             adapter.log.debug('[STATE CHANGE] stateChange => ' + state.val + ' [' + state.ack + ']');
-            
+
             // you can use the ack flag to detect if it is status (true) or command (false)
             if (state && state.ack ) {
                 if( (state.val === null) || (state.val === undefined) || (state.val === NaN) ){
-                    adapter.log.warn('[STATE CHANGE] wrong value => ' + state.val + ' on ' + id + ' => check the other adapter where value comes from ');   
+                    adapter.log.warn('[STATE CHANGE] wrong value => ' + state.val + ' on ' + id + ' => check the other adapter where value comes from ');
                 }
                 else{
                     if (typeObjects.sumDelta && typeObjects.sumDelta.indexOf(id) !== -1) {
@@ -187,7 +187,7 @@ function removeObject(id) { //interne states[id] auch löschen?
         if (!groups.hasOwnProperty(g)) continue;
         const pos = groups[g].items.indexOf(id);
         if (pos !== -1) {
-            adapter.log.debug('found ' + id + ' on pos ' + groups[g].indexOf(id) + ' of ' + g + ' for removal');
+            adapter.log.debug('found ' + id + ' on pos ' + groups[g].items.indexOf(id) + ' of ' + g + ' for removal');
             groups[g].items.splice(pos, 1);
         }
     }
@@ -283,7 +283,7 @@ function fiveMin() {
     isStart && processTasks();
 }
 
-// cached function 
+// cached function
 function getValue(id, callback) {
     if (states.hasOwnProperty(id)) {
         callback(null, states[id]);
@@ -299,7 +299,7 @@ function getValue(id, callback) {
     }
 }
 
-// cached function 
+// cached function
 function setValueStat(id, val, callback) {
     let ts = new Date();
     ts.setMinutes(ts.getMinutes() - 1);
@@ -514,7 +514,8 @@ function newCountValue(id, value) {
                                                 if (ts) {
                                                     value = checkValue(value || 0, ts, args.id, args.type);
                                                 }
-                                                value = Math.round((((value || 0) + args.delta) * 10000) / 10000);
+                                                //value auf 4 stellen hinter dem Komma festgelegt
+                                                value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
                                                 adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                                 setValue(args.id, value, callback);
                                             })
@@ -617,6 +618,8 @@ function newSumDeltaValue(id, value) {
                         delta = value; // Difference between last value and overflow is error rate
                     }
                 }
+                //delta auf 4 stellen hinter dem Komma begrenzen
+                delta = Math.round(delta * 10000) / 10000;
                 tasks.push({
                     name: 'async',
                     args: {
@@ -639,7 +642,8 @@ function newSumDeltaValue(id, value) {
                                 if (ts) {
                                     value = checkValue(value, ts, args.id, args.type);
                                 }
-                                value = (value || 0) + args.delta;
+                                //value auf 4 stellen hinter dem Komma begrenzen
+                                value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
                                 adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                 setValue(args.id, value, callback);
                             })
@@ -669,7 +673,8 @@ function newSumDeltaValue(id, value) {
                                     if (ts) {
                                         value = checkValue(value || 0, ts, args.id, args.type);
                                     }
-                                    value = Math.round((((value || 0) + args.delta) * 10000) / 10000);
+                                    //value auf 4 stellen hinter dem Komma festgelegt
+                                    value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
                                     adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                     setValue(args.id, value, callback);
                                 })
@@ -745,7 +750,7 @@ function newTimeCntValue(id, state) {
                                                 callback: (args, callback) => {
                                                     getValue(args.id, (err, time) => {
                                                         adapter.log.debug('[STATE CHANGE] 0->1 new val ' + args.id + ': ' + ((time || 0) + delta));
-                                                        setValue(args.id, (time || 0) + delta, callback) 
+                                                        setValue(args.id, (time || 0) + delta, callback)
                                                     })
                                                 }
                                             });
@@ -1697,15 +1702,15 @@ function main() {
         true,
         timezone
     );
-    
+
     // daily um 23:59:58
-    crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',                       
+    crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
         () => setTimeCountMidnight(),
         () => adapter.log.debug('stopped timecount midnight trigger'), // This function is executed when the job stops
         true,
         timezone
     );
-    
+
     // daily um 00:00
     crons.daySave = new CronJob('0 0 * * *',
         () => saveValues('day'),
