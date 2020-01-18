@@ -146,27 +146,6 @@ function startAdapter(options) {
                 }
             }
         },
-        /** for future use, when message is needed
-            // Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
-            message: obj => {
-                if (typeof obj === 'object' && obj.message) {
-                    if (obj.command === 'export') {
-                        // e.g. send email or pushover or whatever
-                        console.log('got export command');
-                        // Send response in callback if required
-                        if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-                    } else
-                    if (obj.command === 'import') {
-                        // e.g. send email or pushover or whatever
-                        console.log('got import command');
-                        // Send response in callback if required
-                        if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-                    } else if (obj.command === 'test') {
-                        saveValues(obj.message || '15Min');
-                    }
-                }
-            },
-         **/
         // is called when databases are connected and adapter received configuration.
         // start here!
         ready: () => { main() }
