@@ -38,7 +38,7 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 * specify the configuration in the settings of the state (admin => objects)
 
 ## Changelog
-* adapter.getObjects
+* adapter.getObjectView -> controller > 2.0
 
 ### 0.2.3 [2020-01-02]
 * (HIRSCH-DE) bugfix main.js
