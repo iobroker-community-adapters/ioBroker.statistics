@@ -1195,42 +1195,42 @@ function setInitial(type, id) {
                             if (args.name === 'last01') {
                                 adapter.getForeignState(args.trueId, (err, state) => { // get current value
                                     adapter.log.debug('[SET INITIAL] ' + args.trueId + ' object ' + args.trueId + ' ' + args.name);
-                                    adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + state.lc);
+                                    adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + (state && state.lc));
                                     if (isFalse(state && state.val)) {
                                         adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is false und last 01 now as lastChange');
                                         setValue(args.id, Date.now(), callback);
                                         setValue(args.id, Date.now(), callback);
                                     } else
-                                        if (isTrue(state && state.val)) {
-                                            adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is false und last 01  get old time');
-                                            setValue(args.id, state.lc, callback);
-                                        } else {
-                                            adapter.log.error('[SET INITIAL] ' + args.trueId + ' unknown state to be evaluated in timeCount');
-                                            callback();
-                                        }
+                                    if (isTrue(state && state.val)) {
+                                        adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is false und last 01  get old time');
+                                        setValue(args.id, state.lc, callback);
+                                    } else {
+                                        adapter.log.error('[SET INITIAL] ' + args.trueId + ' unknown state to be evaluated in timeCount');
+                                        callback();
+                                    }
                                 });
                             } else
                                 if (args.name === 'last10') {
                                     adapter.getForeignState(args.trueId, (err, state) => { // get actual values
                                         adapter.log.debug('[SET INITIAL] ' + args.trueId + ' objects ' + args.trueId + ' ' + args.name);
-                                        adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + state.lc);
+                                        adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + (state && state.lc));
                                         if (isFalse(state && state.val)) {
                                             setValue(args.id, state.lc, callback);
                                             adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is false and last 10 get old time');
                                         } else
-                                            if (isTrue(state && state.val)) {
-                                                setValue(args.id, Date.now(), callback);
-                                                adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is true and last 10 get now as lastChange');
-                                            } else {
-                                                adapter.log.error('[SET INITIAL] ' + args.trueId + ' unknown state to be evaluated in timeCount');
-                                                callback();
-                                            }
+                                        if (isTrue(state && state.val)) {
+                                            setValue(args.id, Date.now(), callback);
+                                            adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is true and last 10 get now as lastChange');
+                                        } else {
+                                            adapter.log.error('[SET INITIAL] ' + args.trueId + ' unknown state to be evaluated in timeCount');
+                                            callback();
+                                        }
                                     });
                                 } else
                                     if (args.name === 'lastPulse') {
                                         adapter.getForeignState(args.trueId, (err, state) => { // get actual values
                                             adapter.log.debug('[SET INITIAL] ' + args.trueId + ' objects ' + args.trueId + ' ' + args.name);
-                                            adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + state.lc);
+                                            adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + (state && state.lc));
                                             if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
                                                 setValue(args.id, state.val, callback);
                                                 adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state was ' + state.val + ' and lastPulse get old time');
@@ -1243,7 +1243,7 @@ function setInitial(type, id) {
                                         if (args.name === 'last') { // speichern des aktuellen Zustandes für timecount, sofern mit poll gleiche Zustände geholt werden und keinen Signalwechsel darstellen
                                             adapter.getForeignState(args.trueId, (err, state) => { // get actual value for the state in timecount
                                                 adapter.log.debug('[SET INITIAL] ' + args.trueId + ' objects ' + args.trueId + ' ' + args.name);
-                                                adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + state.lc);
+                                                adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + (state && state.lc));
                                                 if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
                                                     setValue(args.id, state.val, callback);
                                                     adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is ' + state.val + ' and set to last ');
