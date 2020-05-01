@@ -41,9 +41,11 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 ### 1.0.0 (2020-05-01)
 * (bluefox) Caught error if structure is invalid
 * (bluefox) Added sentry
+* adapter.getObjectView -> controller > 2.0
 
 ### 0.2.3 (2020-01-02)
 * (HIRSCH-DE) bugfix main.js
+* (foxthefox) delete messagehandler
 
 ### 0.2.2 (2019-06-29)
 * (foxthefox) adapter logs a warning when invalid values arrive and cancels further processing
@@ -88,4 +90,5 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 The MIT License (MIT)
 
 Copyright (c) 2018-2020 foxthefox <foxthefox@wysiwis.net>,
+
 Copyright (c) 2018-2020 bluefox <dogafox@gmail.com>
