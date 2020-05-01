@@ -723,8 +723,11 @@ function newTimeCntValue(id, state) {
                     if (!isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für OFF-Zeitraum von 1->0 bis jetzt 0->1
                         getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
                             let delta = last ? state.ts - last : 0; // wenn last true dann delta, ansonsten 0
-                            if (delta < 0) { delta = 0 }
-                            else { delta = Math.floor(delta / 1000); }
+                            if (delta < 0) {
+                                delta = 0;
+                            } else {
+                                delta = Math.floor(delta / 1000);
+                            }
                             adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                             setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                 adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.ts + '  '+ timeConverter(state.ts) );
