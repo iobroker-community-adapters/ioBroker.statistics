@@ -38,6 +38,9 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 * specify the configuration in the settings of the state (admin => objects)
 
 ## Changelog
+### 1.0.0 [2020-05-01]
+* (bluefox) Caught error if structure is invalid
+* (bluefox) Added sentry
 
 ### 0.2.3 [2020-01-02]
 * (HIRSCH-DE) bugfix main.js
@@ -84,5 +87,5 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 
 The MIT License (MIT)
 
-Copyright (c) 2018 - 2019 foxthefox <foxthefox@wysiwis.net>,
-                   bluefox <dogafox@gmail.com>
+Copyright (c) 2018-2020 foxthefox <foxthefox@wysiwis.net>,
+Copyright (c) 2018-2020 bluefox <dogafox@gmail.com>

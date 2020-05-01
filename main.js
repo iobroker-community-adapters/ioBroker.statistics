@@ -169,28 +169,35 @@ function startAdapter(options) {
          **/
         // is called when databases are connected and adapter received configuration.
         // start here!
-        ready: () => { main() }
+        ready: () => main()
     });
     adapter = new utils.Adapter(options);
     return adapter;
-};
-function removeObject(id) { //interne states[id] auch löschen?
-    for (const key in typeObjects) {
-        if (!typeObjects.hasOwnProperty(key)) continue;
-        const pos = typeObjects[key].indexOf(id);
-        if (pos !== -1) {
-            adapter.log.debug('found ' + id + ' on pos ' + typeObjects[key].indexOf(id) + ' of ' + key + ' for removal');
-            typeObjects[key].splice(pos, 1);
+}
+
+function removeObject(id) { // interne states[id] auch löschen?
+    Object.keys(typeObjects).forEach(key => {
+        if (typeObjects[key] && Array.isArray(typeObjects[key])) {
+            const pos = typeObjects[key].indexOf(id);
+            if (pos !== -1) {
+                adapter.log.debug('found ' + id + ' on pos ' + typeObjects[key].indexOf(id) + ' of ' + key + ' for removal');
+                typeObjects[key].splice(pos, 1);
+            }
+        } else {
+            adapter.log.error(`Invalid structure of groups: ${JSON.stringify(typeObjects[key])}`);
         }
-    }
-    for (const g in groups) {
-        if (!groups.hasOwnProperty(g)) continue;
-        const pos = groups[g].items.indexOf(id);
-        if (pos !== -1) {
-            adapter.log.debug('found ' + id + ' on pos ' + groups[g].items.indexOf(id) + ' of ' + g + ' for removal');
-            groups[g].items.splice(pos, 1);
+    });
+    Object.keys(groups).forEach(g => {
+        if (groups[g] && groups[g].items && Array.isArray(groups[g].items)) {
+            const pos = groups[g].items.indexOf(id);
+            if (pos !== -1) {
+                adapter.log.debug('found ' + id + ' on pos ' + groups[g].items.indexOf(id) + ' of ' + g + ' for removal');
+                groups[g].items.splice(pos, 1);
+            }
+        } else {
+            adapter.log.error(`Invalid structure of groups: ${JSON.stringify(groups[g].items)}`);
         }
-    }
+    });
 }
 
 // to be removed in compact? process.on('SIGINT', stop);

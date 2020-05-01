@@ -7,3 +7,10 @@ node_modules
 test
 .travis.yml
 appveyor.yml
+.github
+.gitignore
+.idea
+.vscode
+iob_npm.done
+lib/create.js
+lib/save_reset.js
