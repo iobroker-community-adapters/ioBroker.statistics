@@ -1,9 +1,21 @@
 {
     "common": {
         "name": "statistics",
-        "version": "0.2.2",
+        "version": "1.0.0",
         "news": {
-              "0.2.2": {
+            "1.0.0": {
+                "en": "Caught error if structure is invalid",
+                "de": "Fehler aufgetreten, wenn die Struktur ungültig ist",
+                "ru": "Ошибка, если структура неверна",
+                "pt": "Erro detectado se a estrutura for inválida",
+                "nl": "Gevangen fout als structuur ongeldig is",
+                "fr": "Erreur détectée si la structure n'est pas valide",
+                "it": "Errore rilevato se la struttura non è valida",
+                "es": "Error detectado si la estructura no es válida",
+                "pl": "Wystąpił błąd, jeśli struktura jest nieprawidłowa",
+                "zh-cn": "如果结构无效则捕获错误"
+            },
+            "0.2.2": {
                 "en": "adapter warns when invalid values arrive",
                 "de": "Der Adapter warnt, wenn ungültige Werte eintreffen",
                 "ru": "адаптер предупреждает, когда поступают недопустимые значения",
@@ -14,8 +26,8 @@
                 "es": "adaptador advierte cuando llegan valores inválidos",
                 "pl": "adapter ostrzega, gdy nadejdą nieprawidłowe wartości",
                 "zh-cn": "适配器在无效值到达时发出警告"
-              },
-              "0.2.1": {
+            },
+            "0.2.1": {
                 "en": "correction of timecount",
                 "de": "Korrektur der Zeitzählung",
                 "ru": "исправление времени",
@@ -26,8 +38,8 @@
                 "es": "corrección de la cuenta de tiempo",
                 "pl": "korekta licznika czasu",
                 "zh-cn": "修正时间计数"
-              },
-              "0.2.0": {
+            },
+            "0.2.0": {
                 "en": "compact mode added",
                 "de": "Kompaktmodus hinzugefügt",
                 "ru": "добавлен компактный режим",
@@ -37,8 +49,8 @@
                 "it": "modalità compatta aggiunta",
                 "es": "modo compacto agregado",
                 "pl": "dodano tryb kompaktowy"
-              },
-              "0.1.4": {
+            },
+            "0.1.4": {
                 "en": "license in io-package.json, Readme updated",
                 "de": "Lizenz in io-package.json, Liesmich aktualisiert",
                 "ru": "лицензия в io-package.json, обновленный файл Readme",
@@ -48,8 +60,8 @@
                 "it": "licenza in io-package.json, Readme aggiornato",
                 "es": "licencia en io-package.json, Readme actualizado",
                 "pl": "licencja w pliku io-package.json, plik Readme zaktualizowany"
-              },
-              "0.1.3": {
+            },
+            "0.1.3": {
                 "en": "german description and error corrections",
                 "de": "deutsche Beschreibung und Fehlerkorrekturen",
                 "ru": "немецкое описание и исправления ошибок",
@@ -59,7 +71,7 @@
                 "it": "descrizione tedesca e correzioni di errori",
                 "es": "Descripción alemana y correcciones de errores.",
                 "pl": "niemiecki opis i korekty błędów"
-              },
+            },
             "0.1.2": {
                 "en": "adminv3 implemented",
                 "de": "adminv3 implementiert",
@@ -114,9 +126,9 @@
         "compact": true,
         "supportCustoms": true,
         "dependencies": [
-          {
-            "admin": ">=3.5.10"
-          }
+            {
+                "admin": ">=3.5.10"
+            }
         ],
         "authors": [
             {
@@ -127,9 +139,13 @@
                 "name": "bluefox",
                 "email": "dogafox@gmail.com"
             }
-        ]
+        ],
+        "plugins": {
+            "sentry": {
+                "dsn": "https://baf1b0da59cc43e092c500507d3a448d@sentry.iobroker.net/72"
+            }
+        }
     },
-
     "native": {
         "impUnitPerImpulse": 1,
         "impFactor": 1,
@@ -155,7 +171,7 @@
             "language": "javascript",
             "views": {
                 "state": {
-                    "map": "function(doc) { if (doc.type==='state' && (doc.common.custom || doc.common.history)) emit(doc._id, doc.common.custom || doc.common.history) }"
+                    "map": "function(doc) { if (doc.type === 'state' && doc.common.custom) emit(doc._id, doc.common.custom) }"
                 }
             }
         }

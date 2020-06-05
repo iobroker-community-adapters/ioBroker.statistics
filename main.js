@@ -123,23 +123,25 @@ function startAdapter(options) {
 
             // you can use the ack flag to detect if it is status (true) or command (false)
             if (state && state.ack ) {
-                if( (state.val === null) || (state.val === undefined) || (state.val === NaN) ){
+                if (!state.val && state.val !== 0) {
                     adapter.log.warn('[STATE CHANGE] wrong value => ' + state.val + ' on ' + id + ' => check the other adapter where value comes from ');
-                }
-                else{
-                    if (typeObjects.sumDelta && typeObjects.sumDelta.indexOf(id) !== -1) {
+                } else {
+                    if (typeObjects.sumDelta && typeObjects.sumDelta.includes(id)) {
                         newSumDeltaValue(id, state.val);
                     } else
-                        if (typeObjects.avg && typeObjects.avg.indexOf(id) !== -1) {
-                            newAvgValue(id, state.val);
-                        }
-                    if (typeObjects.minmax && typeObjects.minmax.indexOf(id) !== -1) {
+                    if (typeObjects.avg && typeObjects.avg.includes(id)) {
+                        newAvgValue(id, state.val);
+                    }
+
+                    if (typeObjects.minmax && typeObjects.minmax.includes(id)) {
                         newMinMaxValue(id, state.val);
                     }
-                    if (typeObjects.count && typeObjects.count.indexOf(id) !== -1) {
+
+                    if (typeObjects.count && typeObjects.count.includes(id)) {
                         newCountValue(id, state.val);
                     }
-                    if (typeObjects.timeCount && typeObjects.timeCount.indexOf(id) !== -1) {
+
+                    if (typeObjects.timeCount && typeObjects.timeCount.includes(id)) {
                         newTimeCntValue(id, state);
                     }
                     // 5min is treated cyclically
@@ -148,28 +150,35 @@ function startAdapter(options) {
         },
         // is called when databases are connected and adapter received configuration.
         // start here!
-        ready: () => { main() }
+        ready: () => main()
     });
     adapter = new utils.Adapter(options);
     return adapter;
-};
-function removeObject(id) { //interne states[id] auch löschen?
-    for (const key in typeObjects) {
-        if (!typeObjects.hasOwnProperty(key)) continue;
-        const pos = typeObjects[key].indexOf(id);
-        if (pos !== -1) {
-            adapter.log.debug('found ' + id + ' on pos ' + typeObjects[key].indexOf(id) + ' of ' + key + ' for removal');
-            typeObjects[key].splice(pos, 1);
+}
+
+function removeObject(id) { // interne states[id] auch löschen?
+    Object.keys(typeObjects).forEach(key => {
+        if (typeObjects[key] && Array.isArray(typeObjects[key])) {
+            const pos = typeObjects[key].indexOf(id);
+            if (pos !== -1) {
+                adapter.log.debug('found ' + id + ' on pos ' + typeObjects[key].indexOf(id) + ' of ' + key + ' for removal');
+                typeObjects[key].splice(pos, 1);
+            }
+        } else {
+            adapter.log.error(`Invalid structure of groups: ${JSON.stringify(typeObjects[key])}`);
         }
-    }
-    for (const g in groups) {
-        if (!groups.hasOwnProperty(g)) continue;
-        const pos = groups[g].items.indexOf(id);
-        if (pos !== -1) {
-            adapter.log.debug('found ' + id + ' on pos ' + groups[g].items.indexOf(id) + ' of ' + g + ' for removal');
-            groups[g].items.splice(pos, 1);
+    });
+    Object.keys(groups).forEach(g => {
+        if (groups[g] && groups[g].items && Array.isArray(groups[g].items)) {
+            const pos = groups[g].items.indexOf(id);
+            if (pos !== -1) {
+                adapter.log.debug('found ' + id + ' on pos ' + groups[g].items.indexOf(id) + ' of ' + g + ' for removal');
+                groups[g].items.splice(pos, 1);
+            }
+        } else {
+            adapter.log.error(`Invalid structure of groups: ${JSON.stringify(groups[g].items)}`);
         }
-    }
+    });
 }
 
 // to be removed in compact? process.on('SIGINT', stop);
@@ -299,7 +308,8 @@ function newAvgValue(id, value) {
     /**
      * Comparison between last min / max and now transmitted value
      */
-    value = parseFloat(value) // || 0; if NaN we should not put a zero inside, better to skip everything
+    value = parseFloat(value); // || 0; if NaN we should not put a zero inside, better to skip everything
+
     if (!isNaN(value)) {
         adapter.log.debug('[STATE CHANGE] avg call: ' + id + ' value ' + value);
         tasks.push({
@@ -493,7 +503,7 @@ function newCountValue(id, value) {
                                                 if (ts) {
                                                     value = checkValue(value || 0, ts, args.id, args.type);
                                                 }
-                                                //value auf 4 stellen hinter dem Komma festgelegt
+                                                // value auf 4 stellen hinter dem Komma festgelegt
                                                 value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
                                                 adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                                 setValue(args.id, value, callback);
@@ -588,7 +598,7 @@ function newSumDeltaValue(id, value) {
                 if (old === null) {
                     return callback();
                 }
-                let delta = old !== null ? value - old : 0;
+                let delta = value - old;
                 if (delta < 0) {
                     if (statDP[args.id].sumIgnoreMinus) {
                         delta = 0;
@@ -597,7 +607,7 @@ function newSumDeltaValue(id, value) {
                         delta = value; // Difference between last value and overflow is error rate
                     }
                 }
-                //delta auf 4 stellen hinter dem Komma begrenzen
+                // delta auf 4 stellen hinter dem Komma begrenzen
                 delta = Math.round(delta * 10000) / 10000;
                 tasks.push({
                     name: 'async',
@@ -607,6 +617,7 @@ function newSumDeltaValue(id, value) {
                     },
                     callback: (args, callback) => setValue(args.id, args.delta, callback)
                 });
+
                 for (let i = 0; i < nameObjects.sumDelta.temp.length; i++) {
                     tasks.push({
                         name: 'async',
@@ -621,7 +632,7 @@ function newSumDeltaValue(id, value) {
                                 if (ts) {
                                     value = checkValue(value, ts, args.id, args.type);
                                 }
-                                //value auf 4 stellen hinter dem Komma begrenzen
+                                // value auf 4 stellen hinter dem Komma begrenzen
                                 value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
                                 adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                 setValue(args.id, value, callback);
@@ -652,7 +663,7 @@ function newSumDeltaValue(id, value) {
                                     if (ts) {
                                         value = checkValue(value || 0, ts, args.id, args.type);
                                     }
-                                    //value auf 4 stellen hinter dem Komma festgelegt
+                                    // value auf 4 stellen hinter dem Komma festgelegt
                                     value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
                                     adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                     setValue(args.id, value, callback);
@@ -712,15 +723,18 @@ function newTimeCntValue(id, state) {
                     if (!isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für OFF-Zeitraum von 1->0 bis jetzt 0->1
                         getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
                             let delta = last ? state.ts - last : 0; // wenn last true dann delta, ansonsten 0
-                            if (delta < 0) { delta = 0 }
-                            else { delta = parseInt(delta / 1000) }
+                            if (delta < 0) {
+                                delta = 0;
+                            } else {
+                                delta = Math.floor(delta / 1000);
+                            }
                             adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                             setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                 adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.ts + '  '+ timeConverter(state.ts) );
                                 setValue('temp.timeCount.' + args.id + '.last01', state.ts, () => {
                                     adapter.log.debug('[STATE CHANGE] 0->1 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
                                     for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
-                                        if (nameObjects.timeCount.temp[s].match(/\off\w+$/)) {
+                                        if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
                                             tasks.push({
                                                 name: 'async',
                                                 args: {
@@ -743,15 +757,18 @@ function newTimeCntValue(id, state) {
                     else { // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update ON-Zeitraum von letzten 0->1 bis jetzt 0->1
                         getValue('temp.timeCount.' + args.id + '.last01', (err, last) => {
                             let delta = last ? state.ts - last : 0; // wenn last true dann delta, ansonsten 0
-                            if (delta < 0) { delta = 0 }
-                            else { delta = parseInt(delta / 1000) }
+                            if (delta < 0) {
+                                delta = 0
+                            } else {
+                                delta = Math.floor(delta / 1000);
+                            }
                             adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                             setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                 adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.ts + '  '+ timeConverter(state.ts));
                                 setValue('temp.timeCount.' + args.id + '.last01', state.ts, () => {
                                     adapter.log.debug('[STATE EQUAL] 1->1 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
                                     for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
-                                        if (nameObjects.timeCount.temp[s].match(/^\on\w+$/)) { // ^ wegen on in Month
+                                        if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) { // ^ wegen on in Month
                                             tasks.push({
                                                 name: 'async',
                                                 args: {
@@ -787,15 +804,18 @@ function newTimeCntValue(id, state) {
                         if (isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für ON-Zeitraum von 0->1 bis jetzt 1->0
                             getValue('temp.timeCount.' + args.id + '.last01', (err, last) => {
                                 let delta = last ? state.ts - last : 0;
-                                if (delta < 0) { delta = 0 }
-                                else { delta = parseInt(delta / 1000) }
+                                if (delta < 0) { 
+                                    delta = 0;
+                                } else { 
+                                    delta = Math.floor(delta / 1000);
+                                }
                                 adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                                 setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                     adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.ts + '  '+ timeConverter(state.ts));
                                     setValue('temp.timeCount.' + args.id + '.last10', state.ts, () => {
                                         adapter.log.debug('[STATE CHANGE] 1->0 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
                                         for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
-                                            if (nameObjects.timeCount.temp[s].match(/^\on\w+$/)) { // on auch in Month drin, deswegen ^
+                                            if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) { // on auch in Month drin, deswegen ^
                                                 tasks.push({
                                                     name: 'async',
                                                     args: {
@@ -818,15 +838,18 @@ function newTimeCntValue(id, state) {
                         else { // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update OFF-Zeitraum von letzten 1->0 bis jetzt 1->0
                             getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
                                 let delta = last ? state.ts - last : 0;
-                                if (delta < 0) { delta = 0 }
-                                else { delta = parseInt(delta / 1000) }
+                                if (delta < 0) { 
+                                    delta = 0;
+                                } else { 
+                                    delta = Math.floor(delta / 1000); 
+                                }
                                 adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                                 setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                     adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.ts + '  '+ timeConverter(state.ts) );
                                     setValue('temp.timeCount.' + args.id + '.last10', state.ts, () => {
                                         adapter.log.debug('[STATE EQUAL] 0->0 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
                                         for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
-                                            if (nameObjects.timeCount.temp[s].match(/\off\w+$/)) {
+                                            if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
                                                 tasks.push({
                                                     name: 'async',
                                                     args: {
@@ -859,8 +882,7 @@ function copyValue(args, callback) {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
             value = value || 0; // protect against NaN
             setValueStat(args.save, value, () =>
-                setValue(args.temp, 0, callback)
-            );
+                setValue(args.temp, 0, callback));
         } else {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' => no value found');
             callback && callback();
@@ -874,12 +896,11 @@ function copyValueActMinMax(args, callback) {
         if (value !== null && value !== undefined) {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' +args.save);
             value = value || 0; // protect against NaN
-            setValueStat(args.save, value, () => {
+            setValueStat(args.save, value, () =>
                 getValue(args.actual, (err, actual) => {
                     adapter.log.debug('[SET DAILY START MINMAX] Process ' + args.temp + ' = ' + actual + ' from ' + args.actual);
                     setValue(args.temp, actual, callback)
-                });
-            });
+                }));
         } else {
             adapter.log.debug('[SAVE VALUES & SET DAILY START MINMAX] Process ' + args.temp + ' => no value found');
             callback && callback();
@@ -893,8 +914,7 @@ function copyValueRound(args, callback) {
         if (value !== null && value !== undefined) {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' +args.save);
             setValueStat(args.save, Math.round(value * 100) / 100, () => // may be use Math.floor here
-                setValue(args.temp, 0, callback)
-            );
+                setValue(args.temp, 0, callback));
         } else {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' => no value found');
             callback && callback();
@@ -904,23 +924,21 @@ function copyValueRound(args, callback) {
 
 // avg Werte umspeichern und auf 0 setzen
 function copyValue0(args, callback) {
-    getValue(args.temp, (err, value, ts) => {
+    getValue(args.temp, (err, value) => {
         value = value || 0;
-        adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' +args.save);
+        adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' + args.save);
         setValueStat(args.save, value, () =>
-            setValue(args.temp, 0, callback)
-        );
+            setValue(args.temp, 0, callback));
     });
 }
 
 // Betriebszeitzählung umspeichern und temp Werte auf 0 setzen
 function copyValue1000(args, callback) {
-    getValue(args.temp, (err, value, ts) => {
+    getValue(args.temp, (err, value) => {
         //value = Math.floor((value || 0) / 1000);
-        adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' +args.save);
+        adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' + args.save);
         setValueStat(args.save, value, () =>
-            setValue(args.temp, 0, callback)
-        );
+            setValue(args.temp, 0, callback));
     });
 }
 
@@ -936,7 +954,7 @@ function setTimeCountMidnight() {
                 //ts.setMinutes(ts.getMinutes() - 1);
                 //ts.setSeconds(59);
                 //ts.setMilliseconds(0);
-                last.ts = ts.getTime()
+                last.ts = ts.getTime();
                 newTimeCntValue(id, last);
             });
         }
@@ -1167,42 +1185,42 @@ function setInitial(type, id) {
                             if (args.name === 'last01') {
                                 adapter.getForeignState(args.trueId, (err, state) => { // get current value
                                     adapter.log.debug('[SET INITIAL] ' + args.trueId + ' object ' + args.trueId + ' ' + args.name);
-                                    adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + state.lc);
+                                    adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + (state && state.lc));
                                     if (isFalse(state && state.val)) {
                                         adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is false und last 01 now as lastChange');
                                         setValue(args.id, Date.now(), callback);
                                         setValue(args.id, Date.now(), callback);
                                     } else
-                                        if (isTrue(state && state.val)) {
-                                            adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is false und last 01  get old time');
-                                            setValue(args.id, state.lc, callback);
-                                        } else {
-                                            adapter.log.error('[SET INITIAL] ' + args.trueId + ' unknown state to be evaluated in timeCount');
-                                            callback();
-                                        }
+                                    if (isTrue(state && state.val)) {
+                                        adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is false und last 01  get old time');
+                                        setValue(args.id, state.lc, callback);
+                                    } else {
+                                        adapter.log.error('[SET INITIAL] ' + args.trueId + ' unknown state to be evaluated in timeCount');
+                                        callback();
+                                    }
                                 });
                             } else
                                 if (args.name === 'last10') {
                                     adapter.getForeignState(args.trueId, (err, state) => { // get actual values
                                         adapter.log.debug('[SET INITIAL] ' + args.trueId + ' objects ' + args.trueId + ' ' + args.name);
-                                        adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + state.lc);
+                                        adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + (state && state.lc));
                                         if (isFalse(state && state.val)) {
                                             setValue(args.id, state.lc, callback);
                                             adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is false and last 10 get old time');
                                         } else
-                                            if (isTrue(state && state.val)) {
-                                                setValue(args.id, Date.now(), callback);
-                                                adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is true and last 10 get now as lastChange');
-                                            } else {
-                                                adapter.log.error('[SET INITIAL] ' + args.trueId + ' unknown state to be evaluated in timeCount');
-                                                callback();
-                                            }
+                                        if (isTrue(state && state.val)) {
+                                            setValue(args.id, Date.now(), callback);
+                                            adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is true and last 10 get now as lastChange');
+                                        } else {
+                                            adapter.log.error('[SET INITIAL] ' + args.trueId + ' unknown state to be evaluated in timeCount');
+                                            callback();
+                                        }
                                     });
                                 } else
                                     if (args.name === 'lastPulse') {
                                         adapter.getForeignState(args.trueId, (err, state) => { // get actual values
                                             adapter.log.debug('[SET INITIAL] ' + args.trueId + ' objects ' + args.trueId + ' ' + args.name);
-                                            adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + state.lc);
+                                            adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + (state && state.lc));
                                             if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
                                                 setValue(args.id, state.val, callback);
                                                 adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state was ' + state.val + ' and lastPulse get old time');
@@ -1215,7 +1233,7 @@ function setInitial(type, id) {
                                         if (args.name === 'last') { // speichern des aktuellen Zustandes für timecount, sofern mit poll gleiche Zustände geholt werden und keinen Signalwechsel darstellen
                                             adapter.getForeignState(args.trueId, (err, state) => { // get actual value for the state in timecount
                                                 adapter.log.debug('[SET INITIAL] ' + args.trueId + ' objects ' + args.trueId + ' ' + args.name);
-                                                adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + state.lc);
+                                                adapter.log.debug('[SET INITIAL] ' + args.trueId + ' act value ' + (state && state.val) + ' time ' + (state && state.lc));
                                                 if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
                                                     setValue(args.id, state.val, callback);
                                                     adapter.log.debug('[SET INITIAL] ' + args.trueId + ' state is ' + state.val + ' and set to last ');
@@ -1512,6 +1530,7 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
         });
         subscribed = true;
     }
+
     // sumGroup only makes sense if there are also the delta values
     if (obj.sumGroup && (obj.sumDelta || (obj.sumCount && obj.count))) {
         // submit sumgroupname for object creation
@@ -1520,7 +1539,7 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
                 typeObjects.sumGroup = typeObjects.sumGroup || [];
                 typeObjects.sumGroup.push(obj.sumGroup);
             }
-            defineObject('sumGroup', obj.sumGroup, 'Sum for ' + obj.sumGroup); //type, id ist der gruppenname, name
+            defineObject('sumGroup', obj.sumGroup, 'Sum for ' + obj.sumGroup); // type, id ist der gruppenname, name
             tasks.push({
                 name: 'setObjectNotExists',
                 id: 'save.sumGroup',
@@ -1627,7 +1646,7 @@ function main() {
     // typeObjects is rebuilt after starting the adapter
     // deleting data points during runtime must be cleaned up in both arrays
     // reading the setting (here come with other setting!)
-    adapter.objects.getObjectView('custom', 'state', {}, (err, doc) => {
+    adapter.getObjectView('custom', 'state', {}, (err, doc) => {
         let objCount = 0;
         if (doc && doc.rows) {
             for (let i = 0, l = doc.rows.length; i < l; i++) {
