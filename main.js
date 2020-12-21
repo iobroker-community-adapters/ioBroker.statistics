@@ -61,6 +61,12 @@ const nameObjects = {
         temp: ['mean5Min', 'dayMax5Min', 'dayMin5Min']
     },
 };
+
+function roundValue(value, precision = 0) {
+    var multiplier = Math.pow(10, precision);
+    return Math.round(value * multiplier) / multiplier;
+}
+
 function stop() {
     for (const type in crons) {
         if (crons.hasOwnProperty(type) && crons[type]) {
@@ -326,7 +332,7 @@ function newAvgValue(id, value) {
                         getValue('temp.avg.' + args.id + '.daySum', (err, sum) => {
                             sum = sum ? sum + value : value;
                             setValue('temp.avg.' + args.id + '.daySum', sum, () => {
-                                setValue('temp.avg.' + args.id + '.dayAvg', Math.round(sum / count), () => {
+                                setValue('temp.avg.' + args.id + '.dayAvg', roundValue(sum / count, 4), () => {
                                     getValue('temp.avg.' + args.id + '.dayMin', (err, tempMin) => {
                                         if (tempMin === null || tempMin > value) {
                                             setValue('temp.avg.' + args.id + '.dayMin', value);
@@ -504,7 +510,7 @@ function newCountValue(id, value) {
                                                     value = checkValue(value || 0, ts, args.id, args.type);
                                                 }
                                                 // value auf 4 stellen hinter dem Komma festgelegt
-                                                value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
+                                                value = roundValue(((value || 0) + args.delta), 4);
                                                 adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                                 setValue(args.id, value, callback);
                                             })
@@ -608,7 +614,7 @@ function newSumDeltaValue(id, value) {
                     }
                 }
                 // delta auf 4 stellen hinter dem Komma begrenzen
-                delta = Math.round(delta * 10000) / 10000;
+                delta = roundValue(delta, 4);
                 tasks.push({
                     name: 'async',
                     args: {
@@ -633,7 +639,7 @@ function newSumDeltaValue(id, value) {
                                     value = checkValue(value, ts, args.id, args.type);
                                 }
                                 // value auf 4 stellen hinter dem Komma begrenzen
-                                value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
+                                value = roundValue((value || 0) + args.delta, 4);
                                 adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                 setValue(args.id, value, callback);
                             })
@@ -664,7 +670,7 @@ function newSumDeltaValue(id, value) {
                                         value = checkValue(value || 0, ts, args.id, args.type);
                                     }
                                     // value auf 4 stellen hinter dem Komma festgelegt
-                                    value = Math.round(((value || 0) + args.delta) * 10000) / 10000;
+                                    value = roundValue((value || 0) + args.delta, 4);
                                     adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
                                     setValue(args.id, value, callback);
                                 })
@@ -912,8 +918,8 @@ function copyValueActMinMax(args, callback) {
 function copyValueRound(args, callback) {
     getValue(args.temp, (err, value) => {
         if (value !== null && value !== undefined) {
-            adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' +args.save);
-            setValueStat(args.save, Math.round(value * 100) / 100, () => // may be use Math.floor here
+            adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' + args.save);
+            setValueStat(args.save, roundValue(value, 4), () =>
                 setValue(args.temp, 0, callback));
         } else {
             adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' => no value found');
