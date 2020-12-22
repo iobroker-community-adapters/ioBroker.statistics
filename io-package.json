@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "statistics",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "news": {
+            "1.0.1": {
+                "en": "Precision of rounding",
+                "de": "Präzision der Rundung",
+                "ru": "Точность округления",
+                "pt": "Precisão de arredondamento",
+                "nl": "Precisie van afronding",
+                "fr": "Précision d'arrondi",
+                "it": "Precisione di arrotondamento",
+                "es": "Precisión de redondeo",
+                "pl": "Precyzja zaokrąglania",
+                "zh-cn": "舍入精度"
+            },
             "1.0.0": {
                 "en": "Caught error if structure is invalid",
                 "de": "Fehler aufgetreten, wenn die Struktur ungültig ist",
