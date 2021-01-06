@@ -38,7 +38,7 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 * specify the configuration in the settings of the state (admin => objects)
 
 ## Changelog
-### 1.0.1 (2021-01-06)
+### 1.0.2 (2021-01-06)
 * (foxthefox) try catch around the cronjobs
 
 ### 1.0.1 (2020-12-22)
