@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "statistics",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "news": {
+            "1.0.2": {
+                "en": "errohandling in cronjobs",
+                "de": "Errohandling in Cronjobs",
+                "ru": "обработка ошибок в cronjobs",
+                "pt": "tratamento incorreto em cronjobs",
+                "nl": "errohandling in cronjobs",
+                "fr": "errohandling dans cronjobs",
+                "it": "gestione degli errori in cronjobs",
+                "es": "manejo de errores en cronjobs",
+                "pl": "errohandling w cronjobs",
+                "zh-cn": "在cronjobs中进行错误处理"
+            },
             "1.0.1": {
                 "en": "Precision of rounding",
                 "de": "Präzision der Rundung",
