@@ -125,10 +125,11 @@ function startAdapter(options) {
         stateChange: (id, state) => {
             // Warning, state can be null if it was deleted
             adapter.log.debug('[STATE CHANGE] ======================= ' + id + ' =======================');
-            adapter.log.debug('[STATE CHANGE] stateChange => ' + state.val + ' [' + state.ack + ']');
 
             // you can use the ack flag to detect if it is status (true) or command (false)
             if (state && state.ack ) {
+                adapter.log.debug('[STATE CHANGE] stateChange => ' + state.val + ' [' + state.ack + ']');
+
                 if (!state.val && state.val !== 0) {
                     adapter.log.warn('[STATE CHANGE] wrong value => ' + state.val + ' on ' + id + ' => check the other adapter where value comes from ');
                 } else {
@@ -229,6 +230,9 @@ function fiveMin() {
                 name: 'async',
                 args: { id: typeObjects.fiveMin[t] },
                 callback: (args, callback) => {
+                    if (!statDP[args.id]) {
+                        return callback && callback();
+                    }
                     let temp5MinID;
                     let actualID;
                     if (statDP[args.id].sumDelta) {
@@ -455,6 +459,10 @@ function newCountValue(id, value) {
             name: 'async',
             args: { id },
             callback: (args, callback) => {
+                if (!statDP[args.id]) {
+                    return callback && callback();
+                }
+
                 for (let s = 0; s < nameObjects.count.temp.length; s++) {
                     if (nameObjects.count.temp[s] !== 'lastPulse') {
                         tasks.push({
@@ -491,6 +499,7 @@ function newCountValue(id, value) {
                             // add consumption to group
                             if (statDP[args.id].sumGroup &&
                                 groups[statDP[args.id].sumGroup] &&
+                                groups[statDP[args.id].sumGroup].config &&
                                 statDP[args.id].impUnitPerImpulse &&
                                 statDP[args.id].groupFactor
                             ) {
@@ -596,6 +605,10 @@ function newSumDeltaValue(id, value) {
         args: { id },
         callback: (args, callback) => {
             getValue('save.sumDelta.' + args.id + '.last', (err, old) => {
+                if (!statDP[args.id]) {
+                    return callback && callback();
+                }
+
                 tasks.push({
                     name: 'async',
                     args: { id: 'save.sumDelta.' + args.id + '.last', value },
@@ -810,9 +823,9 @@ function newTimeCntValue(id, state) {
                         if (isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für ON-Zeitraum von 0->1 bis jetzt 1->0
                             getValue('temp.timeCount.' + args.id + '.last01', (err, last) => {
                                 let delta = last ? state.ts - last : 0;
-                                if (delta < 0) { 
+                                if (delta < 0) {
                                     delta = 0;
-                                } else { 
+                                } else {
                                     delta = Math.floor(delta / 1000);
                                 }
                                 adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
@@ -844,10 +857,10 @@ function newTimeCntValue(id, state) {
                         else { // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update OFF-Zeitraum von letzten 1->0 bis jetzt 1->0
                             getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
                                 let delta = last ? state.ts - last : 0;
-                                if (delta < 0) { 
+                                if (delta < 0) {
                                     delta = 0;
-                                } else { 
-                                    delta = Math.floor(delta / 1000); 
+                                } else {
+                                    delta = Math.floor(delta / 1000);
                                 }
                                 adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
                                 setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
@@ -960,8 +973,10 @@ function setTimeCountMidnight() {
                 //ts.setMinutes(ts.getMinutes() - 1);
                 //ts.setSeconds(59);
                 //ts.setMilliseconds(0);
-                last.ts = ts.getTime();
-                newTimeCntValue(id, last);
+                if (last) {
+                    last.ts = ts.getTime();
+                    newTimeCntValue(id, last);
+                }
             });
         }
     }
@@ -1358,6 +1373,9 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
     }
     const id = ids.shift();
     const obj = statDP[id];
+    if (!obj) {
+        return setImmediate(setupObjects, ids, callback, isStart);
+    }
     let subscribed = !!noSubscribe;
     if (!obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
         obj.groupFactor = parseFloat(adapter.config.groupFactor) || 1;
@@ -1642,7 +1660,7 @@ function padding(text, num) {
 }
 function getCronStat() {
     for (const type in crons) {
-        if (crons.hasOwnProperty(type)) {
+        if (crons.hasOwnProperty(type) && crons[type]) {
             adapter.log.debug('[INFO] ' + padding(type, 15) + '      status = ' + crons[type].running + ' next event: ' + timeConverter(crons[type].nextDates()));
         }
     }
@@ -1718,7 +1736,7 @@ function main() {
     } catch (e) {
 			adapter.log.error('creating cron errored with :' + e);
     }
-    
+
     // daily um 23:59:58
     try {
         crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
@@ -1730,7 +1748,7 @@ function main() {
     } catch (e) {
 			adapter.log.error('creating cron errored with :' + e);
     }
-    
+
     // daily um 00:00
     try {
         crons.daySave = new CronJob('0 0 * * *',
@@ -1742,9 +1760,9 @@ function main() {
     } catch (e) {
 			adapter.log.error('creating cron errored with :' + e);
     }
-    
+
     // Monday 00:00
-    try { 
+    try {
         crons.weekSave = new CronJob('0 0 * * 1',
             () => saveValues('week'),
             () => adapter.log.debug('stopped week'), // This function is executed when the job stops
@@ -1754,7 +1772,7 @@ function main() {
     } catch (e) {
 			adapter.log.error('creating cron errored with :' + e);
     }
-    
+
     // Monthly at 1 of every month at 00:00
     try {
         crons.monthSave = new CronJob('0 0 1 * *',
@@ -1766,7 +1784,7 @@ function main() {
     } catch (e) {
 			adapter.log.error('creating cron errored with :' + e);
     }
-    
+
     // Quarter
     try {
         crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
@@ -1778,7 +1796,7 @@ function main() {
     } catch (e) {
 			adapter.log.error('creating cron errored with :' + e);
     }
-    
+
     // New year
     try {
         crons.yearSave = new CronJob('0 0 1 0 *',
@@ -1790,7 +1808,7 @@ function main() {
     } catch (e) {
 			adapter.log.error('creating cron errored with :' + e);
     }
-    
+
     // subscribe to objects, so the settings in the object are arriving to the adapter
     adapter.subscribeForeignObjects('*');
 }
