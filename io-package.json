@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "statistics",
-        "version": "1.0.2",
+        "version": "1.0.3",
         "news": {
+             "1.0.3": {
+                "en": "fix several Sentry crash reports",
+                "de": "Beheben Sie mehrere Sentry-Absturzberichte",
+                "ru": "исправить несколько отчетов о сбоях Sentry",
+                "pt": "consertar vários relatórios de falha do Sentry",
+                "nl": "verschillende Sentry-crashrapporten repareren",
+                "fr": "corrige plusieurs rapports de plantage Sentry",
+                "it": "correggere diversi rapporti sugli arresti anomali di Sentry",
+                "es": "arreglar varios informes de fallos de Sentry",
+                "pl": "napraw kilka raportów o awariach Sentry",
+                "zh-cn": "修复多个Sentry崩溃报告"
+              },
             "1.0.2": {
                 "en": "errohandling in cronjobs",
                 "de": "Errohandling in Cronjobs",
