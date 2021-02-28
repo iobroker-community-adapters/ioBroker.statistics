@@ -156,7 +156,7 @@
             "daily value"
         ],
         "readme": "https://github.com/foxthefox/ioBroker.statistics/blob/master/README.md",
-        "loglevel": "debug",
+        "loglevel": "info",
         "type": "misc-data",
         "materialize": true,
         "compact": true,
