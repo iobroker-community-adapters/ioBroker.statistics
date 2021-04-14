@@ -130,7 +130,7 @@ function startAdapter(options) {
             if (state && state.ack ) {
                 adapter.log.debug('[STATE CHANGE] stateChange => ' + state.val + ' [' + state.ack + ']');
 
-                if (!state.val && state.val !== 0) {
+                if ((state.val === null) || (state.val === undefined) || (state.val === NaN) ) {
                     adapter.log.warn('[STATE CHANGE] wrong value => ' + state.val + ' on ' + id + ' => check the other adapter where value comes from ');
                 } else {
                     if (typeObjects.sumDelta && typeObjects.sumDelta.includes(id)) {
