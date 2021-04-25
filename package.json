@@ -12,7 +12,7 @@
       "email": "dogafox@gmail.com"
     }
   ],
-  "homepage": "https://github.com/foxthefox/ioBroker.statistics",
+  "homepage": "https://github.com/iobroker-community-adapters/ioBroker.statistics",
   "license": "MIT",
   "keywords": [
     "count",
@@ -21,7 +21,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/foxthefox/ioBroker.statistics.git"
+    "url": "git+https://github.com/iobroker-community-adapters/ioBroker.statistics.git"
   },
   "dependencies": {
     "cron": "^1.8.2",
