@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "statistics",
-        "version": "1.0.3",
+        "version": "1.0.4",
         "news": {
+              "1.0.4": {
+                "en": "removed the ignored 1->0 transition",
+                "de": "Der ignorierte 1-> 0-Übergang wurde entfernt",
+                "ru": "удален игнорируемый переход 1-> 0",
+                "pt": "removeu a transição 1-> 0 ignorada",
+                "nl": "verwijderde de genegeerde 1-> 0 overgang",
+                "fr": "supprimé la transition ignorée 1-> 0",
+                "it": "rimossa la transizione 1-> 0 ignorata",
+                "es": "eliminó la transición 1-> 0 ignorada",
+                "pl": "usunięto ignorowane przejście 1-> 0",
+                "zh-cn": "删除了忽略的1-> 0过渡"
+              },
              "1.0.3": {
                 "en": "fix several Sentry crash reports",
                 "de": "Beheben Sie mehrere Sentry-Absturzberichte",
