@@ -161,13 +161,13 @@
         "icon": "statistics.png",
         "enabled": false,
         "preserveSettings": "custom",
-        "extIcon": "https://raw.githubusercontent.com/foxthefox/ioBroker.statistics/master/admin/statistics.png",
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.statistics/master/admin/statistics.png",
         "keywords": [
             "statistics",
             "sum",
             "daily value"
         ],
-        "readme": "https://github.com/foxthefox/ioBroker.statistics/blob/master/README.md",
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.statistics/blob/master/README.md",
         "loglevel": "info",
         "type": "misc-data",
         "materialize": true,
