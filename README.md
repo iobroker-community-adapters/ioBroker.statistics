@@ -43,7 +43,7 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.0.5 (2021-05-27)
 * (bluefox) added the support of Admin5 
 
 ### 1.0.4
