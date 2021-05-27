@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "statistics",
-        "version": "1.0.5",
+        "version": "1.0.6",
         "news": {
-            "1.0.5": {
+            "1.0.6": {
                 "en": "added the support of Admin5",
                 "de": "hat die Unterstützung von Admin5 hinzugefügt",
                 "ru": "добавлена поддержка Admin5",
