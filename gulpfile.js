@@ -415,7 +415,7 @@ gulp.task('updateReadme', done => {
                 news += '* ' + iopackage.common.news[pkg.version].en;
             }
 
-            fs.writeFileSync('README.md', readmeStart + '### ' + version + ' (' + date + ')\n' + (news ? news + '\n\n' : '\n') + readmeEnd);
+            fs.writeFileSync('README.md', `${readmeStart}### ${version} (${date})\n${news ? news + '\n\n' : '\n'}${readmeEnd}`);
         }
     }
     done();

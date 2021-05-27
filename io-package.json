@@ -171,8 +171,13 @@
         "loglevel": "info",
         "type": "misc-data",
         "materialize": true,
+        "messagebox": true,
         "compact": true,
         "supportCustoms": true,
+        "adminUI": {
+            "config": "materialize",
+            "custom": "json"
+        },
         "dependencies": [
             {
                 "admin": ">=3.5.10"
