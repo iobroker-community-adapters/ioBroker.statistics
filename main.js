@@ -1695,124 +1695,125 @@ function main() {
                         }
                     }
                 }
+
+                // create cron-jobs
+                const timezone = adapter.config.timezone || 'Europe/Berlin';
+
+                // every 5min
+                try {
+                    crons.avg5min = new CronJob('*/5 * * * *',
+                        () => fiveMin(),
+                        () => adapter.log.debug('stopped 5min'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
+
+                // Every 15 minutes
+                try {
+                    crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
+                        () => saveValues('15Min'),
+                        () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
+
+                // Hourly at 00 min
+                try {
+                    crons.hourSave = new CronJob('0 * * * *',
+                        () => saveValues('hour'),
+                        () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
+
+                // daily um 23:59:58
+                try {
+                    crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
+                        () => setTimeCountMidnight(),
+                        () => adapter.log.debug('stopped timecount midnight trigger'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
+
+                // daily um 00:00
+                try {
+                    crons.daySave = new CronJob('0 0 * * *',
+                        () => saveValues('day'),
+                        () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
+
+                // Monday 00:00
+                try {
+                    crons.weekSave = new CronJob('0 0 * * 1',
+                        () => saveValues('week'),
+                        () => adapter.log.debug('stopped week'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
+
+                // Monthly at 1 of every month at 00:00
+                try {
+                    crons.monthSave = new CronJob('0 0 1 * *',
+                        () => saveValues('month'),
+                        () => adapter.log.debug('stopped month'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
+
+                // Quarter
+                try {
+                    crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
+                        () => saveValues('quarter'),
+                        () => adapter.log.debug('stopped quarter'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
+
+                // New year
+                try {
+                    crons.yearSave = new CronJob('0 0 1 0 *',
+                        () => saveValues('year'), // Months is value range 0-11
+                        () => adapter.log.debug('stopped yearSave'),
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
+
+                // subscribe to objects, so the settings in the object are arriving to the adapter
+                adapter.subscribeForeignObjects('*');
+
                 getCronStat();
             });
         }
     });
-
-    // create cron-jobs
-    const timezone = adapter.config.timezone || 'Europe/Berlin';
-
-    // every 5min
-    try {
-        crons.avg5min = new CronJob('*/5 * * * *',
-            () => fiveMin(),
-            () => adapter.log.debug('stopped 5min'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
-
-    // Every 15 minutes
-    try {
-        crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
-            () => saveValues('15Min'),
-            () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
-
-    // Hourly at 00 min
-    try {
-        crons.hourSave = new CronJob('0 * * * *',
-            () => saveValues('hour'),
-            () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
-
-    // daily um 23:59:58
-    try {
-        crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
-            () => setTimeCountMidnight(),
-            () => adapter.log.debug('stopped timecount midnight trigger'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
-
-    // daily um 00:00
-    try {
-        crons.daySave = new CronJob('0 0 * * *',
-            () => saveValues('day'),
-            () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
-
-    // Monday 00:00
-    try {
-        crons.weekSave = new CronJob('0 0 * * 1',
-            () => saveValues('week'),
-            () => adapter.log.debug('stopped week'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
-
-    // Monthly at 1 of every month at 00:00
-    try {
-        crons.monthSave = new CronJob('0 0 1 * *',
-            () => saveValues('month'),
-            () => adapter.log.debug('stopped month'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
-
-    // Quarter
-    try {
-        crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
-            () => saveValues('quarter'),
-            () => adapter.log.debug('stopped quarter'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
-
-    // New year
-    try {
-        crons.yearSave = new CronJob('0 0 1 0 *',
-            () => saveValues('year'), // Months is value range 0-11
-            () => adapter.log.debug('stopped yearSave'),
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
-
-    // subscribe to objects, so the settings in the object are arriving to the adapter
-    adapter.subscribeForeignObjects('*');
 }
 
 // If started as allInOne/compact mode => return function to create instance
