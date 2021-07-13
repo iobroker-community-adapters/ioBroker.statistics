@@ -1,0 +1,12 @@
+{
+    "E.g. Europe/Berlin. Leave it empty for default settings": "Например. Европа / Берлин. Оставьте его пустым для настроек по умолчанию",
+    "Group": "Группа",
+    "Group name": "Название группы",
+    "Groups": "группы",
+    "Leave it empty for default settings": "Оставьте его пустым для настроек по умолчанию",
+    "One impulse is equal to this value": "Один импульс равен этому значению",
+    "Price": "Цена",
+    "Unit": "Ед. изм",
+    "Values will be added to groups with this factor by default": "Значения будут добавлены к группам с этим коэффициентом по умолчанию",
+    "sum group configuration": "Группы сумм"
+}

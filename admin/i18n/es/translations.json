@@ -1,0 +1,12 @@
+{
+    "E.g. Europe/Berlin. Leave it empty for default settings": "P.ej. Europa / Berlín. Déjalo vacío para la configuración predeterminada",
+    "Group": "Grupo",
+    "Group name": "Nombre del grupo",
+    "Groups": "Grupos",
+    "Leave it empty for default settings": "Déjalo vacío para la configuración predeterminada",
+    "One impulse is equal to this value": "Un impulso es igual a este valor",
+    "Price": "Precio",
+    "Unit": "Unidad",
+    "Values will be added to groups with this factor by default": "Los valores se agregarán a los grupos con este factor de forma predeterminada",
+    "sum group configuration": "configuración de grupo de suma"
+}
