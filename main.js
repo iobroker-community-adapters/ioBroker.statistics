@@ -26,6 +26,7 @@ const groups = {};
 let units = {};
 const tasks = [];
 const states = {}; // hold all states locally
+let tasksFinishedCallbacks = [];
 
 const nameObjects = {
     count: { // Count impulses or counting operations
@@ -102,7 +103,7 @@ function startAdapter(options) {
                     //adapter.log.info('neu aber anderes Setting ' + id);
                     statDP[id] = obj.common.custom[adapter.namespace];
                     removeObject(id);
-                    setupObjects([id], null, undefined, true);
+                    setupObjects([id], null, true);
                     adapter.log.debug('saved typeObjects update1 ' + JSON.stringify(typeObjects));
                 } else {
                     //adapter.log.info('ganz neu ' + id);
@@ -211,17 +212,17 @@ function fiveMin() {
     const isStart = !tasks.length;
     /**
      * Determine 5min values
-     *
-     * Get current min from temp
-     * Get current max from temp
-     * current value from the monitored counter
-     * old value (before 5min) from the monitored counter
-     *
-     * determination delta and decision whether new min / max is stored
-     * current counter reading is written in the old value
-     *
-     * typeObjects.fiveMin [t] contains the objectId of the monitored counter
-     *
+     *
+     * Get current min from temp
+     * Get current max from temp
+     * current value from the monitored counter
+     * old value (before 5min) from the monitored counter
+     *
+     * determination delta and decision whether new min / max is stored
+     * current counter reading is written in the old value
+     *
+     * typeObjects.fiveMin [t] contains the objectId of the monitored counter
+     *
      */
 
     // go through all subscribed objects and write
@@ -449,8 +450,8 @@ function newCountValue(id, value) {
     const isStart = !tasks.length;
     /*
         value with limit or state
-        Change to 1 -> increase by 1
-        Value greater threshold -> increase by 1
+        Change to 1 -> increase by 1
+        Value greater threshold -> increase by 1
     */
     adapter.log.debug('[STATE CHANGE] count call ' + id + ' with ' + value);
     // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
@@ -594,11 +595,11 @@ function newSumDeltaValue(id, value) {
     const isStart = !tasks.length;
     /*
         determine the consumption per period as consecutive meter readings.
-             - Validity check new value must be greater than age
-             - Subtraction with last value Day
-             - Subtraction with last value today -> delta for sum
-             - Add delta to all values
-             - treat own values differently (datapoint name)
+         - Validity check new value must be greater than age
+         - Subtraction with last value Day
+         - Subtraction with last value today -> delta for sum
+         - Add delta to all values
+         - treat own values differently (datapoint name)
     */
     value = parseFloat(value) || 0; //here we can probably leave the 0, if undefined then we have 0
     tasks.push({
@@ -1366,18 +1367,16 @@ function defineObject(type, id, name, unit) {
     setInitial(type, id);
 }
 
-function setupObjects(ids, callback, isStart, noSubscribe) {
+function setupObjects(ids, callback, noSubscribe) {
+    const isStart = !tasks.length;
     if (!ids || !ids.length) {
-        isStart && processTasks();
-        return callback && callback();
-    }
-    if (isStart === undefined) {
-        isStart = !tasks.length;
+        isStart && processTasks(callback);
+        return;
     }
     const id = ids.shift();
     const obj = statDP[id];
     if (!obj) {
-        return setImmediate(setupObjects, ids, callback, isStart);
+        return setImmediate(setupObjects, ids, callback);
     }
     let subscribed = !!noSubscribe;
     if (!obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
@@ -1583,12 +1582,18 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
             adapter.log.error('[CREATION] No group config found for ' + obj.sumGroup);
         }
     }
-    setImmediate(setupObjects, ids, callback, isStart);
+    setImmediate(setupObjects, ids, callback);
 }
 
-function processTasks() {
+function processTasks(callback) {
+    if (callback) {
+        tasksFinishedCallbacks.push(callback);
+    }
     if (!tasks || !tasks.length) {
         units = {};
+        const processCallbacks = tasksFinishedCallbacks;
+        tasksFinishedCallbacks = [];
+        processCallbacks.forEach(cb => setImmediate(cb));
         return;
     }
     const task = tasks.shift();
@@ -1649,7 +1654,8 @@ function processTasks() {
         if (typeof task.callback === 'function') {
             task.callback(task.args, () => setImmediate(processTasks));
         } else {
-            adapter.log.error('error');
+            adapter.log.error('error async task');
+            setImmediate(processTasks);
         }
     }
 }

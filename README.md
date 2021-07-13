@@ -44,6 +44,8 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 
 ## Changelog
 ### __WORK IN PROGRESS__
+* (Apollon77) prepare for js-controller 3.3
+* (Apollon77) make sure all tasks are processed to prevent missing objects
 * (bluefox) added the support of Admin5 
 
 ### 1.0.4
