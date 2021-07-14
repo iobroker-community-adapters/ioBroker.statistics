@@ -1397,7 +1397,7 @@ function setupObjects(ids, callback, noSubscribe) {
 
     // Function is called with the custom objects
     adapter.log.debug(`[CREATION] ============================== ${id} =============================`);
-    adapter.log.debug('[CREATION] setup of object ' + JSON.stringify(obj));
+    adapter.log.debug('[CREATION] setup of object ' + id + ': ' + JSON.stringify(obj));
     const logName = obj.logName;
     if (obj.avg && !obj.sumDelta) {
         if (!typeObjects.avg || !typeObjects.avg.includes(id)) {
@@ -1443,7 +1443,7 @@ function setupObjects(ids, callback, noSubscribe) {
         subscribed = true;
     }
     // 5minutes Values can only be determined when counting
-    adapter.log.debug(`[CREATION] fiveMin = ${obj.fiveMin},  count =  ${obj.count}`);
+    adapter.log.debug(`[CREATION] ${id} fiveMin = ${obj.fiveMin},  count =  ${obj.count}`);
 
     if (obj.fiveMin && obj.count) {
         if (!typeObjects.fiveMin || !typeObjects.fiveMin.includes(id)) {
