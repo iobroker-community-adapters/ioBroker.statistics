@@ -127,7 +127,7 @@ function startAdapter(options) {
             adapter.log.debug(`[STATE CHANGE] ======================= ${id} =======================`);
 
             // you can use the ack flag to detect if it is status (true) or command (false)
-            if (state && state.ack ) {
+            if (state && state.ack) {
                 adapter.log.debug(`[STATE CHANGE] stateChange => ${state.val} [${state.ack}]`);
 
                 if ((state.val === null) || (state.val === undefined) || isNaN(state.val)) {
@@ -239,18 +239,18 @@ function fiveMin() {
                     let temp5MinID;
                     let actualID;
                     if (statDP[args.id].sumDelta) {
-                        temp5MinID = 'temp.sumDelta.' + args.id + '.last5Min';
-                        actualID = 'save.sumDelta.' + args.id + '.last';
+                        temp5MinID = `temp.sumDelta.${args.id}.last5Min`;
+                        actualID = `save.sumDelta.${args.id}.last`;
                     } else {
-                        temp5MinID = 'temp.count.' + args.id + '.last5Min';
-                        actualID = 'temp.count.' + args.id + '.day';
+                        temp5MinID = `temp.count.${args.id}.last5Min`;
+                        actualID = `temp.count.${args.id}.day`;
                     }
                     getValue(actualID, (err, actual) => {
                         if (actual === null) {
                             return callback();
                         }
-                        getValue('temp.fiveMin.' + args.id + '.dayMin5Min', (err, min) => {
-                            getValue('temp.fiveMin.' + args.id + '.dayMax5Min', (err, max) => {
+                        getValue(`temp.fiveMin.${args.id}.dayMin5Min`, (err, min) => {
+                            getValue(`temp.fiveMin.${args.id}.dayMax5Min`, (err, max) => {
                                 getValue(temp5MinID, (err, old) => {
                                     // Write actual state into counter object
                                     setValueStat(temp5MinID, actual, () => {
@@ -259,7 +259,7 @@ function fiveMin() {
                                         }
                                         const delta = actual - old;
                                         adapter.log.debug(`[STATE CHANGE] fiveMin; of : ${args.id} with  min: ${min} max: ${max} actual: ${actual} old: ${old} delta: ${delta}`);
-                                        setValueStat('temp.fiveMin.' + args.id + '.mean5Min', delta, () => {
+                                        setValueStat(`temp.fiveMin.${args.id}.mean5Min`, delta, () => {
                                             if (max === null || delta > max) {
                                                 adapter.log.debug(`[STATE CHANGE] new Max temp.fiveMin.${args.id}.dayMax5Min: ${delta}`);
                                                 setValueStat(`temp.fiveMin.${args.id}.dayMax5Min`, delta, callback);
