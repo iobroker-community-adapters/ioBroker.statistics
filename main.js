@@ -27,6 +27,7 @@ let units = {};
 const tasks = [];
 let taskCallback = null;
 const states = {}; // hold all states locally
+let tasksFinishedCallbacks = [];
 
 const nameObjects = {
     count: { // Count impulses or counting operations
@@ -103,7 +104,7 @@ function startAdapter(options) {
                     //adapter.log.info('neu aber anderes Setting ' + id);
                     statDP[id] = obj.common.custom[adapter.namespace];
                     removeObject(id);
-                    setupObjects([id], null, undefined, true);
+                    setupObjects([id], null, true);
                     adapter.log.debug('saved typeObjects update1 ' + JSON.stringify(typeObjects));
                 } else {
                     //adapter.log.info('ganz neu ' + id);
@@ -1175,7 +1176,7 @@ function setInitial(type, id) {
                         adapter.log.debug(`[SET INITIAL] ${args.trueId} replace with 0 -> ${args.id}`);
                         if (args.type === 'avg') {
                             if (args.name === 'dayCount') {
-                                adapter.getForeignState(args.trueId, (er, value) => {
+                                return adapter.getForeignState(args.trueId, (er, value) => {
                                     if (value && value.val !== null) {
                                         setValue(args.id, 1, callback);
                                     } else {
@@ -1183,7 +1184,7 @@ function setInitial(type, id) {
                                     }
                                 });
                             } else {
-                                adapter.getForeignState(args.trueId, (er, value) => { // get current value to set for initial min, max, last
+                                return adapter.getForeignState(args.trueId, (er, value) => { // get current value to set for initial min, max, last
                                     if (value && value.val !== null) {
                                         adapter.log.debug(`[SET INITIAL] ${args.trueId} object ${args.trueId} ${args.name}`);
                                         adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${value.val}`);
@@ -1194,7 +1195,7 @@ function setInitial(type, id) {
                                 });
                             }
                         } else if (args.type === 'minmax') {
-                            adapter.getForeignState(args.trueId, (er, value) => { // get current value to set for initial min, max, last
+                            return adapter.getForeignState(args.trueId, (er, value) => { // get current value to set for initial min, max, last
                                 if (value && value.val !== null) {
                                     adapter.log.debug(`[SET INITIAL] ${args.trueId} object ${args.trueId} ${args.name}`);
                                     adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${value.val}`);
@@ -1205,12 +1206,11 @@ function setInitial(type, id) {
                             });
                         } else {
                             if (args.name === 'last01') {
-                                adapter.getForeignState(args.trueId, (err, state) => { // get current value
+                                return adapter.getForeignState(args.trueId, (err, state) => { // get current value
                                     adapter.log.debug(`[SET INITIAL] ${args.trueId} object ${args.trueId} ${args.name}`);
                                     adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
                                     if (isFalse(state && state.val)) {
                                         adapter.log.debug(`[SET INITIAL] ${args.trueId} state is false und last 01 now as lastChange`);
-                                        setValue(args.id, Date.now(), callback);
                                         setValue(args.id, Date.now(), callback);
                                     } else
                                     if (isTrue(state && state.val)) {
@@ -1223,7 +1223,7 @@ function setInitial(type, id) {
                                 });
                             } else
                                 if (args.name === 'last10') {
-                                    adapter.getForeignState(args.trueId, (err, state) => { // get actual values
+                                    return adapter.getForeignState(args.trueId, (err, state) => { // get actual values
                                         adapter.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
                                         adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
                                         if (isFalse(state && state.val)) {
@@ -1240,7 +1240,7 @@ function setInitial(type, id) {
                                     });
                                 } else
                                     if (args.name === 'lastPulse') {
-                                        adapter.getForeignState(args.trueId, (err, state) => { // get actual values
+                                        return adapter.getForeignState(args.trueId, (err, state) => { // get actual values
                                             adapter.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
                                             adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
                                             if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
@@ -1253,7 +1253,7 @@ function setInitial(type, id) {
                                         });
                                     } else
                                         if (args.name === 'last') { // speichern des aktuellen Zustandes für timecount, sofern mit poll gleiche Zustände geholt werden und keinen Signalwechsel darstellen
-                                            adapter.getForeignState(args.trueId, (err, state) => { // get actual value for the state in timecount
+                                            return adapter.getForeignState(args.trueId, (err, state) => { // get actual value for the state in timecount
                                                 adapter.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
                                                 adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
                                                 if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
@@ -1264,12 +1264,11 @@ function setInitial(type, id) {
                                                     callback();
                                                 }
                                             });
-                                        } else {
-                                            callback();
                                         }
                         }
+                        return void callback();
                     } else {
-                        callback();
+                        return void callback();
                     }
                 });
             }
@@ -1364,7 +1363,8 @@ function defineObject(type, id, name, unit) {
     setInitial(type, id);
 }
 
-function setupObjects(ids, callback, isStart, noSubscribe) {
+function setupObjects(ids, callback, noSubscribe) {
+    const isStart = !tasks.length;
     if (!ids || !ids.length) {
         if (isStart) {
             taskCallback = callback;
@@ -1379,7 +1379,7 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
     const id = ids.shift();
     const obj = statDP[id];
     if (!obj) {
-        return setImmediate(setupObjects, ids, callback, isStart);
+        return setImmediate(setupObjects, ids, callback);
     }
     let subscribed = !!noSubscribe;
     if (!obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
@@ -1402,7 +1402,7 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
 
     // Function is called with the custom objects
     adapter.log.debug(`[CREATION] ============================== ${id} =============================`);
-    adapter.log.debug('[CREATION] setup of object ' + JSON.stringify(obj));
+    adapter.log.debug('[CREATION] setup of object ' + id + ': ' + JSON.stringify(obj));
     const logName = obj.logName;
     if (obj.avg && !obj.sumDelta) {
         if (!typeObjects.avg || !typeObjects.avg.includes(id)) {
@@ -1448,7 +1448,7 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
         subscribed = true;
     }
     // 5minutes Values can only be determined when counting
-    adapter.log.debug(`[CREATION] fiveMin = ${obj.fiveMin},  count =  ${obj.count}`);
+    adapter.log.debug(`[CREATION] ${id} fiveMin = ${obj.fiveMin},  count =  ${obj.count}`);
 
     if (obj.fiveMin && obj.count) {
         if (!typeObjects.fiveMin || !typeObjects.fiveMin.includes(id)) {
@@ -1585,10 +1585,13 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
             adapter.log.error('[CREATION] No group config found for ' + obj.sumGroup);
         }
     }
-    setImmediate(setupObjects, ids, callback, isStart);
+    setImmediate(setupObjects, ids, callback);
 }
 
-function processTasks() {
+function processTasks(callback) {
+    if (callback) {
+        tasksFinishedCallbacks.push(callback);
+    }
     if (!tasks || !tasks.length) {
         if (taskCallback) {
             const cb = taskCallback;
@@ -1596,9 +1599,18 @@ function processTasks() {
             cb();
         }
         units = {};
+        const processCallbacks = tasksFinishedCallbacks;
+        tasksFinishedCallbacks = [];
+        processCallbacks.forEach(cb => setImmediate(cb));
         return;
     }
-    const task = tasks.shift();
+
+    function processNext() {
+        tasks.shift();
+        setImmediate(processTasks);
+    }
+
+    const task = tasks[0];
     if (task.name === 'setObjectNotExists') {
         const attr = task.id.split('.').pop();
         // detect unit
@@ -1622,10 +1634,9 @@ function processTasks() {
                         adapter.log.debug('[CREATION] ' + task.id);
                     }
                     if (task.subscribe) {
-                        adapter.subscribeForeignStates(task.subscribe, () =>
-                            setImmediate(processTasks));
+                        adapter.subscribeForeignStates(task.subscribe, processNext);
                     } else {
-                        setImmediate(processTasks);
+                        processNext();
                     }
                 });
             });
@@ -1646,17 +1657,18 @@ function processTasks() {
                     adapter.log.debug('[CREATION] ' + task.id);
                 }
                 if (task.subscribe) {
-                    adapter.subscribeForeignStates(task.subscribe, () => setImmediate(processTasks));
+                    adapter.subscribeForeignStates(task.subscribe, processNext);
                 } else {
-                    setImmediate(processTasks);
+                    processNext();
                 }
             });
         }
     } else if (task.name === 'async') {
         if (typeof task.callback === 'function') {
-            task.callback(task.args, () => setImmediate(processTasks));
+            task.callback(task.args, processNext);
         } else {
-            adapter.log.error('error');
+            adapter.log.error('error async task');
+            processNext();
         }
     }
 }
@@ -1702,10 +1714,6 @@ function main() {
                         }
                     }
                 }
-                getCronStat();
-            });
-        }
-    });
 
     // create cron-jobs
     const timezone = adapter.config.timezone || 'Europe/Berlin';
@@ -1820,6 +1828,11 @@ function main() {
 
     // subscribe to objects, so the settings in the object are arriving to the adapter
     adapter.subscribeForeignObjects('*');
+
+                getCronStat();
+            });
+        }
+    });
 }
 
 // If started as allInOne/compact mode => return function to create instance

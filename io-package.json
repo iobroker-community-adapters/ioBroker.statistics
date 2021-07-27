@@ -120,7 +120,8 @@
                 "fr": "mode compact ajouté",
                 "it": "modalità compatta aggiunta",
                 "es": "modo compacto agregado",
-                "pl": "dodano tryb kompaktowy"
+                "pl": "dodano tryb kompaktowy",
+                "zh-cn": "添加了紧凑模式"
             },
             "0.1.4": {
                 "en": "license in io-package.json, Readme updated",
@@ -131,7 +132,8 @@
                 "fr": "licence dans io-package.json, fichier Lisez-moi mis à jour",
                 "it": "licenza in io-package.json, Readme aggiornato",
                 "es": "licencia en io-package.json, Readme actualizado",
-                "pl": "licencja w pliku io-package.json, plik Readme zaktualizowany"
+                "pl": "licencja w pliku io-package.json, plik Readme zaktualizowany",
+                "zh-cn": "io-package.json 中的许可证，自述文件已更新"
             },
             "0.1.3": {
                 "en": "german description and error corrections",
@@ -142,7 +144,8 @@
                 "fr": "description allemande et corrections d'erreur",
                 "it": "descrizione tedesca e correzioni di errori",
                 "es": "Descripción alemana y correcciones de errores.",
-                "pl": "niemiecki opis i korekty błędów"
+                "pl": "niemiecki opis i korekty błędów",
+                "zh-cn": "德语描述和错误更正"
             },
             "0.1.2": {
                 "en": "adminv3 implemented",
@@ -153,7 +156,8 @@
                 "fr": "adminv3 implémenté",
                 "it": "adminv3 implementato",
                 "es": "adminv3 implementado",
-                "pl": "Zaimplementowano adminv3"
+                "pl": "Zaimplementowano adminv3",
+                "zh-cn": "adminv3 实施"
             }
         },
         "title": "statistics",
@@ -166,7 +170,8 @@
             "fr": "Statistiques pour les objets",
             "it": "Statistiche per oggetti",
             "es": "Estadísticas para objetos",
-            "pl": "Statystyki obiektów"
+            "pl": "Statystyki obiektów",
+            "zh-cn": "状态统计"
         },
         "desc": {
             "en": "Calculate statistics: day minimum, day maximum, day average, delta and so on for defined states",
@@ -177,7 +182,8 @@
             "fr": "Calculer les statistiques: jour minimum, jour maximum, moyenne journalière, delta et ainsi de suite pour les états définis",
             "it": "Calcola statistiche: giorno minimo, giorno massimo, giorno medio, delta e così via per stati definiti",
             "es": "Calcule las estadísticas: día mínimo, día máximo, día promedio, delta y así sucesivamente para estados definidos",
-            "pl": "Oblicz statystyki: dzień minimum, dzień maksimum, dzień średni, delta i tak dalej dla zdefiniowanych stanów"
+            "pl": "Oblicz statystyki: dzień minimum, dzień maksimum, dzień średni, delta i tak dalej dla zdefiniowanych stanów",
+            "zh-cn": "计算统计数据：定义状态的日最小值、日最大值、日平均值、增量等"
         },
         "platform": "Javascript/Node.js",
         "mode": "daemon",
@@ -222,8 +228,9 @@
                 "dsn": "https://baf1b0da59cc43e092c500507d3a448d@sentry.iobroker.net/72"
             }
         },
-        "connectionType": "local",
-        "dataSource": "push"
+        "connectionType": "none",
+        "dataSource": "push",
+        "tier": 3
     },
     "native": {
         "impUnitPerImpulse": 1,
