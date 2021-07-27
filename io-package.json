@@ -209,7 +209,9 @@
             "sentry": {
                 "dsn": "https://baf1b0da59cc43e092c500507d3a448d@sentry.iobroker.net/72"
             }
-        }
+        },
+        "connectionType": "local",
+        "dataSource": "push"
     },
     "native": {
         "impUnitPerImpulse": 1,

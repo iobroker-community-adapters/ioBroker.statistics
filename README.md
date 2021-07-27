@@ -43,6 +43,9 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) Removed the warnings for js-controller 3.x
+
 ### 1.0.6 (2021-05-27)
 * (bluefox) added the support of Admin5 
 
