@@ -1,9 +1,33 @@
 {
     "common": {
         "name": "statistics",
-        "version": "1.0.4",
+        "version": "1.0.7",
         "news": {
-              "1.0.4": {
+            "1.0.7": {
+                "en": "Removed the warnings for js-controller 3.x",
+                "de": "Die Warnungen für js-controller 3.x wurden entfernt",
+                "ru": "Убраны предупреждения для js-controller 3.x",
+                "pt": "Removidos os avisos do js-controller 3.x",
+                "nl": "De waarschuwingen voor js-controller 3.x verwijderd",
+                "fr": "Suppression des avertissements pour js-controller 3.x",
+                "it": "Rimossi gli avvisi per js-controller 3.x",
+                "es": "Se eliminaron las advertencias para js-controller 3.x",
+                "pl": "Usunięto ostrzeżenia dla js-controller 3.x",
+                "zh-cn": "删除了 js-controller 3.x 的警告"
+            },
+            "1.0.6": {
+                "en": "added the support of Admin5",
+                "de": "hat die Unterstützung von Admin5 hinzugefügt",
+                "ru": "добавлена поддержка Admin5",
+                "pt": "adicionado o suporte de Admin5",
+                "nl": "de ondersteuning van Admin5 toegevoegd",
+                "fr": "a ajouté le support d'Admin5",
+                "it": "aggiunto il supporto di Admin5",
+                "es": "agregó el soporte de Admin5",
+                "pl": "dodano obsługę Admin5",
+                "zh-cn": "添加了对Admin5的支持"
+            },
+            "1.0.4": {
                 "en": "removed the ignored 1->0 transition",
                 "de": "Der ignorierte 1-> 0-Übergang wurde entfernt",
                 "ru": "удален игнорируемый переход 1-> 0",
@@ -14,8 +38,8 @@
                 "es": "eliminó la transición 1-> 0 ignorada",
                 "pl": "usunięto ignorowane przejście 1-> 0",
                 "zh-cn": "删除了忽略的1-> 0过渡"
-              },
-             "1.0.3": {
+            },
+            "1.0.3": {
                 "en": "fix several Sentry crash reports",
                 "de": "Beheben Sie mehrere Sentry-Absturzberichte",
                 "ru": "исправить несколько отчетов о сбоях Sentry",
@@ -26,7 +50,7 @@
                 "es": "arreglar varios informes de fallos de Sentry",
                 "pl": "napraw kilka raportów o awariach Sentry",
                 "zh-cn": "修复多个Sentry崩溃报告"
-              },
+            },
             "1.0.2": {
                 "en": "errohandling in cronjobs",
                 "de": "Errohandling in Cronjobs",
@@ -197,7 +221,9 @@
             "sentry": {
                 "dsn": "https://baf1b0da59cc43e092c500507d3a448d@sentry.iobroker.net/72"
             }
-        }
+        },
+        "connectionType": "local",
+        "dataSource": "push"
     },
     "native": {
         "impUnitPerImpulse": 1,
@@ -213,7 +239,7 @@
             {
                 "id": "gas",
                 "name": "total gas",
-                "price": 0.50,
+                "price": 0.5,
                 "priceUnit": "€/m³"
             }
         ]

@@ -403,6 +403,7 @@
             "type": "text",
             "label": "Name for Logging",
             "help": "Name of statistics log",
+            "defaultFunc": "(customObj && customObj.common && customObj.common.name) || (customObj && customObj._id) || ''",
             "sm": 6
         },
         "_binary": {

@@ -25,6 +25,7 @@ const statDP = {};      // contains the complete datasets (instead of adapter.co
 const groups = {};
 let units = {};
 const tasks = [];
+let taskCallback = null;
 const states = {}; // hold all states locally
 
 const nameObjects = {
@@ -128,7 +129,7 @@ function startAdapter(options) {
             if (state && state.ack ) {
                 adapter.log.debug(`[STATE CHANGE] stateChange => ${state.val} [${state.ack}]`);
 
-                if ((state.val === null) || (state.val === undefined) || (state.val === NaN) ) {
+                if ((state.val === null) || (state.val === undefined) || isNaN(state.val)) {
                     adapter.log.warn(`[STATE CHANGE] wrong value => ${state.val} on ${id} => check the other adapter where value comes from `);
                 } else {
                     if (typeObjects.sumDelta && typeObjects.sumDelta.includes(id)) {
@@ -211,17 +212,17 @@ function fiveMin() {
     const isStart = !tasks.length;
     /**
      * Determine 5min values
-     *
-     * Get current min from temp
-     * Get current max from temp
-     * current value from the monitored counter
-     * old value (before 5min) from the monitored counter
-     *
-     * determination delta and decision whether new min / max is stored
-     * current counter reading is written in the old value
-     *
-     * typeObjects.fiveMin [t] contains the objectId of the monitored counter
-     *
+     *
+     * Get current min from temp
+     * Get current max from temp
+     * current value from the monitored counter
+     * old value (before 5min) from the monitored counter
+     *
+     * determination delta and decision whether new min / max is stored
+     * current counter reading is written in the old value
+     *
+     * typeObjects.fiveMin [t] contains the objectId of the monitored counter
+     *
      */
 
     // go through all subscribed objects and write
@@ -256,16 +257,16 @@ function fiveMin() {
                                             return callback();
                                         }
                                         const delta = actual - old;
-                                        adapter.log.debug('[STATE CHANGE] fiveMin; of : ' + args.id + ' with  min: ' + min + ' max: ' + max + ' actual: ' + actual + ' old: ' + old + ' delta: ' + delta);
+                                        adapter.log.debug(`[STATE CHANGE] fiveMin; of : ${args.id} with  min: ${min} max: ${max} actual: ${actual} old: ${old} delta: ${delta}`);
                                         setValueStat('temp.fiveMin.' + args.id + '.mean5Min', delta, () => {
                                             if (max === null || delta > max) {
-                                                adapter.log.debug('[STATE CHANGE] new Max ' + 'temp.fiveMin.' + args.id + '.dayMax5Min'+ ': ' + delta);
-                                                setValueStat('temp.fiveMin.' + args.id + '.dayMax5Min', delta, callback);
+                                                adapter.log.debug(`[STATE CHANGE] new Max temp.fiveMin.${args.id}.dayMax5Min: ${delta}`);
+                                                setValueStat(`temp.fiveMin.${args.id}.dayMax5Min`, delta, callback);
                                                 callback = null;
                                             }
                                             if (min === null || delta < min) {
-                                                adapter.log.debug('[STATE CHANGE] new Min ' + 'temp.fiveMin.' + args.id + '.dayMin5Min' + ': ' + delta);
-                                                setValueStat('temp.fiveMin.' + args.id + '.dayMin5Min', delta, callback);
+                                                adapter.log.debug(`[STATE CHANGE] new Min temp.fiveMin.${args.id}.dayMin5Min: ${delta}`);
+                                                setValueStat(`temp.fiveMin.${args.id}.dayMin5Min`, delta, callback);
                                                 callback = null;
                                             }
                                             callback && callback();
@@ -322,31 +323,32 @@ function newAvgValue(id, value) {
     value = parseFloat(value); // || 0; if NaN we should not put a zero inside, better to skip everything
 
     if (!isNaN(value)) {
-        adapter.log.debug('[STATE CHANGE] avg call: ' + id + ' value ' + value);
+        adapter.log.debug(`[STATE CHANGE] avg call: ${id} value ${value}`);
         tasks.push({
             name: 'async',
             args: {
                 id,
                 value
             }, callback: (args, callback) => {
-                adapter.log.debug('[STATE CHANGE] new last for "' + 'temp.avg.' + args.id + '.last' + ': ' + value);
-                setValue('temp.avg.' + args.id + '.last', value); //memorize current value to have it available when date change for actual=starting point of new time frame
-                getValue('temp.avg.' + args.id + '.dayCount', (err, count) => {
+                adapter.log.debug(`[STATE CHANGE] new last for "temp.avg.${args.id}.last: ${value}`);
+                setValue(`temp.avg.${args.id}.last`, value); //memorize current value to have it available when date change for actual=starting point of new time frame
+
+                getValue(`temp.avg.${args.id}.dayCount`, (err, count) => {
                     count = count ? count + 1 : 1;
-                    setValue('temp.avg.' + args.id + '.dayCount', count, () => {
-                        getValue('temp.avg.' + args.id + '.daySum', (err, sum) => {
+                    setValue(`temp.avg.${args.id}.dayCount`, count, () => {
+                        getValue(`temp.avg.${args.id}.daySum`, (err, sum) => {
                             sum = sum ? sum + value : value;
-                            setValue('temp.avg.' + args.id + '.daySum', sum, () => {
-                                setValue('temp.avg.' + args.id + '.dayAvg', roundValue(sum / count, 4), () => {
-                                    getValue('temp.avg.' + args.id + '.dayMin', (err, tempMin) => {
+                            setValue(`temp.avg.${args.id}.daySum`, sum, () => {
+                                setValue(`temp.avg.${args.id}.dayAvg`, roundValue(sum / count, 4), () => {
+                                    getValue(`temp.avg.${args.id}.dayMin`, (err, tempMin) => {
                                         if (tempMin === null || tempMin > value) {
-                                            setValue('temp.avg.' + args.id + '.dayMin', value);
-                                            adapter.log.debug('[STATE CHANGE] new min for "' + 'temp.avg.' + args.id + '.dayMin' + ': ' + value);
+                                            setValue(`temp.avg.${args.id}.dayMin`, value);
+                                            adapter.log.debug(`[STATE CHANGE] new min for "temp.avg.${args.id}.dayMin: ${value}`);
                                         }
-                                        getValue('temp.avg.' + args.id + '.dayMax', (err, tempMax) => {
+                                        getValue(`temp.avg.${args.id}.dayMax`, (err, tempMax) => {
                                             if (tempMax === null || tempMax < value) {
-                                                setValue('temp.avg.' + args.id + '.dayMax', value, callback);
-                                                adapter.log.debug('[STATE CHANGE] new max for "' + 'temp.avg.' + args.id + '.dayMax'+ ': ' + value);
+                                                setValue(`temp.avg.${args.id}.dayMax`, value, callback);
+                                                adapter.log.debug(`[STATE CHANGE] new max for "temp.avg.${args.id}.dayMax: ${value}`);
                                             } else {
                                                 callback && callback();
                                             }
@@ -369,64 +371,64 @@ function newMinMaxValue(id, value) {
      */
     value = parseFloat(value) || 0;
     if (!isNaN(value)) {
-        adapter.log.debug('[STATE CHANGE] minmax call: ' + id + ' value ' + value);
+        adapter.log.debug(`[STATE CHANGE] minmax call: ${id} value ${value}`);
         tasks.push({
             name: 'async',
             args: {
                 id,
                 value
             }, callback: (args, callback) => {
-                adapter.log.debug('[STATE CHANGE] new last for "' + 'temp.minmax.' + args.id + '.last' + ': ' + value);
-                setValue('temp.minmax.' + args.id + '.last', value); //memorize current value to have it available when date change for actual=starting point of new time frame
-                getValue('temp.minmax.' + args.id + '.yearMin', (err, tempMin) => {
+                adapter.log.debug(`[STATE CHANGE] new last for "temp.minmax.${args.id}.last: ${value}`);
+                setValue(`temp.minmax.${args.id}.last`, value); //memorize current value to have it available when date change for actual=starting point of new time frame
+                getValue(`temp.minmax.${args.id}.yearMin`, (err, tempMin) => {
                     if (tempMin === null || tempMin > value) {
-                        setValue('temp.minmax.' + args.id + '.yearMin', value);
-                        adapter.log.debug('[STATE CHANGE] new year min for "' + args.id + ': ' + value);
+                        setValue(`temp.minmax.${args.id}.yearMin`, value);
+                        adapter.log.debug(`[STATE CHANGE] new year min for "${args.id}: ${value}`);
                     }
-                    getValue('temp.minmax.' + args.id + '.yearMax', (err, tempMax) => {
+                    getValue(`temp.minmax.${args.id}.yearMax`, (err, tempMax) => {
                         if (tempMax === null || tempMax < value) {
-                            setValue('temp.minmax.' + args.id + '.yearMax', value);
-                            adapter.log.debug('[STATE CHANGE] new year max for "' + args.id + ': ' + value);
+                            setValue(`temp.minmax.${args.id}.yearMax`, value);
+                            adapter.log.debug(`[STATE CHANGE] new year max for "${args.id}: ${value}`);
                         }
-                        getValue('temp.minmax.' + args.id + '.quarterMin', (err, tempMin) => {
+                        getValue(`temp.minmax.${args.id}.quarterMin`, (err, tempMin) => {
                             if (tempMin === null || tempMin > value) {
-                                setValue('temp.minmax.' + args.id + '.quarterMin', value);
-                                adapter.log.debug('[STATE CHANGE] new quarter min for "' + args.id + ': ' + value);
+                                setValue(`temp.minmax.${args.id}.quarterMin`, value);
+                                adapter.log.debug(`[STATE CHANGE] new quarter min for "${args.id}: ${value}`);
                             }
-                            getValue('temp.minmax.' + args.id + '.quarterMax', (err, tempMax) => {
+                            getValue(`temp.minmax.${args.id}.quarterMax`, (err, tempMax) => {
                                 if (tempMax === null || tempMax < value) {
-                                    setValue('temp.minmax.' + args.id + '.quarterMax', value);
-                                    adapter.log.debug('[STATE CHANGE] new quarter max for "' + args.id + ': ' + value);
+                                    setValue(`temp.minmax.${args.id}.quarterMax`, value);
+                                    adapter.log.debug(`[STATE CHANGE] new quarter max for "${args.id}: ${value}`);
                                 }
-                                getValue('temp.minmax.' + args.id + '.monthMin', (err, tempMin) => {
+                                getValue(`temp.minmax.${args.id}.monthMin`, (err, tempMin) => {
                                     if (tempMin === null || tempMin > value) {
                                         setValue('temp.minmax.' + args.id + '.monthMin', value);
-                                        adapter.log.debug('[STATE CHANGE] new month min for "' + args.id + ': ' + value);
+                                        adapter.log.debug(`[STATE CHANGE] new month min for "${args.id}: ${value}`);
                                     }
-                                    getValue('temp.minmax.' + args.id + '.monthMax', (err, tempMax) => {
+                                    getValue(`temp.minmax.${args.id}.monthMax`, (err, tempMax) => {
                                         if (tempMax === null || tempMax < value) {
-                                            setValue('temp.minmax.' + args.id + '.monthMax', value);
-                                            adapter.log.debug('[STATE CHANGE] new month max for "' + args.id + ': ' + value);
+                                            setValue(`temp.minmax.${args.id}.monthMax`, value);
+                                            adapter.log.debug(`[STATE CHANGE] new month max for "${args.id}: ${value}`);
                                         }
-                                        getValue('temp.minmax.' + args.id + '.weekMin', (err, tempMin) => {
+                                        getValue(`temp.minmax.${args.id}.weekMin`, (err, tempMin) => {
                                             if (tempMin === null || tempMin > value) {
-                                                setValue('temp.minmax.' + args.id + '.weekMin', value);
-                                                adapter.log.debug('[STATE CHANGE] new week min for "' + args.id + ': ' + value);
+                                                setValue(`temp.minmax.${args.id}.weekMin`, value);
+                                                adapter.log.debug(`[STATE CHANGE] new week min for "${args.id}: ${value}`);
                                             }
-                                            getValue('temp.minmax.' + args.id + '.weekMax', (err, tempMax) => {
+                                            getValue(`temp.minmax.${args.id}.weekMax`, (err, tempMax) => {
                                                 if (tempMax === null || tempMax < value) {
-                                                    setValue('temp.minmax.' + args.id + '.weekMax', value);
-                                                    adapter.log.debug('[STATE CHANGE] new week max for "' + args.id + ': ' + value);
+                                                    setValue(`temp.minmax.${args.id}.weekMax`, value);
+                                                    adapter.log.debug(`[STATE CHANGE] new week max for "${args.id}: ${value}`);
                                                 }
-                                                getValue('temp.minmax.' + args.id + '.dayMin', (err, tempMin) => {
+                                                getValue(`temp.minmax.${args.id}.dayMin`, (err, tempMin) => {
                                                     if (tempMin === null || tempMin > value) {
-                                                        setValue('temp.minmax.' + args.id + '.dayMin', value);
-                                                        adapter.log.debug('[STATE CHANGE] new day min for "' + args.id + ': ' + value);
+                                                        setValue(`temp.minmax.${args.id}.dayMin`, value);
+                                                        adapter.log.debug(`[STATE CHANGE] new day min for "${args.id}: ${value}`);
                                                     }
-                                                    getValue('temp.minmax.' + args.id + '.dayMax', (err, tempMax) => {
+                                                    getValue(`temp.minmax.${args.id}.dayMax`, (err, tempMax) => {
                                                         if (tempMax === null || tempMax < value) {
-                                                            setValue('temp.minmax.' + args.id + '.dayMax', value, callback);
-                                                            adapter.log.debug('[STATE CHANGE] new day max for "' + args.id + ': ' + value);
+                                                            setValue(`temp.minmax.${args.id}.dayMax`, value, callback);
+                                                            adapter.log.debug(`[STATE CHANGE] new day max for "${args.id}: ${value}`);
                                                         } else {
                                                             callback && callback();
                                                         }
@@ -449,10 +451,10 @@ function newCountValue(id, value) {
     const isStart = !tasks.length;
     /*
         value with limit or state
-        Change to 1 -> increase by 1
-        Value greater threshold -> increase by 1
+        Change to 1 -> increase by 1
+        Value greater threshold -> increase by 1
     */
-    adapter.log.debug('[STATE CHANGE] count call ' + id + ' with ' + value);
+    adapter.log.debug(`[STATE CHANGE] count call ${id} with ${value}`);
     // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
     // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
     if (isTrueNew(id, value)) {
@@ -469,12 +471,12 @@ function newCountValue(id, value) {
                         tasks.push({
                             name: 'async',
                             args: {
-                                id: 'temp.count.' + id + '.' + nameObjects.count.temp[s]
+                                id: `temp.count.${id}.${nameObjects.count.temp[s]}`
                             },
                             callback: (args, callback) => {
                                 getValue(args.id, (err, oldVal) => {
                                     oldVal = oldVal ? oldVal + 1 : 1;
-                                    adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on 1 to ' + oldVal);
+                                    adapter.log.debug(`[STATE CHANGE] Increase ${args.id} on 1 to ${oldVal}`);
                                     setValue(args.id, oldVal, callback);
                                 });
                             }
@@ -492,7 +494,7 @@ function newCountValue(id, value) {
                                 callback: (args, callback) => {
                                     getValue(args.id, (err, consumption) => {
                                         const value = consumption ? consumption + args.impUnitPerImpulse : args.impUnitPerImpulse;
-                                        adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.impUnitPerImpulse + ' to ' + value);
+                                        adapter.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.impUnitPerImpulse} to ${value}`);
                                         setValue(args.id, value, callback)
                                     })
                                 }
@@ -521,7 +523,7 @@ function newCountValue(id, value) {
                                                 }
                                                 // value auf 4 stellen hinter dem Komma festgelegt
                                                 value = roundValue(((value || 0) + args.delta), 4);
-                                                adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
+                                                adapter.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.delta} to ${value}`);
                                                 setValue(args.id, value, callback);
                                             })
                                     });
@@ -584,7 +586,7 @@ function checkValue(value, ts, id, type) {
                                 return value;
                             }
     if (ts < now.getTime()) {
-        adapter.log.warn('[STATE CHANGE] Value of ' + id + ' ignored because older than ' + now.toISOString());
+        adapter.log.warn(`[STATE CHANGE] Value of ${id} ignored because older than ${now.toISOString()}`);
         value = 0;
     }
     return value;
@@ -594,25 +596,25 @@ function newSumDeltaValue(id, value) {
     const isStart = !tasks.length;
     /*
         determine the consumption per period as consecutive meter readings.
-             - Validity check new value must be greater than age
-             - Subtraction with last value Day
-             - Subtraction with last value today -> delta for sum
-             - Add delta to all values
-             - treat own values differently (datapoint name)
+         - Validity check new value must be greater than age
+         - Subtraction with last value Day
+         - Subtraction with last value today -> delta for sum
+         - Add delta to all values
+         - treat own values differently (datapoint name)
     */
     value = parseFloat(value) || 0; //here we can probably leave the 0, if undefined then we have 0
     tasks.push({
         name: 'async',
         args: { id },
         callback: (args, callback) => {
-            getValue('save.sumDelta.' + args.id + '.last', (err, old) => {
+            getValue(`save.sumDelta.${args.id}.last`, (err, old) => {
                 if (!statDP[args.id]) {
                     return callback && callback();
                 }
 
                 tasks.push({
                     name: 'async',
-                    args: { id: 'save.sumDelta.' + args.id + '.last', value },
+                    args: { id: `save.sumDelta.${args.id}.last`, value },
                     callback: (args, callback) => setValue(args.id, args.value, callback)
                 });
                 if (old === null) {
@@ -633,7 +635,7 @@ function newSumDeltaValue(id, value) {
                     name: 'async',
                     args: {
                         delta,
-                        id: 'save.sumDelta.' + args.id + '.delta'
+                        id: `save.sumDelta.${args.id}.delta`
                     },
                     callback: (args, callback) => setValue(args.id, args.delta, callback)
                 });
@@ -643,7 +645,7 @@ function newSumDeltaValue(id, value) {
                         name: 'async',
                         args: {
                             delta,
-                            id: 'temp.sumDelta.' + args.id + '.' + nameObjects.sumDelta.temp[i],
+                            id: `temp.sumDelta.${args.id}.${nameObjects.sumDelta.temp[i]}`,
                             type: nameObjects.sumDelta.temp[i]
                         },
                         callback: (args, callback) =>
@@ -654,13 +656,13 @@ function newSumDeltaValue(id, value) {
                                 }
                                 // value auf 4 stellen hinter dem Komma begrenzen
                                 value = roundValue((value || 0) + args.delta, 4);
-                                adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
+                                adapter.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.delta} to ${value}`);
                                 setValue(args.id, value, callback);
                             })
                     });
                 }
                 // calculate average
-                if (typeObjects.avg && typeObjects.avg.indexOf(args.id)) {
+                if (typeObjects.avg && typeObjects.avg.includes(args.id)) {
                     newAvgValue(args.id, delta);
                 }
                 if (statDP[args.id].sumGroup &&
@@ -674,7 +676,7 @@ function newSumDeltaValue(id, value) {
                             name: 'async',
                             args: {
                                 delta: delta * factor * price,
-                                id: 'temp.sumGroup.' + statDP[args.id].sumGroup + '.' + nameObjects.sumGroup.temp[i],
+                                id: `temp.sumGroup.${statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[i]}`,
                                 type: nameObjects.sumGroup.temp[i]
                             },
                             callback: (args, callback) =>
@@ -685,7 +687,7 @@ function newSumDeltaValue(id, value) {
                                     }
                                     // value auf 4 stellen hinter dem Komma festgelegt
                                     value = roundValue((value || 0) + args.delta, 4);
-                                    adapter.log.debug('[STATE CHANGE] Increase ' + args.id + ' on ' + args.delta + ' to ' + value);
+                                    adapter.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.delta} to ${value}`);
                                     setValue(args.id, value, callback);
                                 })
                         });
@@ -700,8 +702,8 @@ function newSumDeltaValue(id, value) {
 
 function isTrueNew(id, val) { //detection if a count value is real or only from polling with same state
     let newPulse = false;
-    getValue('temp.count.' + id + '.lastPulse', (err, value) => {
-        setValue('temp.count.' + id + '.lastPulse', val);
+    getValue(`temp.count.${id}.lastPulse`, (err, value) => {
+        setValue(`temp.count.${id}.lastPulse`, val);
         if (value === val) {
             newPulse = false;
             adapter.log.debug('new pulse false ? ' + newPulse);
@@ -728,7 +730,7 @@ function newTimeCntValue(id, state) {
     Addition of time
     Change to 0 at threshold 1 -> time between event since last 1
     Addition of time
-    no change but retrigger counts up the time of respective state
+    no change but re-trigger counts up the time of respective state
     */
     adapter.log.debug('[STATE CHANGE] timecount call ' + id + ' with ' + state.val); // !! val ist hier falsch da state komplett übergeben
     if (isTrue(state.val)) {
@@ -739,7 +741,7 @@ function newTimeCntValue(id, state) {
                 state
             },
             callback: (args, callback) => {
-                getValue('temp.timeCount.' + args.id + '.last', (err, actual) => { //Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
+                getValue(`temp.timeCount.${args.id}.last`, (err, actual) => { //Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
                     if (!isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für OFF-Zeitraum von 1->0 bis jetzt 0->1
                         getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
                             let delta = last ? state.ts - last : 0; // wenn last true dann delta, ansonsten 0
@@ -748,24 +750,23 @@ function newTimeCntValue(id, state) {
                             } else {
                                 delta = Math.floor(delta / 1000);
                             }
-                            adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
-                            setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.ts + '  '+ timeConverter(state.ts) );
-                                setValue('temp.timeCount.' + args.id + '.last01', state.ts, () => {
-                                    adapter.log.debug('[STATE CHANGE] 0->1 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
+                            adapter.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
+                            setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
+                                adapter.log.debug(`[STATE CHANGE] new last01 temp.timeCount.${args.id}.last01: ${state.ts}  ${timeConverter(state.ts)}` );
+                                setValue(`temp.timeCount.${args.id}.last01`, state.ts, () => {
+                                    adapter.log.debug(`[STATE CHANGE] 0->1 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
                                     for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
                                         if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
                                             tasks.push({
                                                 name: 'async',
                                                 args: {
-                                                    id: 'temp.timeCount.' + args.id + '.' + nameObjects.timeCount.temp[s]
+                                                    id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
                                                 },
-                                                callback: (args, callback) => {
+                                                callback: (args, callback) =>
                                                     getValue(args.id, (err, time) => {
-                                                        adapter.log.debug('[STATE CHANGE] 0->1 new val ' + args.id + ': ' + ((time || 0) + delta));
-                                                        setValue(args.id, (time || 0) + delta, callback)
+                                                        adapter.log.debug(`[STATE CHANGE] 0->1 new val ${args.id}: ${(time || 0) + delta}`);
+                                                        setValue(args.id, (time || 0) + delta, callback);
                                                     })
-                                                }
                                             });
                                         }
                                     }
@@ -775,31 +776,30 @@ function newTimeCntValue(id, state) {
                         });
                     }
                     else { // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update ON-Zeitraum von letzten 0->1 bis jetzt 0->1
-                        getValue('temp.timeCount.' + args.id + '.last01', (err, last) => {
+                        getValue(`temp.timeCount.${args.id}.last01`, (err, last) => {
                             let delta = last ? state.ts - last : 0; // wenn last true dann delta, ansonsten 0
                             if (delta < 0) {
                                 delta = 0
                             } else {
                                 delta = Math.floor(delta / 1000);
                             }
-                            adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
-                            setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
+                            adapter.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
+                            setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                 adapter.log.debug('[STATE CHANGE] new last01 ' + 'temp.timeCount.' + args.id + '.last01' + ': ' + state.ts + '  '+ timeConverter(state.ts));
-                                setValue('temp.timeCount.' + args.id + '.last01', state.ts, () => {
-                                    adapter.log.debug('[STATE EQUAL] 1->1 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
+                                setValue(`temp.timeCount.${args.id}.last01`, state.ts, () => {
+                                    adapter.log.debug(`[STATE EQUAL] 1->1 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
                                     for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
                                         if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) { // ^ wegen on in Month
                                             tasks.push({
                                                 name: 'async',
                                                 args: {
-                                                    id: 'temp.timeCount.' + args.id + '.' + nameObjects.timeCount.temp[s]
+                                                    id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
                                                 },
-                                                callback: (args, callback) => {
+                                                callback: (args, callback) =>
                                                     getValue(args.id, (err, time) => {
-                                                        adapter.log.debug('[STATE EQUAL] 1->1 new val ' + args.id + ': ' + ((time || 0) + delta));
-                                                        setValue(args.id, (time || 0) + delta, callback)
+                                                        adapter.log.debug(`[STATE EQUAL] 1->1 new val ${args.id}: ${(time || 0) + delta}`);
+                                                        setValue(args.id, (time || 0) + delta, callback);
                                                     })
-                                                }
                                             });
                                         }
                                     }
@@ -820,33 +820,32 @@ function newTimeCntValue(id, state) {
                     state
                 },
                 callback: (args, callback) => {
-                    getValue('temp.timeCount.' + args.id + '.last', (err, actual) => { //Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
+                    getValue(`temp.timeCount.${args.id}.last`, (err, actual) => { //Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
                         if (isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für ON-Zeitraum von 0->1 bis jetzt 1->0
-                            getValue('temp.timeCount.' + args.id + '.last01', (err, last) => {
+                            getValue(`temp.timeCount.${args.id}.last01`, (err, last) => {
                                 let delta = last ? state.ts - last : 0;
                                 if (delta < 0) {
                                     delta = 0;
                                 } else {
                                     delta = Math.floor(delta / 1000);
                                 }
-                                adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
-                                setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.ts + '  '+ timeConverter(state.ts));
-                                    setValue('temp.timeCount.' + args.id + '.last10', state.ts, () => {
-                                        adapter.log.debug('[STATE CHANGE] 1->0 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
+                                adapter.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
+                                setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
+                                    adapter.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${state.ts}  ${timeConverter(state.ts)}`);
+                                    setValue(`temp.timeCount.${args.id}.last10`, state.ts, () => {
+                                        adapter.log.debug(`[STATE CHANGE] 1->0 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
                                         for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
                                             if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) { // on auch in Month drin, deswegen ^
                                                 tasks.push({
                                                     name: 'async',
                                                     args: {
-                                                        id: 'temp.timeCount.' + args.id + '.' + nameObjects.timeCount.temp[s]
+                                                        id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
                                                     },
-                                                    callback: (args, callback) => {
+                                                    callback: (args, callback) =>
                                                         getValue(args.id, (err, time) => {
-                                                            adapter.log.debug('[STATE CHANGE] 1->0 new val ' + args.id + ': ' + ((time || 0) + delta));
-                                                            setValue(args.id, (time || 0) + delta, callback)
+                                                            adapter.log.debug(`[STATE CHANGE] 1->0 new val ${args.id}: ${(time || 0) + delta}`);
+                                                            setValue(args.id, (time || 0) + delta, callback);
                                                         })
-                                                    }
                                                 });
                                             }
                                         }
@@ -863,24 +862,23 @@ function newTimeCntValue(id, state) {
                                 } else {
                                     delta = Math.floor(delta / 1000);
                                 }
-                                adapter.log.debug('[STATE CHANGE] new last ' + 'temp.timeCount.' + args.id + '.last' + ': ' + state.val);
-                                setValue('temp.timeCount.' + args.id + '.last', state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
+                                adapter.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
+                                setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
                                     adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.ts + '  '+ timeConverter(state.ts) );
-                                    setValue('temp.timeCount.' + args.id + '.last10', state.ts, () => {
-                                        adapter.log.debug('[STATE EQUAL] 0->0 delta ' + delta + ' state ' + timeConverter(state.ts) + ' last ' + timeConverter(last));
+                                    setValue(`temp.timeCount.${args.id}.last10`, state.ts, () => {
+                                        adapter.log.debug(`[STATE EQUAL] 0->0 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
                                         for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
                                             if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
                                                 tasks.push({
                                                     name: 'async',
                                                     args: {
-                                                        id: 'temp.timeCount.' + args.id + '.' + nameObjects.timeCount.temp[s]
+                                                        id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
                                                     },
-                                                    callback: (args, callback) => {
+                                                    callback: (args, callback) =>
                                                         getValue(args.id, (err, time) => {
-                                                            adapter.log.debug('[STATE EQUAL] 0->0 new val ' + args.id + ': ' + ((time || 0) + delta));
-                                                            setValue(args.id, (time || 0) + delta, callback)
+                                                            adapter.log.debug(`[STATE EQUAL] 0->0 new val ${args.id}: ${(time || 0) + delta}`);
+                                                            setValue(args.id, (time || 0) + delta, callback);
                                                         })
-                                                    }
                                                 });
                                             }
                                         }
@@ -910,19 +908,19 @@ function copyValue(args, callback) {
     });
 }
 
-// Setzen der Ausgangspunkte für Min/Maxmit aktuelle Wert, anstatt mit 0
+// Setzen der Ausgangspunkte für Min/Max mit aktuelle Wert, anstatt mit 0
 function copyValueActMinMax(args, callback) {
     getValue(args.temp, (err, value) => {
         if (value !== null && value !== undefined) {
-            adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' +args.save);
+            adapter.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
             value = value || 0; // protect against NaN
             setValueStat(args.save, value, () =>
                 getValue(args.actual, (err, actual) => {
-                    adapter.log.debug('[SET DAILY START MINMAX] Process ' + args.temp + ' = ' + actual + ' from ' + args.actual);
+                    adapter.log.debug(`[SET DAILY START MINMAX] Process ${args.temp} = ${actual} from ${args.actual}`);
                     setValue(args.temp, actual, callback)
                 }));
         } else {
-            adapter.log.debug('[SAVE VALUES & SET DAILY START MINMAX] Process ' + args.temp + ' => no value found');
+            adapter.log.debug(`[SAVE VALUES & SET DAILY START MINMAX] Process ${args.temp} => no value found`);
             callback && callback();
         }
     });
@@ -932,11 +930,11 @@ function copyValueActMinMax(args, callback) {
 function copyValueRound(args, callback) {
     getValue(args.temp, (err, value) => {
         if (value !== null && value !== undefined) {
-            adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' + args.save);
+            adapter.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
             setValueStat(args.save, roundValue(value, 4), () =>
                 setValue(args.temp, 0, callback));
         } else {
-            adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' => no value found');
+            adapter.log.debug(`[SAVE VALUES] Process ${args.temp} => no value found`);
             callback && callback();
         }
     });
@@ -946,7 +944,7 @@ function copyValueRound(args, callback) {
 function copyValue0(args, callback) {
     getValue(args.temp, (err, value) => {
         value = value || 0;
-        adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' + args.save);
+        adapter.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
         setValueStat(args.save, value, () =>
             setValue(args.temp, 0, callback));
     });
@@ -956,7 +954,7 @@ function copyValue0(args, callback) {
 function copyValue1000(args, callback) {
     getValue(args.temp, (err, value) => {
         //value = Math.floor((value || 0) / 1000);
-        adapter.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value + ' to ' + args.save);
+        adapter.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
         setValueStat(args.save, value, () =>
             setValue(args.temp, 0, callback));
     });
@@ -968,7 +966,7 @@ function setTimeCountMidnight() {
             const id = typeObjects.timeCount[s];
             //bevor umgespeichert wird, muß noch ein Aufruf mit actual erfolgen, damit die restliche Zeit vom letzten Signalwechsel bis Mitternacht erfolgt
             //aufruf von newTimeCntValue(id, "last") damit wird gleicher Zustand getriggert und last01 oder last10 zu Mitternacht neu gesetzt
-            adapter.getForeignState(adapter.namespace + '.temp.timeCount.' + id + '.last', (err, last) => { //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
+            adapter.getForeignState(`${adapter.namespace}.temp.timeCount.${id}.last`, (err, last) => { //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
                 //evtl. status ermitteln und dann setForeignState nochmals den Zustand schreiben um anzutriggern und aktuelle Zeit zu verwenden (bzw. 00:00:00)
                 let ts = new Date();
                 //ts.setMinutes(ts.getMinutes() - 1);
@@ -1368,8 +1366,12 @@ function defineObject(type, id, name, unit) {
 
 function setupObjects(ids, callback, isStart, noSubscribe) {
     if (!ids || !ids.length) {
-        isStart && processTasks();
-        return callback && callback();
+        if (isStart) {
+            taskCallback = callback;
+            return processTasks();
+        } else {
+            return callback && callback();
+        }
     }
     if (isStart === undefined) {
         isStart = !tasks.length;
@@ -1588,6 +1590,11 @@ function setupObjects(ids, callback, isStart, noSubscribe) {
 
 function processTasks() {
     if (!tasks || !tasks.length) {
+        if (taskCallback) {
+            const cb = taskCallback;
+            taskCallback = null;
+            cb();
+        }
         units = {};
         return;
     }
