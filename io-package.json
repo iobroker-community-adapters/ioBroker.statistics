@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "statistics",
-        "version": "1.0.6",
+        "version": "1.0.7",
         "news": {
+            "1.0.7": {
+                "en": "Removed the warnings for js-controller 3.x",
+                "de": "Die Warnungen für js-controller 3.x wurden entfernt",
+                "ru": "Убраны предупреждения для js-controller 3.x",
+                "pt": "Removidos os avisos do js-controller 3.x",
+                "nl": "De waarschuwingen voor js-controller 3.x verwijderd",
+                "fr": "Suppression des avertissements pour js-controller 3.x",
+                "it": "Rimossi gli avvisi per js-controller 3.x",
+                "es": "Se eliminaron las advertencias para js-controller 3.x",
+                "pl": "Usunięto ostrzeżenia dla js-controller 3.x",
+                "zh-cn": "删除了 js-controller 3.x 的警告"
+            },
             "1.0.6": {
                 "en": "added the support of Admin5",
                 "de": "hat die Unterstützung von Admin5 hinzugefügt",
