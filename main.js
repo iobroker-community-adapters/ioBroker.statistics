@@ -1364,7 +1364,8 @@ function defineObject(type, id, name, unit) {
 }
 
 function setupObjects(ids, callback, noSubscribe) {
-    const isStart = !tasks.length;
+    let isStart = !tasks.length;
+
     if (!ids || !ids.length) {
         if (isStart) {
             taskCallback = callback;
@@ -1373,13 +1374,11 @@ function setupObjects(ids, callback, noSubscribe) {
             return callback && callback();
         }
     }
-    if (isStart === undefined) {
-        isStart = !tasks.length;
-    }
+
     const id = ids.shift();
     const obj = statDP[id];
     if (!obj) {
-        return setImmediate(setupObjects, ids, callback);
+        return setImmediate(setupObjects, ids, callback, noSubscribe);
     }
     let subscribed = !!noSubscribe;
     if (!obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
@@ -1404,7 +1403,7 @@ function setupObjects(ids, callback, noSubscribe) {
     adapter.log.debug(`[CREATION] ============================== ${id} =============================`);
     adapter.log.debug(`[CREATION] setup of object ${id}: ${JSON.stringify(obj)}`);
     const logName = obj.logName;
-    if (obj.avg && !obj.sumDelta) {
+    if (obj.avg) {
         if (!typeObjects.avg || !typeObjects.avg.includes(id)) {
             typeObjects.avg = typeObjects.avg || [];
             typeObjects.avg.push(id);
