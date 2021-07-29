@@ -1402,7 +1402,7 @@ function setupObjects(ids, callback, noSubscribe) {
 
     // Function is called with the custom objects
     adapter.log.debug(`[CREATION] ============================== ${id} =============================`);
-    adapter.log.debug('[CREATION] setup of object ' + id + ': ' + JSON.stringify(obj));
+    adapter.log.debug(`[CREATION] setup of object ${id}: ${JSON.stringify(obj)}`);
     const logName = obj.logName;
     if (obj.avg && !obj.sumDelta) {
         if (!typeObjects.avg || !typeObjects.avg.includes(id)) {
