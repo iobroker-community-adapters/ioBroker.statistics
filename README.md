@@ -47,6 +47,10 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 -->
 
 ## Changelog
+
+### __WORK IN PROGRESS__
+* (Apollon77) prevent some crash cases
+
 ### 1.0.9 (2021-07-29)
 * (bluefox) Removed the warnings for js-controller 3.x
 

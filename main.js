@@ -668,6 +668,7 @@ function newSumDeltaValue(id, value) {
                 }
                 if (statDP[args.id].sumGroup &&
                     groups[statDP[args.id].sumGroup] &&
+                    groups[statDP[args.id].sumGroup].config &&
                     statDP[args.id].groupFactor
                 ) {
                     const factor = statDP[args.id].groupFactor;
