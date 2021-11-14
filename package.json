@@ -1,6 +1,6 @@
 {
   "name": "iobroker.statistics",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "ioBroker statistics Adapter",
   "author": {
     "name": "foxthefox",
