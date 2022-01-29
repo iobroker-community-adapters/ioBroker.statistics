@@ -77,12 +77,12 @@ describe('Test ' + adapterShortName + ' adapter', function () {
         this.timeout(600000); // because of first install from npm
 
         setup.setupController(() => {
-            const config = setup.getAdapterConfig();
+            const config = await setup.getAdapterConfig();
             // enable adapter
             config.common.enabled  = true;
             config.common.loglevel = 'debug';
 
-            setup.setAdapterConfig(config.common, config.native);
+            await setup.setAdapterConfig(config.common, config.native);
 
             setup.startController(true, (id, obj) => {
 
