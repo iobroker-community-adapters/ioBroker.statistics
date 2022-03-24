@@ -47,8 +47,7 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.1.0 (2022-03-24)
 * IMPORTANT: js-controller 3.2 is needed at least!
 * (Apollon77) Prepare for future js-controller compatibility
 
