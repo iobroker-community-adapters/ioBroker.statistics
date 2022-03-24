@@ -136,9 +136,14 @@
             "config": "materialize",
             "custom": "json"
         },
-        "dependencies": [
+        "globalDependencies": [
             {
                 "admin": ">=3.5.10"
+            }
+        ],
+        "dependencies": [
+            {
+                "js-controller": ">=3.2.0"
             }
         ],
         "authors": [
@@ -178,16 +183,5 @@
                 "priceUnit": "€/m³"
             }
         ]
-    },
-    "objects": [
-        {
-            "_id": "_design/custom",
-            "language": "javascript",
-            "views": {
-                "state": {
-                    "map": "function(doc) { if (doc.type === 'state' && doc.common.custom) emit(doc._id, doc.common.custom) }"
-                }
-            }
-        }
-    ]
+    }
 }

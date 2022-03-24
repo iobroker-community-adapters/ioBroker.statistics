@@ -1691,7 +1691,7 @@ function main() {
     // typeObjects is rebuilt after starting the adapter
     // deleting data points during runtime must be cleaned up in both arrays
     // reading the setting (here come with other setting!)
-    adapter.getObjectView('custom', 'state', {}, (err, doc) => {
+    adapter.getObjectView('system', 'custom', {}, (err, doc) => {
         let objCount = 0;
         if (doc && doc.rows) {
             for (let i = 0, l = doc.rows.length; i < l; i++) {
