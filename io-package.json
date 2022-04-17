@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "statistics",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "news": {
+      "1.1.1": {
+        "en": "Prevent warn logs when using non-number states as statistic source",
+        "de": "Verhindern Sie Warnprotokolle, wenn Sie Status als Statistikquelle verwenden, die keine Zahlen sind",
+        "ru": "Предотвращение журналов предупреждений при использовании нечисловых состояний в качестве источника статистики",
+        "pt": "Evitar logs de aviso ao usar estados não numéricos como fonte de estatística",
+        "nl": "Voorkom waarschuwingslogboeken bij het gebruik van niet-getalstaten als statistische bron",
+        "fr": "Empêcher les journaux d'avertissement lors de l'utilisation d'états non numériques comme source de statistiques",
+        "it": "Impedisci i registri di avviso quando si utilizzano stati non numerici come origine statistica",
+        "es": "Evite los registros de advertencia cuando utilice estados que no sean números como fuente de estadísticas",
+        "pl": "Zapobiegaj ostrzeżeniom podczas używania stanów nieliczbowych jako źródła statystyk",
+        "zh-cn": "使用非数字状态作为统计源时防止警告日志"
+      },
       "1.1.0": {
         "en": "IMPORTANT: js-controller 3.2 is needed at least!\nPrepare for future js-controller compatibility",
         "de": "WICHTIG: js-controller 3.2 wird mindestens benötigt!\nBereiten Sie sich auf zukünftige js-Controller-Kompatibilität vor",
@@ -74,18 +86,6 @@
         "es": "agregó el soporte de Admin5",
         "pl": "dodano obsługę Admin5",
         "zh-cn": "添加了对Admin5的支持"
-      },
-      "1.0.4": {
-        "en": "removed the ignored 1->0 transition",
-        "de": "Der ignorierte 1-> 0-Übergang wurde entfernt",
-        "ru": "удален игнорируемый переход 1-> 0",
-        "pt": "removeu a transição 1-> 0 ignorada",
-        "nl": "verwijderde de genegeerde 1-> 0 overgang",
-        "fr": "supprimé la transition ignorée 1-> 0",
-        "it": "rimossa la transizione 1-> 0 ignorata",
-        "es": "eliminó la transición 1-> 0 ignorada",
-        "pl": "usunięto ignorowane przejście 1-> 0",
-        "zh-cn": "删除了忽略的1-> 0过渡"
       }
     },
     "title": "statistics",

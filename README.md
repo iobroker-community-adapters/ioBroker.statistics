@@ -47,8 +47,7 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 -->
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.1.1 (2022-04-17)
 * Prevent warn logs when using non-number states as statistic source
 
 ### 1.1.0 (2022-03-24)
