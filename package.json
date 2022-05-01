@@ -24,7 +24,7 @@
     "url": "git+https://github.com/iobroker-community-adapters/ioBroker.statistics.git"
   },
   "dependencies": {
-    "cron": "^1.8.2",
+    "cron": "^1.8.3",
     "@iobroker/adapter-core": "^2.6.0"
   },
   "devDependencies": {
