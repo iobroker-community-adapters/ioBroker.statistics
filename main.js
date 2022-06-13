@@ -68,16 +68,12 @@ function timeConverter(timestamp) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const year = a.getFullYear();
     const month = months[a.getMonth()];
-    let date = a.getDate();
-    date = date < 10 ? ' ' + date : date;
-    let hour = a.getHours();
-    hour = hour < 10 ? '0' + hour : hour;
-    let min = a.getMinutes();
-    min = min < 10 ? '0' + min : min;
-    let sec = a.getSeconds();
-    sec = sec < 10 ? '0' + sec : sec;
+    const date = a.getDate();
+    const hour = a.getHours();
+    const min = a.getMinutes();
+    const sec = a.getSeconds();
 
-    return date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec;
+    return `${date < 10 ? ' ' + date : date} ${month} ${year} ${hour < 10 ? '0' + hour : hour}:${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`;
 }
 
 class Statistics extends utils.Adapter {
@@ -130,7 +126,7 @@ class Statistics extends utils.Adapter {
                 this.setupObjects(keys, () => {
                     this.log.info(`[INFO] statistics observes ${objCount} values after startup`);
                     for (const type in this.typeObjects) {
-                        if (this.typeObjects.hasOwnProperty(type)) {
+                        if (Object.prototype.hasOwnProperty.call(this.typeObjects, type)) {
                             for (let i = 0; i < this.typeObjects[type].length; i++) {
                                 this.log.info(`[INFO] monitor "${this.typeObjects[type][i]}" as ${type}`);
                             }
@@ -252,7 +248,7 @@ class Statistics extends utils.Adapter {
                     this.subscribeForeignObjects('*');
 
                     for (const type in this.crons) {
-                        if (this.crons.hasOwnProperty(type) && this.crons[type]) {
+                        if (Object.prototype.hasOwnProperty.call(this.crons, type) && this.crons[type]) {
                             this.log.debug(`[INFO] ${type} status = ${this.crons[type].running} next event: ${timeConverter(this.crons[type].nextDates())}`);
                         }
                     }
@@ -350,7 +346,7 @@ class Statistics extends utils.Adapter {
         try {
             // possibly also delete a few schedules
             for (const type in this.crons) {
-                if (this.crons.hasOwnProperty(type) && this.crons[type]) {
+                if (Object.prototype.hasOwnProperty.call(this.crons, type) && this.crons[type]) {
                     this.crons[type].stop();
                     this.crons[type] = null;
                 }
@@ -381,7 +377,7 @@ class Statistics extends utils.Adapter {
     }
 
     getValue(id, callback) {
-        if (this.states.hasOwnProperty(id)) {
+        if (Object.prototype.hasOwnProperty.call(this.states, id)) {
             callback(null, this.states[id]);
         } else {
             this.getState(id, (err, value) => {
@@ -808,7 +804,7 @@ class Statistics extends utils.Adapter {
         const isStart = !this.tasks.length;
         const dayTypes = [];
         for (const key in this.typeObjects) {
-            if (this.typeObjects.hasOwnProperty(key) &&
+            if (Object.prototype.hasOwnProperty.call(this.typeObjects, key) &&
                 this.typeObjects[key] &&
                 this.typeObjects[key].length &&
                 copyToSave.includes(key)
