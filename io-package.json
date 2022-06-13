@@ -101,16 +101,16 @@
             "zh-cn": "状态统计"
         },
         "desc": {
-            "en": "Calculate statistics: day minimum, day maximum, day average, delta and so on for defined states",
-            "de": "Berechnen Sie Statistiken: Tagesminimum, Tagesmaximum, Tagesdurchschnitt, Delta und so weiter für vordefinierte Status",
-            "ru": "Вычислить статистику: минимум дня, максимум дня, дневной средний, дельта и т. Д. Для определенных состояний",
-            "pt": "Calcular estatísticas: dia mínimo, dia máximo, dia médio, delta e assim por diante para estados definidos",
-            "nl": "Bereken statistieken: dag minimum, dag maximum, dag gemiddelde, delta en ga zo maar door voor gedefinieerde staten",
-            "fr": "Calculer les statistiques: jour minimum, jour maximum, moyenne journalière, delta et ainsi de suite pour les états définis",
-            "it": "Calcola statistiche: giorno minimo, giorno massimo, giorno medio, delta e così via per stati definiti",
-            "es": "Calcule las estadísticas: día mínimo, día máximo, día promedio, delta y así sucesivamente para estados definidos",
-            "pl": "Oblicz statystyki: dzień minimum, dzień maksimum, dzień średni, delta i tak dalej dla zdefiniowanych stanów",
-            "zh-cn": "计算统计数据：定义状态的日最小值、日最大值、日平均值、增量等"
+            "en": "Provides statistics like day minimum, day maximum, day average, delta and much more",
+            "de": "Bietet Statistiken wie Tagesminimum, Tagesmaximum, Tagesdurchschnitt, Delta und vieles mehr",
+            "ru": "Обеспечивает статистику как минимум дня, максимальный день, средний день, дельта и многое другое",
+            "pt": "Fornece estatísticas como dia mínimo, dia máximo, dia média, delta e muito mais",
+            "nl": "Provides statistieken zoals dagelijks, maximaal, dag gemiddeld, delta en veel meer",
+            "fr": "Fournit des statistiques comme le minimum de jour, le maximum de jour, la moyenne de jour, delta et beaucoup plus",
+            "it": "Fornisce statistiche come il minimo del giorno, il massimo del giorno, la media del giorno, delta e molto altro",
+            "es": "Proporciona estadísticas como mínimo de día, máximo de día, promedio de día, delta y mucho más",
+            "pl": "Obserwuje statystyki takie jak np. dzień minimalny, średnia dnia, delta i znacznie więcej",
+            "zh-cn": "提供每日最低、每天最高、每天平均、日报、审会和更多的统计数字"
         },
         "platform": "Javascript/Node.js",
         "mode": "daemon",
