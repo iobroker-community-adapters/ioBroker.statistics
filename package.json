@@ -73,7 +73,7 @@
     "release-major": "release-script major --yes"
   },
   "bugs": {
-    "url": "https://github.com/ioBroker/ioBroker.statistics/issues"
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.statistics/issues"
   },
   "readmeFilename": "README.md"
 }
