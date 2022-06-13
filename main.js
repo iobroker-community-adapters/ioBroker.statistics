@@ -598,8 +598,18 @@ class Statistics extends utils.Adapter {
                 obj: {
                     type: 'channel',
                     common: {
-                        name: 'Average values',
-                        role: 'sensor'
+                        name: {
+                            en: 'Average values',
+                            de: 'Durchschnittswerte',
+                            ru: 'Среднее значение',
+                            pt: 'Valores médios',
+                            nl: 'Gemiddelde waarden',
+                            fr: 'Valeurs moyennes',
+                            it: 'Valori medi',
+                            es: 'Valores medios',
+                            pl: 'Average value',
+                            'zh-cn': '平均值'
+                        }
                     },
                     native: {}
                 }
@@ -621,8 +631,18 @@ class Statistics extends utils.Adapter {
                 obj: {
                     type: 'channel',
                     common: {
-                        name: 'MinMax values',
-                        role: 'sensor'
+                        name: {
+                            en: 'Min/Max values',
+                            de: 'Min/Max Werte',
+                            ru: 'Мин/макс. значения',
+                            pt: 'Min/Max valores',
+                            nl: 'Min/Max waarden',
+                            fr: 'Valeurs Min/Max',
+                            it: 'Valori minimi/max',
+                            es: 'Valores Min/Max',
+                            pl: 'Wartości Min/Max',
+                            'zh-cn': 'Min/Max'
+                        }
                     },
                     native: {}
                 }
@@ -645,8 +665,18 @@ class Statistics extends utils.Adapter {
                 obj: {
                     type: 'channel',
                     common: {
-                        name: '5min Consumption',
-                        role: 'sensor'
+                        name: {
+                            en: 'Consumption (5 min.)',
+                            de: 'Verbrauch (5 min)',
+                            ru: 'Потребление (5 мин)',
+                            pt: 'Consumo (5 min)',
+                            nl: 'Consumptie (5 minuten)',
+                            fr: 'Consommation (5 min)',
+                            it: 'Consumo (5 min)',
+                            es: 'Consumo (5 min)',
+                            pl: '5 minut)',
+                            'zh-cn': '消费(5分钟)。'
+                        }
                     },
                     native: {}
                 }
@@ -667,8 +697,18 @@ class Statistics extends utils.Adapter {
                 obj: {
                     type: 'channel',
                     common: {
-                        name: 'Operation time counter',
-                        role: 'sensor'
+                        name: {
+                            en: 'Operating time counter',
+                            de: 'Betriebszeitzähler',
+                            ru: 'Рабочий счетчик времени',
+                            pt: 'Contador de tempo operacional',
+                            nl: 'Operatie tijd tegen',
+                            fr: 'Compteur de temps de fonctionnement',
+                            it: 'Contatore orario',
+                            es: 'Contrato de tiempo de funcionamiento',
+                            pl: 'Czas kontrastowy',
+                            'zh-cn': '业务时间反击'
+                        }
                     },
                     native: {}
                 }
@@ -690,8 +730,18 @@ class Statistics extends utils.Adapter {
                 obj: {
                     type: 'channel',
                     common: {
-                        name: 'Impulse counter, Counting of switching cycles',
-                        role: 'sensor'
+                        name: {
+                            en: 'Impulse counter',
+                            de: 'Impulszähler',
+                            ru: 'Импульсный счетчик',
+                            pt: 'Contador de impulso',
+                            nl: 'Impulse contra',
+                            fr: 'Compteur Impulse',
+                            it: 'Contatore di impulso',
+                            es: 'Contrato impulsivo',
+                            pl: 'Przeciwstawić się',
+                            'zh-cn': '有罪不罚'
+                        }
                     },
                     native: {}
                 }
@@ -714,8 +764,18 @@ class Statistics extends utils.Adapter {
                 obj: {
                     type: 'channel',
                     common: {
-                        name: 'Consumption from impulse counter',
-                        role: 'sensor'
+                        name: {
+                            en: 'Consumption from counting',
+                            de: 'Verbrauch aus der Zählung',
+                            ru: 'Потребление от подсчета',
+                            pt: 'Consumo de contar',
+                            nl: 'Consumptie van tellen',
+                            fr: 'Consommation du comptage',
+                            it: 'Consumo dal conteggio',
+                            es: 'Consumo por contar',
+                            pl: 'Zliczanie',
+                            'zh-cn': '消费'
+                        }
                     },
                     native: {}
                 }
@@ -736,8 +796,18 @@ class Statistics extends utils.Adapter {
                 obj: {
                     type: 'channel',
                     common: {
-                        name: 'Consumption',
-                        role: 'sensor'
+                        name: {
+                            en: 'Consumption',
+                            de: 'Verbrauch',
+                            ru: 'Потребление',
+                            pt: 'Consumo',
+                            nl: 'Consumptie',
+                            fr: 'Consommation',
+                            it: 'Consumo',
+                            es: 'Consumo',
+                            pl: 'Consumowanie',
+                            'zh-cn': '消费'
+                        }
                     },
                     native: {}
                 }
@@ -761,8 +831,18 @@ class Statistics extends utils.Adapter {
                     obj: {
                         type: 'channel',
                         common: {
-                            name: 'Total consumption',
-                            role: 'sensor'
+                            name: {
+                                en: 'Total consumption',
+                                de: 'Gesamtverbrauch',
+                                ru: 'Общее потребление',
+                                pt: 'Consumo total',
+                                nl: 'Totale consumptie',
+                                fr: 'Total de la consommation',
+                                it: 'Consumo totale',
+                                es: 'Consumo total',
+                                pl: 'Łączna konsumpcja',
+                                'zh-cn': '总消费量'
+                            }
                         },
                         native: {}
                     }
@@ -975,8 +1055,7 @@ class Statistics extends utils.Adapter {
             obj: {
                 type: 'channel',
                 common: {
-                    name: `Save values for ${name}`,
-                    role: 'sensor'
+                    name: `Save values for ${name}`
                 },
                 native: {
                     addr: id
@@ -989,8 +1068,7 @@ class Statistics extends utils.Adapter {
             obj: {
                 type: 'channel',
                 common: {
-                    name: `Temporary value for ${name}`,
-                    role: 'sensor',
+                    name: `Temporary value for ${name}`
                     // expert: true
                 },
                 native: {
