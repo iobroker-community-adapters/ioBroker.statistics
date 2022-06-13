@@ -1,0 +1,132 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "_options": {
+            "type": "panel",
+            "label": "Main settings",
+            "items": {
+                "impUnitPerImpulse": {
+                    "type": "number",
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 4,
+                    "label": "Default units per impulse",
+                    "help": "One impulse is equal to this value"
+                },
+                "impFactor": {
+                    "type": "number",
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 4,
+                    "label": "Default group factor",
+                    "help": "Values will be added to groups with this factor by default"
+                },
+                "timezone": {
+                    "newLine": true,
+                    "type": "text",
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 4,
+                    "label": "Time zone",
+                    "help": "E.g. Europe/Berlin. Leave it empty for default settings"
+                }
+            }
+        },
+        "_groups": {
+            "type": "panel",
+            "label": "Groups",
+            "items": {
+                "groups": {
+                    "type": "table",
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "label": "Groups",
+                    "items": [
+                        {
+                            "type": "text",
+                            "attr": "id",
+                            "width": "25%",
+                            "title": {
+                                "en": "ID",
+                                "de": "ID",
+                                "ru": "КОД",
+                                "pt": "ID",
+                                "nl": "ID",
+                                "fr": "ID",
+                                "it": "ID",
+                                "es": "ID",
+                                "pl": "ID",
+                                "zh-cn": "ID"
+                            },
+                            "filter": true,
+                            "sort": true,
+                            "default": ""
+                        },
+                        {
+                            "type": "text",
+                            "attr": "name",
+                            "width": "35%",
+                            "title": {
+                                "en": "Name",
+                                "de": "Name",
+                                "ru": "Имя",
+                                "pt": "Nome",
+                                "nl": "Naam",
+                                "fr": "Nom",
+                                "it": "Nome",
+                                "es": "Nombre",
+                                "pl": "Nazwa",
+                                "zh-cn": "姓名"
+                            },
+                            "filter": false,
+                            "sort": false,
+                            "default": ""
+                        },
+                        {
+                            "type": "number",
+                            "attr": "price",
+                            "width": "20%",
+                            "title": {
+                                "en": "Price",
+                                "de": "Preis",
+                                "ru": "Цена",
+                                "pt": "Preço",
+                                "nl": "Price",
+                                "fr": "Prix",
+                                "it": "Prezzo",
+                                "es": "Precio",
+                                "pl": "Price",
+                                "zh-cn": "价格"
+                            },
+                            "filter": false,
+                            "sort": false,
+                            "default": false
+                        },
+                        {
+                            "type": "text",
+                            "attr": "priceUnit",
+                            "width": "20%",
+                            "title": {
+                                "en": "Unit",
+                                "de": "Einheit",
+                                "ru": "Единица",
+                                "pt": "Unidade",
+                                "nl": "Unit",
+                                "fr": "Unité",
+                                "it": "Unità",
+                                "es": "Dependencia",
+                                "pl": "Jednostka",
+                                "zh-cn": "股"
+                            },
+                            "filter": false,
+                            "sort": false,
+                            "default": "€/kWh"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

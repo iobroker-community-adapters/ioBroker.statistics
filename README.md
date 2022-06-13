@@ -52,6 +52,8 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
+### __WORK IN PROGRESS__
+* (klein0r) Added Admin 5 configuration
 
 ### 1.1.1 (2022-04-17)
 * Prevent warn logs when using non-number states as statistic source
