@@ -384,7 +384,7 @@ class Statistics extends utils.Adapter {
         if (this.states.hasOwnProperty(id)) {
             callback(null, this.states[id]);
         } else {
-            this.getForeignState(this.namespace + '.' + id, (err, value) => {
+            this.getState(id, (err, value) => {
                 if (value) {
                     this.states[id] = value.val;
                 } else {
@@ -397,7 +397,7 @@ class Statistics extends utils.Adapter {
 
     setValue(id, val, callback) {
         this.states[id] = val;
-        this.setForeignState(this.namespace + '.' + id, val, true, callback);
+        this.setState(id, val, true, callback);
     }
 
     setValueStat(id, val, callback) {
@@ -405,8 +405,9 @@ class Statistics extends utils.Adapter {
         ts.setMinutes(ts.getMinutes() - 1);
         ts.setSeconds(59);
         ts.setMilliseconds(0);
+
         this.states[id] = val;
-        this.setForeignState(this.namespace + '.' + id, { val, ts: ts.getTime(), ack: true }, callback);
+        this.setState(id, { val, ts: ts.getTime(), ack: true }, callback);
     }
 
     checkValue(value, ts, id, type) {
@@ -529,7 +530,7 @@ class Statistics extends utils.Adapter {
                 const id = this.typeObjects.timeCount[s];
                 //bevor umgespeichert wird, muß noch ein Aufruf mit actual erfolgen, damit die restliche Zeit vom letzten Signalwechsel bis Mitternacht erfolgt
                 //aufruf von newTimeCntValue(id, "last") damit wird gleicher Zustand getriggert und last01 oder last10 zu Mitternacht neu gesetzt
-                this.getForeignState(`${this.namespace}.temp.timeCount.${id}.last`, (err, last) => { //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
+                this.getState(`temp.timeCount.${id}.last`, (err, last) => { //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
                     //evtl. status ermitteln und dann setForeignState nochmals den Zustand schreiben um anzutriggern und aktuelle Zeit zu verwenden (bzw. 00:00:00)
                     const ts = new Date();
                     //ts.setMinutes(ts.getMinutes() - 1);
@@ -1213,9 +1214,8 @@ class Statistics extends utils.Adapter {
                 task.obj.type === 'state' &&
                 this.units[task.obj.native.addr] === undefined &&
                 !nameObjects.timeCount.temp.includes(attr) &&
-                !task.id.match(/\.dayCount$/) &&       // !! Problem mit .?
-                !task.id.startsWith('save.sumGroup.') &&
-                !task.id.startsWith('temp.sumGroup.')) {
+                !task.id.match(/\.dayCount$/) && // !! Problem mit .?
+                !task.id.startsWith('save.sumGroup.') && !task.id.startsWith('temp.sumGroup.')) {
                 this.getForeignObject(task.obj.native.addr, (err, obj) => {
                     if (obj && obj.common.unit) {
                         task.obj.common.unit = obj.common.unit;
