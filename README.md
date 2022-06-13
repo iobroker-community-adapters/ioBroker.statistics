@@ -76,7 +76,7 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
-### __WORK IN PROGRESS__
+### 2.0.0 (2022-06-13)
 * (klein0r) Added Admin 5 configuration
 * (klein0r) Updated translations
 
