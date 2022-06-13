@@ -1,15 +1,3 @@
-/**
- *
- * statistics adapter
- *
- * the adapter creates new states according to the configuration
- * the configured objects are subscribed for changes and the statistic is calculated
- *
- */
-
-/* jshint -W097 */
-/* jshint strict: false */
-/* jslint node: true */
 'use strict';
 
 // you have to require the utils module and call adapter function
@@ -19,7 +7,7 @@ const CronJob = require('cron').CronJob;
 
 let adapter;
 
-let crons = {};
+const crons = {};
 const typeObjects = {}; // to remember the used objects within the types (calculations)
 const statDP = {};      // contains the complete datasets (instead of adapter.config)
 const groups = {};
@@ -302,7 +290,7 @@ function getValue(id, callback) {
 
 // cached function
 function setValueStat(id, val, callback) {
-    let ts = new Date();
+    const ts = new Date();
     ts.setMinutes(ts.getMinutes() - 1);
     ts.setSeconds(59);
     ts.setMilliseconds(0);
@@ -355,7 +343,7 @@ function newAvgValue(id, value) {
                                             }
                                         });
                                     });
-                                })
+                                });
                             });
                         });
                     });
@@ -496,8 +484,8 @@ function newCountValue(id, value) {
                                     getValue(args.id, (err, consumption) => {
                                         const value = consumption ? consumption + args.impUnitPerImpulse : args.impUnitPerImpulse;
                                         adapter.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.impUnitPerImpulse} to ${value}`);
-                                        setValue(args.id, value, callback)
-                                    })
+                                        setValue(args.id, value, callback);
+                                    });
                                 }
                             });
                             // add consumption to group
@@ -541,51 +529,47 @@ function newCountValue(id, value) {
 }
 
 function checkValue(value, ts, id, type) {
-    let now = new Date();
+    const now = new Date();
     now.setSeconds(0);
     now.setMilliseconds(0);
+
     if (type === '15Min') {
         // value may not be older than 15 min
         now.setMinutes(now.getMinutes() - now.getMinutes() % 15);
-    } else
-        if (type === 'hour') {
-            // value may not be older than full hour
-            now.setMinutes(0);
-        } else
-            if (type === 'day') {
-                // value may not be older than 00:00 of today
-                now.setMinutes(0);
-                now.setHours(0);
-            } else
-                if (type === 'week') {
-                    // value may not be older than 00:00 of today
-                    now.setMinutes(0);
-                    now.setHours(0);
-                } else
-                    if (type === 'month') {
-                        // value may not be older than 00:00 of today
-                        now.setMinutes(0);
-                        now.setHours(0);
-                        now.setDate(1);
-                    } else
-                        if (type === 'quarter') {
-                            // value may not be older than 00:00 of today
-                            now.setMinutes(0);
-                            now.setHours(0);
-                            now.setDate(1);
-                            //0, 3, 6, 9
-                            now.setMonth(now.getMonth() - now.getMonth() % 3);
-                        } else
-                            if (type === 'year') {
-                                // value may not be older than 1 Januar of today
-                                now.setMinutes(0);
-                                now.setHours(0);
-                                now.setDate(1);
-                                now.setMonth(0);
-                            } else {
-                                adapter.log.error('Unknown calc type: ' + type);
-                                return value;
-                            }
+    } else if (type === 'hour') {
+        // value may not be older than full hour
+        now.setMinutes(0);
+    } else if (type === 'day') {
+        // value may not be older than 00:00 of today
+        now.setMinutes(0);
+        now.setHours(0);
+    } else if (type === 'week') {
+        // value may not be older than 00:00 of today
+        now.setMinutes(0);
+        now.setHours(0);
+    } else if (type === 'month') {
+        // value may not be older than 00:00 of today
+        now.setMinutes(0);
+        now.setHours(0);
+        now.setDate(1);
+    } else if (type === 'quarter') {
+        // value may not be older than 00:00 of today
+        now.setMinutes(0);
+        now.setHours(0);
+        now.setDate(1);
+        // 0, 3, 6, 9
+        now.setMonth(now.getMonth() - now.getMonth() % 3);
+    } else if (type === 'year') {
+        // value may not be older than 1 Januar of today
+        now.setMinutes(0);
+        now.setHours(0);
+        now.setDate(1);
+        now.setMonth(0);
+    } else {
+        adapter.log.error('Unknown calc type: ' + type);
+        return value;
+    }
+
     if (ts < now.getTime()) {
         adapter.log.warn(`[STATE CHANGE] Value of ${id} ignored because older than ${now.toISOString()}`);
         value = 0;
@@ -722,7 +706,7 @@ function isTrue(val) {
 }
 
 function isFalse(val) {
-    return val === 0 || val === '0' || val === false || val === 'false' || val === 'off' || val === 'OFF' || val === 'standby'
+    return val === 0 || val === '0' || val === false || val === 'false' || val === 'off' || val === 'OFF' || val === 'standby';
 }
 function newTimeCntValue(id, state) {
     const isStart = !tasks.length;
@@ -781,7 +765,7 @@ function newTimeCntValue(id, state) {
                         getValue(`temp.timeCount.${args.id}.last01`, (err, last) => {
                             let delta = last ? state.ts - last : 0; // wenn last true dann delta, ansonsten 0
                             if (delta < 0) {
-                                delta = 0
+                                delta = 0;
                             } else {
                                 delta = Math.floor(delta / 1000);
                             }
@@ -813,86 +797,86 @@ function newTimeCntValue(id, state) {
                 });
             }
         });
-    } else
-        if (isFalse(state.val)) {
-            tasks.push({
-                name: 'async',
-                args: {
-                    id,
-                    state
-                },
-                callback: (args, callback) => {
-                    getValue(`temp.timeCount.${args.id}.last`, (err, actual) => { //Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
-                        if (isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für ON-Zeitraum von 0->1 bis jetzt 1->0
-                            getValue(`temp.timeCount.${args.id}.last01`, (err, last) => {
-                                let delta = last ? state.ts - last : 0;
-                                if (delta < 0) {
-                                    delta = 0;
-                                } else {
-                                    delta = Math.floor(delta / 1000);
-                                }
-                                adapter.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
-                                setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    adapter.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${state.ts}  ${timeConverter(state.ts)}`);
-                                    setValue(`temp.timeCount.${args.id}.last10`, state.ts, () => {
-                                        adapter.log.debug(`[STATE CHANGE] 1->0 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
-                                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
-                                            if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) { // on auch in Month drin, deswegen ^
-                                                tasks.push({
-                                                    name: 'async',
-                                                    args: {
-                                                        id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
-                                                    },
-                                                    callback: (args, callback) =>
-                                                        getValue(args.id, (err, time) => {
-                                                            adapter.log.debug(`[STATE CHANGE] 1->0 new val ${args.id}: ${(time || 0) + delta}`);
-                                                            setValue(args.id, (time || 0) + delta, callback);
-                                                        })
-                                                });
-                                            }
+    } else if (isFalse(state.val)) {
+        tasks.push({
+            name: 'async',
+            args: {
+                id,
+                state
+            },
+            callback: (args, callback) => {
+                getValue(`temp.timeCount.${args.id}.last`, (err, actual) => { //Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
+                    if (isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für ON-Zeitraum von 0->1 bis jetzt 1->0
+                        getValue(`temp.timeCount.${args.id}.last01`, (err, last) => {
+                            let delta = last ? state.ts - last : 0;
+                            if (delta < 0) {
+                                delta = 0;
+                            } else {
+                                delta = Math.floor(delta / 1000);
+                            }
+                            adapter.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
+                            setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
+                                adapter.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${state.ts}  ${timeConverter(state.ts)}`);
+                                setValue(`temp.timeCount.${args.id}.last10`, state.ts, () => {
+                                    adapter.log.debug(`[STATE CHANGE] 1->0 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
+                                    for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
+                                        if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) { // on auch in Month drin, deswegen ^
+                                            tasks.push({
+                                                name: 'async',
+                                                args: {
+                                                    id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
+                                                },
+                                                callback: (args, callback) =>
+                                                    getValue(args.id, (err, time) => {
+                                                        adapter.log.debug(`[STATE CHANGE] 1->0 new val ${args.id}: ${(time || 0) + delta}`);
+                                                        setValue(args.id, (time || 0) + delta, callback);
+                                                    })
+                                            });
                                         }
-                                        callback();
-                                    });
+                                    }
+                                    callback();
                                 });
                             });
-                        }
-                        else { // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update OFF-Zeitraum von letzten 1->0 bis jetzt 1->0
-                            getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
-                                let delta = last ? state.ts - last : 0;
-                                if (delta < 0) {
-                                    delta = 0;
-                                } else {
-                                    delta = Math.floor(delta / 1000);
-                                }
-                                adapter.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
-                                setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.ts + '  '+ timeConverter(state.ts) );
-                                    setValue(`temp.timeCount.${args.id}.last10`, state.ts, () => {
-                                        adapter.log.debug(`[STATE EQUAL] 0->0 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
-                                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
-                                            if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
-                                                tasks.push({
-                                                    name: 'async',
-                                                    args: {
-                                                        id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
-                                                    },
-                                                    callback: (args, callback) =>
-                                                        getValue(args.id, (err, time) => {
-                                                            adapter.log.debug(`[STATE EQUAL] 0->0 new val ${args.id}: ${(time || 0) + delta}`);
-                                                            setValue(args.id, (time || 0) + delta, callback);
-                                                        })
-                                                });
-                                            }
+                        });
+                    }
+                    else { // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update OFF-Zeitraum von letzten 1->0 bis jetzt 1->0
+                        getValue('temp.timeCount.' + args.id + '.last10', (err, last) => {
+                            let delta = last ? state.ts - last : 0;
+                            if (delta < 0) {
+                                delta = 0;
+                            } else {
+                                delta = Math.floor(delta / 1000);
+                            }
+                            adapter.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
+                            setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
+                                adapter.log.debug('[STATE CHANGE] new last10 ' + 'temp.timeCount.' + args.id + '.last10' + ': ' + state.ts + '  '+ timeConverter(state.ts) );
+                                setValue(`temp.timeCount.${args.id}.last10`, state.ts, () => {
+                                    adapter.log.debug(`[STATE EQUAL] 0->0 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
+                                    for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
+                                        if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
+                                            tasks.push({
+                                                name: 'async',
+                                                args: {
+                                                    id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
+                                                },
+                                                callback: (args, callback) =>
+                                                    getValue(args.id, (err, time) => {
+                                                        adapter.log.debug(`[STATE EQUAL] 0->0 new val ${args.id}: ${(time || 0) + delta}`);
+                                                        setValue(args.id, (time || 0) + delta, callback);
+                                                    })
+                                            });
                                         }
-                                        callback();
-                                    });
+                                    }
+                                    callback();
                                 });
                             });
-                        }
-                    });
-                }
-            });
-        }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
     isStart && processTasks();
 }
 // normales Umspeichern, temp wird auf 0 gesetzt!!
@@ -919,7 +903,7 @@ function copyValueActMinMax(args, callback) {
             setValueStat(args.save, value, () =>
                 getValue(args.actual, (err, actual) => {
                     adapter.log.debug(`[SET DAILY START MINMAX] Process ${args.temp} = ${actual} from ${args.actual}`);
-                    setValue(args.temp, actual, callback)
+                    setValue(args.temp, actual, callback);
                 }));
         } else {
             adapter.log.debug(`[SAVE VALUES & SET DAILY START MINMAX] Process ${args.temp} => no value found`);
@@ -970,7 +954,7 @@ function setTimeCountMidnight() {
             //aufruf von newTimeCntValue(id, "last") damit wird gleicher Zustand getriggert und last01 oder last10 zu Mitternacht neu gesetzt
             adapter.getForeignState(`${adapter.namespace}.temp.timeCount.${id}.last`, (err, last) => { //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
                 //evtl. status ermitteln und dann setForeignState nochmals den Zustand schreiben um anzutriggern und aktuelle Zeit zu verwenden (bzw. 00:00:00)
-                let ts = new Date();
+                const ts = new Date();
                 //ts.setMinutes(ts.getMinutes() - 1);
                 //ts.setSeconds(59);
                 //ts.setMilliseconds(0);
@@ -982,7 +966,6 @@ function setTimeCountMidnight() {
         }
     }
 }
-
 
 const column = ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'];
 const copyToSave = ['count', 'sumCount', 'sumGroup', 'sumDelta'];
@@ -1222,50 +1205,47 @@ function setInitial(type, id) {
                                         callback();
                                     }
                                 });
-                            } else
-                                if (args.name === 'last10') {
-                                    return adapter.getForeignState(args.trueId, (err, state) => { // get actual values
-                                        adapter.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
-                                        adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
-                                        if (isFalse(state && state.val)) {
-                                            setValue(args.id, state.lc, callback);
-                                            adapter.log.debug(`[SET INITIAL] ${args.trueId} state is false and last 10 get old time`);
-                                        } else
-                                        if (isTrue(state && state.val)) {
-                                            setValue(args.id, Date.now(), callback);
-                                            adapter.log.debug(`[SET INITIAL] ${args.trueId} state is true and last 10 get now as lastChange`);
-                                        } else {
-                                            adapter.log.error(`[SET INITIAL] ${args.trueId} unknown state to be evaluated in timeCount`);
-                                            callback();
-                                        }
-                                    });
-                                } else
-                                    if (args.name === 'lastPulse') {
-                                        return adapter.getForeignState(args.trueId, (err, state) => { // get actual values
-                                            adapter.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
-                                            adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
-                                            if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
-                                                setValue(args.id, state.val, callback);
-                                                adapter.log.debug(`[SET INITIAL] ${args.trueId} state was ${state.val} and lastPulse get old time`);
-                                            } else {
-                                                adapter.log.error(`[SET INITIAL] ${args.trueId} unknown state to be evaluated in count`);
-                                                callback();
-                                            }
-                                        });
+                            } else if (args.name === 'last10') {
+                                return adapter.getForeignState(args.trueId, (err, state) => { // get actual values
+                                    adapter.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
+                                    adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
+                                    if (isFalse(state && state.val)) {
+                                        setValue(args.id, state.lc, callback);
+                                        adapter.log.debug(`[SET INITIAL] ${args.trueId} state is false and last 10 get old time`);
                                     } else
-                                        if (args.name === 'last') { // speichern des aktuellen Zustandes für timecount, sofern mit poll gleiche Zustände geholt werden und keinen Signalwechsel darstellen
-                                            return adapter.getForeignState(args.trueId, (err, state) => { // get actual value for the state in timecount
-                                                adapter.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
-                                                adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
-                                                if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
-                                                    setValue(args.id, state.val, callback);
-                                                    adapter.log.debug(`[SET INITIAL] ${args.trueId} state is ${state.val} and set to last `);
-                                                } else {
-                                                    adapter.log.error(`[SET INITIAL] ${args.trueId} unknown state to be evaluated in count`);
-                                                    callback();
-                                                }
-                                            });
-                                        }
+                                    if (isTrue(state && state.val)) {
+                                        setValue(args.id, Date.now(), callback);
+                                        adapter.log.debug(`[SET INITIAL] ${args.trueId} state is true and last 10 get now as lastChange`);
+                                    } else {
+                                        adapter.log.error(`[SET INITIAL] ${args.trueId} unknown state to be evaluated in timeCount`);
+                                        callback();
+                                    }
+                                });
+                            } else if (args.name === 'lastPulse') {
+                                return adapter.getForeignState(args.trueId, (err, state) => { // get actual values
+                                    adapter.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
+                                    adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
+                                    if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
+                                        setValue(args.id, state.val, callback);
+                                        adapter.log.debug(`[SET INITIAL] ${args.trueId} state was ${state.val} and lastPulse get old time`);
+                                    } else {
+                                        adapter.log.error(`[SET INITIAL] ${args.trueId} unknown state to be evaluated in count`);
+                                        callback();
+                                    }
+                                });
+                            } else if (args.name === 'last') { // speichern des aktuellen Zustandes für timecount, sofern mit poll gleiche Zustände geholt werden und keinen Signalwechsel darstellen
+                                return adapter.getForeignState(args.trueId, (err, state) => { // get actual value for the state in timecount
+                                    adapter.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
+                                    adapter.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
+                                    if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
+                                        setValue(args.id, state.val, callback);
+                                        adapter.log.debug(`[SET INITIAL] ${args.trueId} state is ${state.val} and set to last `);
+                                    } else {
+                                        adapter.log.error(`[SET INITIAL] ${args.trueId} unknown state to be evaluated in count`);
+                                        callback();
+                                    }
+                                });
+                            }
                         }
                         return void callback();
                     } else {
@@ -1365,7 +1345,7 @@ function defineObject(type, id, name, unit) {
 }
 
 function setupObjects(ids, callback, noSubscribe) {
-    let isStart = !tasks.length;
+    const isStart = !tasks.length;
 
     if (!ids || !ids.length) {
         if (isStart) {
@@ -1646,10 +1626,9 @@ function processTasks(callback) {
                     if (units[task.obj.native.addr]) {
                         task.obj.common.unit = units[task.obj.native.addr];
                     }
-                } else
-                    if (task.id.startsWith('save.sumGroup.') || task.id.startsWith('temp.sumGroup.')) {
-                        task.obj.common.unit = groups[task.obj.native.addr] && groups[task.obj.native.addr].config && groups[task.obj.native.addr].config.priceUnit ? groups[task.obj.native.addr].config.priceUnit.split('/')[0] : '€';
-                    }
+                } else if (task.id.startsWith('save.sumGroup.') || task.id.startsWith('temp.sumGroup.')) {
+                    task.obj.common.unit = groups[task.obj.native.addr] && groups[task.obj.native.addr].config && groups[task.obj.native.addr].config.priceUnit ? groups[task.obj.native.addr].config.priceUnit.split('/')[0] : '€';
+                }
             }
 
             adapter.setObjectNotExists(task.id, task.obj, (err, isCreated) => {
@@ -1715,119 +1694,119 @@ function main() {
                     }
                 }
 
-    // create cron-jobs
-    const timezone = adapter.config.timezone || 'Europe/Berlin';
+                // create cron-jobs
+                const timezone = adapter.config.timezone || 'Europe/Berlin';
 
-    // every 5min
-    try {
-        crons.avg5min = new CronJob('*/5 * * * *',
-            () => fiveMin(),
-            () => adapter.log.debug('stopped 5min'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
+                // every 5min
+                try {
+                    crons.avg5min = new CronJob('*/5 * * * *',
+                        () => fiveMin(),
+                        () => adapter.log.debug('stopped 5min'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
 
-    // Every 15 minutes
-    try {
-        crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
-            () => saveValues('15Min'),
-            () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
+                // Every 15 minutes
+                try {
+                    crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
+                        () => saveValues('15Min'),
+                        () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
 
-    // Hourly at 00 min
-    try {
-        crons.hourSave = new CronJob('0 * * * *',
-            () => saveValues('hour'),
-            () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
+                // Hourly at 00 min
+                try {
+                    crons.hourSave = new CronJob('0 * * * *',
+                        () => saveValues('hour'),
+                        () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
 
-    // daily um 23:59:58
-    try {
-        crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
-            () => setTimeCountMidnight(),
-            () => adapter.log.debug('stopped timecount midnight trigger'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
+                // daily um 23:59:58
+                try {
+                    crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
+                        () => setTimeCountMidnight(),
+                        () => adapter.log.debug('stopped timecount midnight trigger'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
 
-    // daily um 00:00
-    try {
-        crons.daySave = new CronJob('0 0 * * *',
-            () => saveValues('day'),
-            () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
+                // daily um 00:00
+                try {
+                    crons.daySave = new CronJob('0 0 * * *',
+                        () => saveValues('day'),
+                        () => adapter.log.debug('stopped daySave'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
 
-    // Monday 00:00
-    try {
-        crons.weekSave = new CronJob('0 0 * * 1',
-            () => saveValues('week'),
-            () => adapter.log.debug('stopped week'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
+                // Monday 00:00
+                try {
+                    crons.weekSave = new CronJob('0 0 * * 1',
+                        () => saveValues('week'),
+                        () => adapter.log.debug('stopped week'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
 
-    // Monthly at 1 of every month at 00:00
-    try {
-        crons.monthSave = new CronJob('0 0 1 * *',
-            () => saveValues('month'),
-            () => adapter.log.debug('stopped month'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
+                // Monthly at 1 of every month at 00:00
+                try {
+                    crons.monthSave = new CronJob('0 0 1 * *',
+                        () => saveValues('month'),
+                        () => adapter.log.debug('stopped month'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
 
-    // Quarter
-    try {
-        crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
-            () => saveValues('quarter'),
-            () => adapter.log.debug('stopped quarter'), // This function is executed when the job stops
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
+                // Quarter
+                try {
+                    crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
+                        () => saveValues('quarter'),
+                        () => adapter.log.debug('stopped quarter'), // This function is executed when the job stops
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
 
-    // New year
-    try {
-        crons.yearSave = new CronJob('0 0 1 0 *',
-            () => saveValues('year'), // Months is value range 0-11
-            () => adapter.log.debug('stopped yearSave'),
-            true,
-            timezone
-        );
-    } catch (e) {
-			adapter.log.error('creating cron errored with :' + e);
-    }
+                // New year
+                try {
+                    crons.yearSave = new CronJob('0 0 1 0 *',
+                        () => saveValues('year'), // Months is value range 0-11
+                        () => adapter.log.debug('stopped yearSave'),
+                        true,
+                        timezone
+                    );
+                } catch (e) {
+                    adapter.log.error('creating cron errored with :' + e);
+                }
 
-    // subscribe to objects, so the settings in the object are arriving to the adapter
-    adapter.subscribeForeignObjects('*');
+                // subscribe to objects, so the settings in the object are arriving to the adapter
+                adapter.subscribeForeignObjects('*');
 
                 getCronStat();
             });
