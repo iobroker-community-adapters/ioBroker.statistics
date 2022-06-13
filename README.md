@@ -1,13 +1,37 @@
 ![Logo](admin/statistics.png)
+
 # ioBroker.statistics
 
-![Number of Installations](http://iobroker.live/badges/statistics-installed.svg)
-![Number of Installations](http://iobroker.live/badges/statistics-stable.svg)
-[![NPM version](http://img.shields.io/npm/v/iobroker.statistics.svg)](https://www.npmjs.com/package/iobroker.statistics)
+[![NPM version](https://img.shields.io/npm/v/iobroker.statistics?style=flat-square)](https://www.npmjs.com/package/iobroker.statistics)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.statistics?label=npm%20downloads&style=flat-square)](https://www.npmjs.com/package/iobroker.statistics)
+![Snyk Vulnerabilities for npm package](https://img.shields.io/snyk/vulnerabilities/npm/iobroker.statistics?label=npm%20vulnerabilities&style=flat-square)
+![node-lts](https://img.shields.io/node/v-lts/iobroker.statistics?style=flat-square)
+![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/iobroker.statistics?label=npm%20dependencies&style=flat-square)
 
-![Test and Release](https://github.com/iobroker-community-adapters/ioBroker.statistics/workflows/Test%20and%20Release/badge.svg)
+![GitHub](https://img.shields.io/github/license/iobroker-community-adapters/iobroker.statistics?style=flat-square)
+![GitHub repo size](https://img.shields.io/github/repo-size/iobroker-community-adapters/iobroker.statistics?logo=github&style=flat-square)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/iobroker-community-adapters/iobroker.statistics?logo=github&style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/iobroker-community-adapters/iobroker.statistics?logo=github&style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/iobroker-community-adapters/iobroker.statistics?logo=github&style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/iobroker-community-adapters/iobroker.statistics/Test%20and%20Release?label=Test%20and%20Release&logo=github&style=flat-square)
+![Snyk Vulnerabilities for GitHub Repo](https://img.shields.io/snyk/vulnerabilities/github/iobroker-community-adapters/iobroker.statistics?label=repo%20vulnerabilities&logo=github&style=flat-square)
+
+## Versions
+
+![Beta](https://img.shields.io/npm/v/iobroker.statistics.svg?color=red&label=beta)
+![Stable](http://iobroker.live/badges/statistics-stable.svg)
+![Installed](http://iobroker.live/badges/statistics-installed.svg)
 [![Translation status](https://weblate.iobroker.net/widgets/adapters/-/statistics/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.statistics.svg)](https://www.npmjs.com/package/iobroker.statistics)
+
+Statistics adapter for ioBroker (Avg, Sum, Min, Max, ...)
+
+## Installation
+
+Please use the "adapter list" in ioBroker to install a stable version of this adapter. You can also use the CLI to install this adapter:
+
+```
+iobroker add statistics
+```
 
 ## Description
 This adapter will make the configuration of statistics easier.
