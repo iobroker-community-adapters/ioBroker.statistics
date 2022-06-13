@@ -9,8 +9,6 @@
 [![Translation status](https://weblate.iobroker.net/widgets/adapters/-/statistics/svg-badge.svg)](https://weblate.iobroker.net/engage/adapters/?utm_source=widget)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.statistics.svg)](https://www.npmjs.com/package/iobroker.statistics)
 
-**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
-
 ## Description
 This adapter will make the configuration of statistics easier.
 
@@ -41,12 +39,20 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 * specify the relevant groups in the instance configuration page (admin => instances => statistics config)
 * specify the configuration in the settings of the state (admin => objects)
 
+## Credits
+
+- SVG: https://pixabay.com/de/vectors/diagramm-histogramm-statistiken-3149003/
+
+## Sentry
+
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+
+## Changelog
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
 
-## Changelog
 ### 1.1.1 (2022-04-17)
 * Prevent warn logs when using non-number states as statistic source
 
