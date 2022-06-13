@@ -4,14 +4,14 @@
     "items": {
         "_options": {
             "type": "panel",
-            "label": "Main settings",
+            "label": "Options",
             "items": {
                 "impUnitPerImpulse": {
                     "type": "number",
                     "sm": 12,
                     "md": 4,
                     "lg": 4,
-                    "label": "Default units per impulse",
+                    "label": "Units per impulse (default)",
                     "help": "One impulse is equal to this value"
                 },
                 "impFactor": {
@@ -19,8 +19,8 @@
                     "sm": 12,
                     "md": 4,
                     "lg": 4,
-                    "label": "Default group factor",
-                    "help": "Values will be added to groups with this factor by default"
+                    "label": "Group factor (default)",
+                    "help": "Values will be added to groups with this factor"
                 },
                 "timezone": {
                     "newLine": true,
@@ -29,7 +29,7 @@
                     "md": 4,
                     "lg": 4,
                     "label": "Time zone",
-                    "help": "E.g. Europe/Berlin. Leave it empty for default settings"
+                    "help": "e.g. Europe/Berlin (leave empty for default settings)"
                 }
             }
         },

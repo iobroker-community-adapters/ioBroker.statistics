@@ -3,60 +3,56 @@
     "items": {
         "logName": {
             "type": "text",
-            "label": "Name for Logging",
+            "label": "Name",
             "help": "Name of statistics log",
             "defaultFunc": "(customObj && customObj.common && customObj.common.name) || (customObj && customObj._id) || ''",
             "sm": 6
         },
+
         "_binary": {
-            "hidden": "customObj.common.type === 'number'",
-           "newLine": true,
+            "hidden": "customObj.common.type !== 'boolean'",
+            "newLine": true,
             "type": "header",
-            "text": "for impulses, binary data points",
+            "text": "For impulses (boolean data points)",
             "size": 4,
             "sm": 12
         },
-        "_binaryComment": {
-            "hidden": "customObj.common.type === 'number'",
-            "type": "staticText",
-            "text": "configure here the possible settings for binary values"
-        },
         "count": {
-            "hidden": "customObj.common.type === 'number'",
+            "hidden": "customObj.common.type !== 'boolean'",
             "newLine": true,
             "type": "checkbox",
             "label": "Count",
-            "help": "Counting pulses or edge changes",
+            "help": "Count pulses or edge changes",
             "default": false,
             "sm": 6
         },
         "sumCount": {
-            "hidden": "customObj.common.type === 'number'",
+            "hidden": "customObj.common.type !== 'boolean'",
             "type": "checkbox",
             "label": "Counting -> Consumption",
-            "sm": 6,
+            "help": "Determines the consumption from counting",
             "default": false,
-            "help": "determine the consumption from counting"
+            "sm": 6
         },
         "timeCount": {
-            "hidden": "customObj.common.type === 'number'",
+            "hidden": "customObj.common.type !== 'boolean'",
             "newLine": true,
             "type": "checkbox",
-            "label": "Operating time count",
-            "help": "Determine times for states 0 or 1",
+            "label": "Operating time",
+            "help": "Determines times for values 0 and 1",
             "default": false,
             "sm": 6
         },
         "fiveMin": {
-            "hidden": "customObj.common.type === 'number'",
+            "hidden": "customObj.common.type !== 'boolean'",
             "type": "checkbox",
-            "label": "5min Values",
-            "sm": 6,
+            "label": "5min values",
+            "help": "Determines the consumption every 5 minutes",
             "default": false,
-            "help": "every 5 minutes determine the consumption"
+            "sm": 6
         },
         "impUnitPerImpulse": {
-            "hidden": "customObj.common.type === 'number'",
+            "hidden": "customObj.common.type !== 'boolean'",
             "newLine": true,
             "type": "number",
             "label": "Units per impulse",
@@ -65,59 +61,54 @@
             "sm": 6
         },
         "impUnit": {
-            "hidden": "customObj.common.type === 'number'",
+            "hidden": "customObj.common.type !== 'boolean'",
             "type": "text",
             "label": "Units",
-            "sm": 6,
+            "help": "kWh, m, liters, or similar",
             "default": "",
-            "help": "kWh, m, liters, or similar"
+            "sm": 6
         },
 
         "_analog": {
-            "hidden": "customObj.common.type === 'boolean'",
+            "hidden": "customObj.common.type !== 'number'",
             "newLine": true,
             "type": "header",
-            "text": "for analog values (also consumption from counting)",
+            "text": "For analog values (number data points)",
             "size": 4,
             "sm": 12
         },
-        "_analogComment": {
-            "hidden": "customObj.common.type === 'boolean'",
-            "type": "staticText",
-            "text": "Configure here the possible settings for analog values"
-        },
         "avg": {
-            "hidden": "customObj.common.type === 'boolean'",
+            "hidden": "customObj.common.type !== 'number'",
             "newLine": true,
             "type": "checkbox",
-            "label": "Average values / daily values",
-            "help": "Daily values",
+            "label": "Average",
+            "help": "Creates avaerage / daily values",
             "default": false,
             "sm": 6
         },
         "minmax": {
-            "hidden": "customObj.common.type === 'boolean'",
+            "hidden": "customObj.common.type !== 'number'",
             "type": "checkbox",
             "label": "Min/Max values",
-            "sm": 6,
+            "help": "Creates daily, weekly, monthly, quarterly and annual values",
             "default": false,
-            "help": "Day-/Week-/Month-/Quarter-/Annual-values"
+            "sm": 6
         },
         "sumDelta": {
-            "hidden": "customObj.common.type === 'boolean'",
+            "hidden": "customObj.common.type !== 'number'",
             "newLine": true,
             "type": "checkbox",
-            "label": "Counter in delta consumption",
+            "label": "Delta consumption",
             "help": "Convert consecutive meter readings into consumption values",
             "default": false,
             "sm": 6
         },
         "sumIgnoreMinus": {
-            "hidden": "customObj.common.type === 'boolean' || !data.sumDelta",
+            "hidden": "customObj.common.type !== 'number' || !data.sumDelta",
             "newLine": true,
             "type": "checkbox",
             "label": "Ignore errors",
-            "help": "Ignore difference if new value less than old one",
+            "help": "Ignores difference if new value less than old one",
             "default": false,
             "sm": 6
         },
@@ -126,21 +117,16 @@
             "hidden": "!data.sumDelta && !data.sumCount",
             "newLine": true,
             "type": "header",
-            "text": "Group the value",
+            "text": "Groups",
             "size": 4,
             "sm": 12
-        },
-        "_groupComment": {
-            "hidden": "!data.sumDelta && !data.sumCount",
-            "type": "staticText",
-            "text": "The groups are defined in the admin page"
         },
         "sumGroup": {
             "hidden": "!data.sumDelta && !data.sumCount",
             "newLine": true,
             "type": "selectSendTo",
             "label": "Group",
-            "help": "Choose the group",
+            "help": "Can be configured in adapter configuration",
             "command": "groups",
             "sm": 6
         },
@@ -151,7 +137,7 @@
             "step": 0.001,
             "min": 0.001,
             "max": 100,
-            "label": "Counter factor",
+            "label": "Counting factor",
             "help": "Conversion factor for consumption counter",
             "default": 1,
             "sm": 6
