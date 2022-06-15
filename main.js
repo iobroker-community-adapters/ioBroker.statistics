@@ -1048,6 +1048,14 @@ class Statistics extends utils.Adapter {
 
     defineObject(type, id, name, unit) {
         const isStart = !this.tasks.length;
+
+        // Workaround for untranslated objects
+        if (typeof name !== 'object') {
+            name = {
+                en: name
+            };
+        }
+
         // Create channels
         this.tasks.push({
             name: 'setObjectNotExists',
@@ -1055,7 +1063,18 @@ class Statistics extends utils.Adapter {
             obj: {
                 type: 'channel',
                 common: {
-                    name: `Save values for ${name}`
+                    name: {
+                        en: `Saved values for ${name.en}`,
+                        de: `Gespeicherte Werte für ${name.de || name.en}`,
+                        ru: `Сохраненные значения для ${name.ru || name.en}`,
+                        pt: `Valores salvos para ${name.pt || name.en}`,
+                        nl: `Bespaarde waarden voor ${name.nl || name.en}`,
+                        fr: `Valeurs sauvegardées pour ${name.fr || name.en}`,
+                        it: `Valori salvati per ${name.it || name.en}`,
+                        es: `Valores guardados para ${name.es || name.en}`,
+                        pl: `Oszczędne wartości dla ${name.pl || name.en}`,
+                        'zh-cn': `保存的价值 ${name['zh-cn'] || name.en}`
+                    }
                 },
                 native: {
                     addr: id
@@ -1068,7 +1087,18 @@ class Statistics extends utils.Adapter {
             obj: {
                 type: 'channel',
                 common: {
-                    name: `Temporary value for ${name}`
+                    name: {
+                        en: `Temporary values for ${name}`,
+                        de: `Vorläufige Werte für ${name.de || name.en}`,
+                        ru: `Временные значения для ${name.ru || name.en}`,
+                        pt: `Valores temporários para ${name.pt || name.en}`,
+                        nl: `Tijdelijke waarden voor ${name.nl || name.en}`,
+                        fr: `Valeurs temporaires pour ${name.fr || name.en}`,
+                        it: `Valori temporanei per ${name.it || name.en}`,
+                        es: `Valores temporales para ${name.es || name.en}`,
+                        pl: `Temporary wartości dla ${name.pl || name.en}`,
+                        'zh-cn': `${name['zh-cn'] || name.en} 的临时值`,
+                    }
                     // expert: true
                 },
                 native: {
