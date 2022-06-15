@@ -106,7 +106,6 @@
         },
         "sumIgnoreMinus": {
             "hidden": "customObj.common.type !== 'number' || !data.sumDelta",
-            "newLine": true,
             "type": "checkbox",
             "label": "Ignore errors",
             "help": "Ignores difference if new value less than old one",

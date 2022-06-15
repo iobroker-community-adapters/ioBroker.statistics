@@ -290,8 +290,15 @@ class Statistics extends utils.Adapter {
         } else if (this.statDP[id]) {
             this.log.debug(`[OBJECT CHANGE] removing typeObjects: ${JSON.stringify(this.statDP[id])}`);
 
+            // Delete objects of all types
+            Object.keys(this.typeObjects).forEach(type => {
+                this.delObject(`save.${type}.${id}`, { recursive: true });
+                this.delObject(`temp.${type}.${id}`, { recursive: true });
+            });
+
             delete this.statDP[id];
             this.removeObject(id);
+            this.unsubscribeForeignObjects(id);
             this.unsubscribeForeignStates(id);
         }
     }
@@ -314,9 +321,7 @@ class Statistics extends utils.Adapter {
                 if (this.typeObjects.sumDelta.includes(id)) {
                     this.log.debug(`[STATE CHANGE] starting onStateChangeSumDeltaValue for ${id}`);
                     this.onStateChangeSumDeltaValue(id, state.val);
-                }
-
-                if (this.typeObjects.avg.includes(id)) {
+                } else if (this.typeObjects.avg.includes(id)) {
                     this.log.debug(`[STATE CHANGE] starting onStateChangeAvgValue for ${id}`);
                     this.onStateChangeAvgValue(id, state.val);
                 }
@@ -699,12 +704,12 @@ class Statistics extends utils.Adapter {
     }
 
     removeObject(id) {
-        Object.keys(this.typeObjects).forEach(key => {
-            if (Array.isArray(this.typeObjects[key])) {
-                const pos = this.typeObjects[key].indexOf(id);
+        Object.keys(this.typeObjects).forEach(type => {
+            if (Array.isArray(this.typeObjects[type])) {
+                const pos = this.typeObjects[type].indexOf(id);
                 if (pos !== -1) {
-                    this.log.debug(`found ${id} on pos ${this.typeObjects[key].indexOf(id)} of ${key} for removal`);
-                    this.typeObjects[key].splice(pos, 1);
+                    this.log.debug(`found ${id} on pos ${this.typeObjects[type].indexOf(id)} of ${type} for removal`);
+                    this.typeObjects[type].splice(pos, 1);
                 }
             } else {
                 this.log.error(`Invalid structure of typeObjects: ${JSON.stringify(this.typeObjects[key])}`);
@@ -1020,7 +1025,7 @@ class Statistics extends utils.Adapter {
                     name: objects[s],
                     id: `temp.${type}.${id}.${objects[s]}`,
                     trueId: id,
-                    type
+                    type: type
                 },
                 wait: true,
                 callback: (args, callback) => {
@@ -1728,7 +1733,7 @@ class Statistics extends utils.Adapter {
              - Add delta to all values
              - treat own values differently (datapoint name)
         */
-        value = parseFloat(value) || 0; //here we can probably leave the 0, if undefined then we have 0
+        value = parseFloat(value) || 0; // here we can probably leave the 0, if undefined then we have 0
         this.tasks.push({
             name: 'async',
             args: { id },
@@ -1786,6 +1791,11 @@ class Statistics extends utils.Adapter {
                                     this.setValue(args.id, value, callback);
                                 })
                         });
+                    }
+
+                    // calculate average based on delta (skipped in onStateChange)
+                    if (this.typeObjects.avg.includes(args.id)) {
+                        this.onStateChangeAvgValue(args.id, delta);
                     }
 
                     if (this.statDP[args.id].sumGroup &&
