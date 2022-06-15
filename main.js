@@ -47,7 +47,7 @@ const nameObjects = {
         // 5 minutes, etc. only useful with impulses
         save: ['mean5Min', 'dayMax5Min', 'dayMin5Min'],
         temp: ['mean5Min', 'dayMax5Min', 'dayMin5Min']
-    },
+    }
 };
 
 const column = ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'];
@@ -98,7 +98,7 @@ class Statistics extends utils.Adapter {
         this.units = {};
 
         this.typeObjects = {}; // to remember the used objects within the types (calculations)
-        this.statDP = {};      // contains the complete datasets (instead of adapter.config)
+        this.statDP = {};      // contains all custom object definitions (with Object-ID as key)
 
         this.on('ready', this.onReady.bind(this));
         this.on('objectChange', this.onObjectChange.bind(this));
@@ -128,13 +128,6 @@ class Statistics extends utils.Adapter {
                 const keys = Object.keys(this.statDP);
                 this.setupObjects(keys, () => {
                     this.log.info(`[INFO] statistics observes ${objCount} values after startup`);
-                    for (const type in this.typeObjects) {
-                        if (Object.prototype.hasOwnProperty.call(this.typeObjects, type)) {
-                            for (let i = 0; i < this.typeObjects[type].length; i++) {
-                                this.log.info(`[INFO] monitor "${this.typeObjects[type][i]}" as ${type}`);
-                            }
-                        }
-                    }
 
                     // create cron-jobs
                     const timezone = this.config.timezone || 'Europe/Berlin';
@@ -148,7 +141,7 @@ class Statistics extends utils.Adapter {
                             timezone
                         );
                     } catch (e) {
-                        this.log.error(`creating cron errored with: ${e}`);
+                        this.log.error(`creating cron avg5min errored with: ${e}`);
                     }
 
                     // Every 15 minutes
@@ -160,7 +153,7 @@ class Statistics extends utils.Adapter {
                             timezone
                         );
                     } catch (e) {
-                        this.log.error(`creating cron errored with: ${e}`);
+                        this.log.error(`creating cron fifteenMinSave errored with: ${e}`);
                     }
 
                     // Hourly at 00 min
@@ -172,7 +165,7 @@ class Statistics extends utils.Adapter {
                             timezone
                         );
                     } catch (e) {
-                        this.log.error(`creating cron errored with: ${e}`);
+                        this.log.error(`creating cron hourSave errored with: ${e}`);
                     }
 
                     // daily um 23:59:58
@@ -184,7 +177,7 @@ class Statistics extends utils.Adapter {
                             timezone
                         );
                     } catch (e) {
-                        this.log.error(`creating cron errored with: ${e}`);
+                        this.log.error(`creating cron dayTriggerTimeCount errored with: ${e}`);
                     }
 
                     // daily um 00:00
@@ -196,7 +189,7 @@ class Statistics extends utils.Adapter {
                             timezone
                         );
                     } catch (e) {
-                        this.log.error(`creating cron errored with: ${e}`);
+                        this.log.error(`creating cron daySave errored with: ${e}`);
                     }
 
                     // Monday 00:00
@@ -208,7 +201,7 @@ class Statistics extends utils.Adapter {
                             timezone
                         );
                     } catch (e) {
-                        this.log.error(`creating cron errored with: ${e}`);
+                        this.log.error(`creating cron weekSave errored with: ${e}`);
                     }
 
                     // Monthly at 1 of every month at 00:00
@@ -220,7 +213,7 @@ class Statistics extends utils.Adapter {
                             timezone
                         );
                     } catch (e) {
-                        this.log.error(`creating cron errored with: ${e}`);
+                        this.log.error(`creating cron monthSave errored with: ${e}`);
                     }
 
                     // Quarter
@@ -232,7 +225,7 @@ class Statistics extends utils.Adapter {
                             timezone
                         );
                     } catch (e) {
-                        this.log.error(`creating cron errored with: ${e}`);
+                        this.log.error(`creating cron quarterSave errored with: ${e}`);
                     }
 
                     // New year
@@ -244,7 +237,7 @@ class Statistics extends utils.Adapter {
                             timezone
                         );
                     } catch (e) {
-                        this.log.error(`creating cron errored with: ${e}`);
+                        this.log.error(`creating cron yearSave errored with: ${e}`);
                     }
 
                     // subscribe to objects, so the settings in the object are arriving to the adapter
@@ -270,28 +263,26 @@ class Statistics extends utils.Adapter {
         // nur das verarbeiten was auch diesen Adapter interessiert
         if (obj && obj.common && obj.common.custom && obj.common.custom[this.namespace] && obj.common.custom[this.namespace].enabled) {
             //hier sollte nur ein Datenpunkt angekommen sein
-            this.log.debug(`received objectChange for stat "${id}" ${JSON.stringify(obj.common.custom)}`);
+            this.log.debug(`[OBJECT CHANGE] stat "${id}" ${JSON.stringify(obj.common.custom)}`);
+
             // old but changed
             if (this.statDP[id]) {
-                //this.log.info('neu aber anderes Setting ' + id);
                 this.statDP[id] = obj.common.custom[this.namespace];
                 this.removeObject(id);
                 this.setupObjects([id], null, true);
-                this.log.debug(`saved typeObjects update1 ${JSON.stringify(this.typeObjects)}`);
+                this.log.debug(`[OBJECT CHANGE] saved (updated) typeObject: ${JSON.stringify(this.statDP[id])}`);
             } else {
-                //this.log.info('ganz neu ' + id);
                 this.statDP[id] = obj.common.custom[this.namespace];
                 this.setupObjects([id]);
                 this.log.info('enabled logging of ' + id);
-                this.log.debug(`saved typeObjects update2 ${JSON.stringify(this.typeObjects)}`);
+                this.log.debug(`[OBJECT CHANGE] saved (new) typeObjects: ${JSON.stringify(this.statDP[id])}`);
             }
         } else if (this.statDP[id]) {
-            //this.log.info('alt aber disabled id' + id );
-            this.unsubscribeForeignStates(id);
+            this.log.debug(`[OBJECT CHANGE] removing typeObjects: ${JSON.stringify(this.statDP[id])}`);
+
             delete this.statDP[id];
-            this.log.info(`disabled logging of ${id}`);
             this.removeObject(id);
-            this.log.debug(`saved typeObjects update3 ${JSON.stringify(this.typeObjects)}`);
+            this.unsubscribeForeignStates(id);
         }
     }
 
@@ -311,26 +302,33 @@ class Statistics extends utils.Adapter {
                 this.log.warn(`[STATE CHANGE] wrong value => ${state.val} on ${id} => check the other adapter where value comes from `);
             } else {
                 if (this.typeObjects.sumDelta && this.typeObjects.sumDelta.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] starting `);
-                    this.newSumDeltaValue(id, state.val);
-                } else if (this.typeObjects.avg && this.typeObjects.avg.includes(id)) {
-                    this.newAvgValue(id, state.val);
+                    this.log.debug(`[STATE CHANGE] starting onStateChangeSumDeltaValue for ${id}`);
+                    this.onStateChangeSumDeltaValue(id, state.val);
+                }
+
+                if (this.typeObjects.avg && this.typeObjects.avg.includes(id)) {
+                    this.log.debug(`[STATE CHANGE] starting onStateChangeAvgValue for ${id}`);
+                    this.onStateChangeAvgValue(id, state.val);
                 }
 
                 if (this.typeObjects.minmax && this.typeObjects.minmax.includes(id)) {
-                    this.newMinMaxValue(id, state.val);
+                    this.log.debug(`[STATE CHANGE] starting onStateChangeMinMaxValue for ${id}`);
+                    this.onStateChangeMinMaxValue(id, state.val);
                 }
 
                 if (this.typeObjects.count && this.typeObjects.count.includes(id)) {
-                    this.newCountValue(id, state.val);
+                    this.log.debug(`[STATE CHANGE] starting onStateChangeCountValue for ${id}`);
+                    this.onStateChangeCountValue(id, state.val);
                 }
 
                 if (this.typeObjects.sumCount && this.typeObjects.sumCount.includes(id)) {
-                    this.newSumCountValue(id, state.val);
+                    this.log.debug(`[STATE CHANGE] starting onStateChangeSumCountValue for ${id}`);
+                    this.onStateChangeSumCountValue(id, state.val);
                 }
 
                 if (this.typeObjects.timeCount && this.typeObjects.timeCount.includes(id)) {
-                    this.newTimeCntValue(id, state);
+                    this.log.debug(`[STATE CHANGE] starting onStateChangeTimeCntValue for ${id}`);
+                    this.onStateChangeTimeCntValue(id, state);
                 }
 
                 // 5min is treated cyclically
@@ -532,8 +530,8 @@ class Statistics extends utils.Adapter {
         if (this.typeObjects.timeCount) {
             for (let s = 0; s < this.typeObjects.timeCount.length; s++) {
                 const id = this.typeObjects.timeCount[s];
-                //bevor umgespeichert wird, muß noch ein Aufruf mit actual erfolgen, damit die restliche Zeit vom letzten Signalwechsel bis Mitternacht erfolgt
-                //aufruf von newTimeCntValue(id, "last") damit wird gleicher Zustand getriggert und last01 oder last10 zu Mitternacht neu gesetzt
+                // bevor umgespeichert wird, muß noch ein Aufruf mit actual erfolgen, damit die restliche Zeit vom letzten Signalwechsel bis Mitternacht erfolgt
+                // aufruf von newTimeCntValue(id, "last") damit wird gleicher Zustand getriggert und last01 oder last10 zu Mitternacht neu gesetzt
                 this.getState(`temp.timeCount.${id}.last`, (err, last) => { //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
                     //evtl. status ermitteln und dann setForeignState nochmals den Zustand schreiben um anzutriggern und aktuelle Zeit zu verwenden (bzw. 00:00:00)
                     const ts = new Date();
@@ -542,7 +540,7 @@ class Statistics extends utils.Adapter {
                     //ts.setMilliseconds(0);
                     if (last) {
                         last.ts = ts.getTime();
-                        this.newTimeCntValue(id, last);
+                        this.onStateChangeTimeCntValue(id, last);
                     }
                 });
             }
@@ -570,13 +568,13 @@ class Statistics extends utils.Adapter {
         let subscribed = !!noSubscribe;
 
         if (!obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
-            obj.groupFactor = parseFloat(this.config.groupFactor) || 1;
+            obj.groupFactor = 1;
         } else {
             obj.groupFactor = parseFloat(obj.groupFactor) || 1;
         }
 
         if (!obj.impUnitPerImpulse && obj.impUnitPerImpulse !== '0' && obj.impUnitPerImpulse !== 0) {
-            obj.impUnitPerImpulse = parseInt(this.config.impUnitPerImpulse, 10) || 1;
+            obj.impUnitPerImpulse = this.config.impUnitPerImpulse;
         } else {
             obj.impUnitPerImpulse = parseInt(obj.impUnitPerImpulse, 10) || 1;
         }
@@ -593,11 +591,16 @@ class Statistics extends utils.Adapter {
         this.log.debug(`[CREATION] ============================== ${id} =============================`);
         this.log.debug(`[CREATION] setup of object ${id}: ${JSON.stringify(obj)}`);
         const logName = obj.logName;
+
+        // avg
         if (obj.avg) {
+            this.log.debug(`[CREATION] avg: ${id}`);
+
             if (!this.typeObjects.avg || !this.typeObjects.avg.includes(id)) {
                 this.typeObjects.avg = this.typeObjects.avg || [];
                 this.typeObjects.avg.push(id);
             }
+
             this.defineObject('avg', id, logName); // type, id, name
             this.tasks.push({
                 name: 'setObjectNotExists',
@@ -622,15 +625,19 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
+
             subscribed = true;
         }
 
-        // minmax over time
+        // minMax
         if (obj.minmax) {
+            this.log.debug(`[CREATION] minmax: ${id}`);
+
             if (!this.typeObjects.minmax || !this.typeObjects.minmax.includes(id)) {
                 this.typeObjects.minmax = this.typeObjects.minmax || [];
                 this.typeObjects.minmax.push(id);
             }
+
             this.defineObject('minmax', id, logName); // type, id, name
             this.tasks.push({
                 name: 'setObjectNotExists',
@@ -655,16 +662,19 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
+
             subscribed = true;
         }
-        // 5minutes Values can only be determined when counting
-        this.log.debug(`[CREATION] ${id} fiveMin = ${obj.fiveMin},  count =  ${obj.count}`);
 
+        // 5minutes Values can only be determined when counting
         if (obj.fiveMin && obj.count) {
+            this.log.debug(`[CREATION] fiveMin: ${id}`);
+
             if (!this.typeObjects.fiveMin || !this.typeObjects.fiveMin.includes(id)) {
                 this.typeObjects.fiveMin = this.typeObjects.fiveMin || [];
                 this.typeObjects.fiveMin.push(id);
             }
+
             this.defineObject('fiveMin', id, logName); // type, id, name
             this.tasks.push({
                 name: 'setObjectNotExists',
@@ -689,14 +699,19 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
+
             subscribed = true;
         }
 
+        // timeCount
         if (obj.timeCount) {
+            this.log.debug(`[CREATION] timeCount: ${id}`);
+
             if (!this.typeObjects.timeCount || !this.typeObjects.timeCount.includes(id)) {
                 this.typeObjects.timeCount = this.typeObjects.timeCount || [];
                 this.typeObjects.timeCount.push(id);
             }
+
             this.defineObject('timeCount', id, logName); // type, id, name
             this.tasks.push({
                 name: 'setObjectNotExists',
@@ -721,10 +736,14 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
+
             subscribed = true;
         }
 
+        // count
         if (obj.count) {
+            this.log.debug(`[CREATION] count: ${id}`);
+
             if (!this.typeObjects.count || !this.typeObjects.count.includes(id)) {
                 this.typeObjects.count = this.typeObjects.count || [];
                 this.typeObjects.count.push(id);
@@ -754,10 +773,14 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
+
             subscribed = true;
         }
 
+        // sumCount
         if (obj.sumCount) {
+            this.log.debug(`[CREATION] sumCount: ${id}`);
+
             if (!this.typeObjects.sumCount || !this.typeObjects.sumCount.includes(id)) {
                 this.typeObjects.sumCount = this.typeObjects.sumCount || [];
                 this.typeObjects.sumCount.push(id);
@@ -789,7 +812,10 @@ class Statistics extends utils.Adapter {
             });
         }
 
+        // sumDelta
         if (obj.sumDelta) {
+            this.log.debug(`[CREATION] sumDelta: ${id}`);
+
             if (!this.typeObjects.sumDelta || !this.typeObjects.sumDelta.includes(id)) {
                 this.typeObjects.sumDelta = this.typeObjects.sumDelta || [];
                 this.typeObjects.sumDelta.push(id);
@@ -819,11 +845,14 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
+
             subscribed = true;
         }
 
-        // sumGroup only makes sense if there are also the delta values
+        // sumGroup
         if (obj.sumGroup && (obj.sumDelta || (obj.sumCount))) {
+            this.log.debug(`[CREATION] sumGroup: ${id}`);
+
             // submit sumgroupname for object creation
             if (this.groups[obj.sumGroup] && this.groups[obj.sumGroup].config) {
                 if (!this.typeObjects.sumGroup || !this.typeObjects.sumGroup.includes(obj.sumGroup)) {
@@ -862,7 +891,6 @@ class Statistics extends utils.Adapter {
     }
 
     removeObject(id) {
-        // interne states[id] auch löschen?
         Object.keys(this.typeObjects).forEach(key => {
             if (this.typeObjects[key] && Array.isArray(this.typeObjects[key])) {
                 const pos = this.typeObjects[key].indexOf(id);
@@ -874,6 +902,7 @@ class Statistics extends utils.Adapter {
                 this.log.error(`Invalid structure of groups: ${JSON.stringify(this.typeObjects[key])}`);
             }
         });
+
         Object.keys(this.groups).forEach(g => {
             if (this.groups[g] && this.groups[g].items && Array.isArray(this.groups[g].items)) {
                 const pos = this.groups[g].items.indexOf(id);
@@ -1453,7 +1482,7 @@ class Statistics extends utils.Adapter {
         isStart && this.processTasks();
     }
 
-    newAvgValue(id, value) {
+    onStateChangeAvgValue(id, value) {
         const isStart = !this.tasks.length;
         /**
          * Comparison between last min / max and now transmitted value
@@ -1504,7 +1533,7 @@ class Statistics extends utils.Adapter {
         }
     }
 
-    newTimeCntValue(id, state) {
+    onStateChangeTimeCntValue(id, state) {
         const isStart = !this.tasks.length;
         /*
         value with threshold or state
@@ -1674,7 +1703,7 @@ class Statistics extends utils.Adapter {
         isStart && this.processTasks();
     }
 
-    newCountValue(id, value) {
+    onStateChangeCountValue(id, value) {
         const isStart = !this.tasks.length;
         /*
             value with limit or state
@@ -1715,10 +1744,11 @@ class Statistics extends utils.Adapter {
                 }
             });
         }
+
         isStart && this.processTasks();
     }
 
-    newSumCountValue(id, value) {
+    onStateChangeSumCountValue(id, value) {
         const isStart = !this.tasks.length;
         /*
             value with limit or state
@@ -1801,7 +1831,7 @@ class Statistics extends utils.Adapter {
         isStart && this.processTasks();
     }
 
-    newMinMaxValue(id, value) {
+    onStateChangeMinMaxValue(id, value) {
         const isStart = !this.tasks.length;
         /**
          * Comparison between last min / max and now transmitted value
@@ -1885,7 +1915,7 @@ class Statistics extends utils.Adapter {
         }
     }
 
-    newSumDeltaValue(id, value) {
+    onStateChangeSumDeltaValue(id, value) {
         const isStart = !this.tasks.length;
         /*
             determine the consumption per period as consecutive meter readings.
@@ -1954,10 +1984,7 @@ class Statistics extends utils.Adapter {
                                 })
                         });
                     }
-                    // calculate average
-                    if (this.typeObjects.avg && this.typeObjects.avg.includes(args.id)) {
-                        this.newAvgValue(args.id, delta);
-                    }
+
                     if (this.statDP[args.id].sumGroup &&
                         this.groups[this.statDP[args.id].sumGroup] &&
                         this.groups[this.statDP[args.id].sumGroup].config &&

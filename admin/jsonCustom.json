@@ -45,7 +45,7 @@
             "sm": 6
         },
         "fiveMin": {
-            "hidden": "customObj.common.type !== 'boolean'",
+            "hidden": "customObj.common.type !== 'boolean' || !data.count",
             "type": "checkbox",
             "label": "5min values",
             "help": "Determines the consumption every 5 minutes",
