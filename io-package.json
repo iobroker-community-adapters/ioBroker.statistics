@@ -182,5 +182,45 @@
         "priceUnit": "€/m³"
       }
     ]
-  }
+  },
+  "instanceObjects": [
+    {
+      "_id": "save",
+      "type": "folder",
+      "common": {
+        "name": {
+          "en": "Saved values",
+          "de": "Gespeicherte Werte",
+          "ru": "Сохраненные ценности",
+          "pt": "Valores salvos",
+          "nl": "Bespaart waarden",
+          "fr": "Valeurs sauvegardées",
+          "it": "Valori salvati",
+          "es": "Valores guardados",
+          "pl": "Oszczędzać wartości",
+          "zh-cn": "丧失价值"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "temp",
+      "type": "folder",
+      "common": {
+        "name": {
+          "en": "Temporary values",
+          "de": "Vorübergehende Werte",
+          "ru": "Временные значения",
+          "pt": "Valores temporários",
+          "nl": "Tijdelijke waarden",
+          "fr": "Valeurs temporaires",
+          "it": "Valori temporanei",
+          "es": "Valores temporales",
+          "pl": "Wartości tymczasowe",
+          "zh-cn": "临时价值观"
+        }
+      },
+      "native": {}
+    }
+  ]
 }
