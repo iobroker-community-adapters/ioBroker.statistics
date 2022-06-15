@@ -150,14 +150,9 @@
       }
     ],
     "authors": [
-      {
-        "name": "foxthefox",
-        "email": "foxthefox@wysiwis.net"
-      },
-      {
-        "name": "bluefox",
-        "email": "dogafox@gmail.com"
-      }
+      "foxthefox <foxthefox@wysiwis.net>",
+      "bluefox <dogafox@gmail.com>",
+      "Matthias Kleine <info@haus-automatisierung.com>"
     ],
     "plugins": {
       "sentry": {
