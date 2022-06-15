@@ -6,7 +6,7 @@
             "type": "text",
             "label": "Name",
             "help": "Name of statistics log",
-            "defaultFunc": "(customObj && customObj.common && customObj.common.name) || (customObj && customObj._id) || ''",
+            "defaultFunc": "(customObj && customObj._id && String(customObj._id).split('.').pop()) || ''",
             "sm": 6
         },
 
@@ -28,7 +28,7 @@
             "sm": 6
         },
         "sumCount": {
-            "hidden": "customObj.common.type !== 'boolean'",
+            "hidden": "customObj.common.type !== 'boolean' || !data.count",
             "type": "checkbox",
             "label": "Counting -> Consumption",
             "help": "Determines the consumption from counting",
