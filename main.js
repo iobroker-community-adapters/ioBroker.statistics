@@ -121,13 +121,13 @@ class Statistics extends utils.Adapter {
                         if (!custom || !custom[this.namespace] || !custom[this.namespace].enabled) continue;
                         this.statDP[id] = custom[this.namespace]; // all-inclusive assumption of all answers
                         objCount++;
-                        this.log.info(`[CREATION] enabled statistics for ${id}`);
+                        this.log.info(`[SETUP] enabled statistics for ${id}`);
                     }
                 }
 
                 const keys = Object.keys(this.statDP);
                 this.setupObjects(keys, () => {
-                    this.log.info(`[INFO] statistics observes ${objCount} values after startup`);
+                    this.log.info(`[SETUP] statistics observes ${objCount} values after startup`);
 
                     // create cron-jobs
                     const timezone = this.config.timezone || 'Europe/Berlin';
@@ -245,7 +245,7 @@ class Statistics extends utils.Adapter {
 
                     for (const type in this.crons) {
                         if (Object.prototype.hasOwnProperty.call(this.crons, type) && this.crons[type]) {
-                            this.log.debug(`[INFO] ${type} status = ${this.crons[type].running} next event: ${timeConverter(this.crons[type].nextDates())}`);
+                            this.log.debug(`[SETUP] ${type} status = ${this.crons[type].running} next event: ${timeConverter(this.crons[type].nextDates())}`);
                         }
                     }
                 });
@@ -269,7 +269,7 @@ class Statistics extends utils.Adapter {
             if (this.statDP[id]) {
                 this.statDP[id] = obj.common.custom[this.namespace];
                 this.removeObject(id);
-                this.setupObjects([id], null, true);
+                this.setupObjects([id]);
                 this.log.debug(`[OBJECT CHANGE] saved (updated) typeObject: ${JSON.stringify(this.statDP[id])}`);
             } else {
                 this.statDP[id] = obj.common.custom[this.namespace];
@@ -547,7 +547,7 @@ class Statistics extends utils.Adapter {
         }
     }
 
-    setupObjects(ids, callback, noSubscribe) {
+    setupObjects(ids, callback) {
         const isStart = !this.tasks.length;
 
         if (!ids || !ids.length) {
@@ -562,10 +562,10 @@ class Statistics extends utils.Adapter {
         const id = ids.shift();
         const obj = this.statDP[id];
         if (!obj) {
-            return setImmediate(this.setupObjects.bind(this), ids, callback, noSubscribe);
+            return setImmediate(this.setupObjects.bind(this), ids, callback);
         }
 
-        let subscribed = !!noSubscribe;
+        this.subscribeForeignStates(id);
 
         if (!obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
             obj.groupFactor = 1;
@@ -604,7 +604,6 @@ class Statistics extends utils.Adapter {
             this.defineObject('avg', id, logName); // type, id, name
             this.tasks.push({
                 name: 'setObjectNotExists',
-                subscribe: !subscribed && id,
                 id: 'save.avg',
                 obj: {
                     type: 'channel',
@@ -625,8 +624,6 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
-
-            subscribed = true;
         }
 
         // minMax
@@ -641,7 +638,6 @@ class Statistics extends utils.Adapter {
             this.defineObject('minmax', id, logName); // type, id, name
             this.tasks.push({
                 name: 'setObjectNotExists',
-                subscribe: !subscribed && id,
                 id: 'save.minmax',
                 obj: {
                     type: 'channel',
@@ -662,8 +658,6 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
-
-            subscribed = true;
         }
 
         // 5minutes Values can only be determined when counting
@@ -678,7 +672,6 @@ class Statistics extends utils.Adapter {
             this.defineObject('fiveMin', id, logName); // type, id, name
             this.tasks.push({
                 name: 'setObjectNotExists',
-                subscribe: !subscribed && id,
                 id: 'save.fiveMin',
                 obj: {
                     type: 'channel',
@@ -699,8 +692,6 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
-
-            subscribed = true;
         }
 
         // timeCount
@@ -715,7 +706,6 @@ class Statistics extends utils.Adapter {
             this.defineObject('timeCount', id, logName); // type, id, name
             this.tasks.push({
                 name: 'setObjectNotExists',
-                subscribe: !subscribed && id,
                 id: 'save.timeCount',
                 obj: {
                     type: 'channel',
@@ -736,8 +726,6 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
-
-            subscribed = true;
         }
 
         // count
@@ -752,7 +740,6 @@ class Statistics extends utils.Adapter {
             this.defineObject('count', id, logName); // type, id, name
             this.tasks.push({
                 name: 'setObjectNotExists',
-                subscribe: !subscribed && id,
                 id: 'save.count',
                 obj: {
                     type: 'channel',
@@ -773,8 +760,6 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
-
-            subscribed = true;
         }
 
         // sumCount
@@ -789,7 +774,6 @@ class Statistics extends utils.Adapter {
             this.defineObject('sumCount', id, logName, obj.unit); // type, id, name, Unit
             this.tasks.push({
                 name: 'setObjectNotExists',
-                subscribe: !subscribed && id,
                 id: 'save.sumCount',
                 obj: {
                     type: 'channel',
@@ -824,7 +808,6 @@ class Statistics extends utils.Adapter {
             this.defineObject('sumDelta', id, logName); //type, id, name
             this.tasks.push({
                 name: 'setObjectNotExists',
-                subscribe: !subscribed && id,
                 id: 'save.sumDelta',
                 obj: {
                     type: 'channel',
@@ -845,8 +828,6 @@ class Statistics extends utils.Adapter {
                     native: {}
                 }
             });
-
-            subscribed = true;
         }
 
         // sumGroup
@@ -1356,7 +1337,8 @@ class Statistics extends utils.Adapter {
                 !task.id.match(/\.dayCount$/) && // !! Problem mit .?
                 !task.id.startsWith('save.sumGroup.') && !task.id.startsWith('temp.sumGroup.')) {
                 this.getForeignObject(task.obj.native.addr, (err, obj) => {
-                    if (obj && obj.common.unit) {
+
+                    if (obj && obj.common && obj.common.unit) {
                         task.obj.common.unit = obj.common.unit;
                         this.units[task.obj.native.addr] = obj.common.unit;
                     } else {
@@ -1367,11 +1349,8 @@ class Statistics extends utils.Adapter {
                         if (isCreated) {
                             this.log.debug(`[CREATION] ${task.id}`);
                         }
-                        if (task.subscribe) {
-                            this.subscribeForeignStates(task.subscribe, this.processNext.bind(this));
-                        } else {
-                            this.processNext();
-                        }
+
+                        this.processNext();
                     });
                 });
             } else {
@@ -1389,11 +1368,8 @@ class Statistics extends utils.Adapter {
                     if (isCreated) {
                         this.log.debug(`[CREATION] ${task.id}`);
                     }
-                    if (task.subscribe) {
-                        this.subscribeForeignStates(task.subscribe, this.processNext.bind(this));
-                    } else {
-                        this.processNext();
-                    }
+
+                    this.processNext();
                 });
             }
         } else if (task.name === 'async') {
