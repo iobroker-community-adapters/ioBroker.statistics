@@ -28,7 +28,7 @@
             "sm": 6
         },
         "sumCount": {
-            "hidden": "customObj.common.type !== 'boolean' || !data.count",
+            "hidden": "customObj.common.type !== 'boolean'",
             "type": "checkbox",
             "label": "Counting -> Consumption",
             "help": "Determines the consumption from counting",

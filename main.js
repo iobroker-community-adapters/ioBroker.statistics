@@ -6,6 +6,7 @@ const stateObjects = require('./lib/objects');
 
 const PRECISION = 5;
 
+// Which objects should be created (see lib/objects.js)
 const nameObjects = {
     count: {
         // Count impulses or counting operations
@@ -15,7 +16,7 @@ const nameObjects = {
     sumCount: {
         // Addition of analogue values (consumption from pulses) Multiplication with price = costs
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
-        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
+        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'lastPulse']
     },
     sumDelta: {
         // Consumption from continuous quantities () Multiplication with price = costs
@@ -310,6 +311,7 @@ class Statistics extends utils.Adapter {
                 this.log.warn(`[STATE CHANGE] wrong value => ${state.val} on ${id} => check the other adapter where value comes from `);
             } else {
                 if (this.typeObjects.sumDelta && this.typeObjects.sumDelta.includes(id)) {
+                    this.log.debug(`[STATE CHANGE] starting `);
                     this.newSumDeltaValue(id, state.val);
                 } else if (this.typeObjects.avg && this.typeObjects.avg.includes(id)) {
                     this.newAvgValue(id, state.val);
@@ -321,6 +323,10 @@ class Statistics extends utils.Adapter {
 
                 if (this.typeObjects.count && this.typeObjects.count.includes(id)) {
                     this.newCountValue(id, state.val);
+                }
+
+                if (this.typeObjects.sumCount && this.typeObjects.sumCount.includes(id)) {
+                    this.newSumCountValue(id, state.val);
                 }
 
                 if (this.typeObjects.timeCount && this.typeObjects.timeCount.includes(id)) {
@@ -362,11 +368,11 @@ class Statistics extends utils.Adapter {
         }
     }
 
-    isTrueNew(id, val) {
+    isTrueNew(id, val, type) {
         // detection if a count value is real or only from polling with same state
         let newPulse = false;
-        this.getValue(`temp.count.${id}.lastPulse`, (err, value) => {
-            this.setValue(`temp.count.${id}.lastPulse`, val);
+        this.getValue(`temp.${type}.${id}.lastPulse`, (err, value) => {
+            this.setValue(`temp.${type}.${id}.lastPulse`, val);
             if (value === val) {
                 newPulse = false;
                 this.log.debug(`new pulse false ? ${newPulse}`);
@@ -576,7 +582,7 @@ class Statistics extends utils.Adapter {
         }
 
         // merge der Kosten in den Datensatz
-        if (obj.sumGroup && ((obj.count && obj.sumCount) || obj.sumDelta)) {
+        if (obj.sumGroup && (obj.count || obj.sumCount || obj.sumDelta)) {
             this.groups[obj.sumGroup] = this.groups[obj.sumGroup] || { config: this.config.groups.find(g => g.id === obj.sumGroup), items: [] };
             if (!this.groups[obj.sumGroup].items.includes(id)) {
                 this.groups[obj.sumGroup].items.push(id);
@@ -751,8 +757,7 @@ class Statistics extends utils.Adapter {
             subscribed = true;
         }
 
-        // Conversion pulses into consumption is only useful if pulses exist
-        if (obj.sumCount && obj.count) {
+        if (obj.sumCount) {
             if (!this.typeObjects.sumCount || !this.typeObjects.sumCount.includes(id)) {
                 this.typeObjects.sumCount = this.typeObjects.sumCount || [];
                 this.typeObjects.sumCount.push(id);
@@ -818,7 +823,7 @@ class Statistics extends utils.Adapter {
         }
 
         // sumGroup only makes sense if there are also the delta values
-        if (obj.sumGroup && (obj.sumDelta || (obj.sumCount && obj.count))) {
+        if (obj.sumGroup && (obj.sumDelta || (obj.sumCount))) {
             // submit sumgroupname for object creation
             if (this.groups[obj.sumGroup] && this.groups[obj.sumGroup].config) {
                 if (!this.typeObjects.sumGroup || !this.typeObjects.sumGroup.includes(obj.sumGroup)) {
@@ -1679,7 +1684,7 @@ class Statistics extends utils.Adapter {
         this.log.debug(`[STATE CHANGE] count call ${id} with ${value}`);
         // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
         // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
-        if (this.isTrueNew(id, value)) {
+        if (this.isTrueNew(id, value, 'count')) {
             this.tasks.push({
                 name: 'async',
                 args: { id },
@@ -1704,6 +1709,32 @@ class Statistics extends utils.Adapter {
                                 }
                             });
                         }
+                    }
+
+                    callback();
+                }
+            });
+        }
+        isStart && this.processTasks();
+    }
+
+    newSumCountValue(id, value) {
+        const isStart = !this.tasks.length;
+        /*
+            value with limit or state
+            Change to 1 -> increase by 1
+            Value greater threshold -> increase by 1
+        */
+        this.log.debug(`[STATE CHANGE] count call ${id} with ${value}`);
+        // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
+        // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
+        if (this.isTrueNew(id, value, 'sumCount')) {
+            this.tasks.push({
+                name: 'async',
+                args: { id },
+                callback: (args, callback) => {
+                    if (!this.statDP[args.id]) {
+                        return callback && callback();
                     }
 
                     // Calculation of consumption (what is a physical-sized pulse)
