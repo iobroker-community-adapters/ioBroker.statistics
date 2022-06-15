@@ -4,6 +4,8 @@ const utils = require('@iobroker/adapter-core');
 const CronJob = require('cron').CronJob;
 const stateObjects = require('./lib/objects');
 
+const PRECISION = 5;
+
 const nameObjects = {
     count: {
         // Count impulses or counting operations
@@ -267,7 +269,7 @@ class Statistics extends utils.Adapter {
         // nur das verarbeiten was auch diesen Adapter interessiert
         if (obj && obj.common && obj.common.custom && obj.common.custom[this.namespace] && obj.common.custom[this.namespace].enabled) {
             //hier sollte nur ein Datenpunkt angekommen sein
-            this.log.debug(`received objectChange for stat "${id}" ${obj.common.custom}`);
+            this.log.debug(`received objectChange for stat "${id}" ${JSON.stringify(obj.common.custom)}`);
             // old but changed
             if (this.statDP[id]) {
                 //this.log.info('neu aber anderes Setting ' + id);
@@ -391,19 +393,19 @@ class Statistics extends utils.Adapter {
         }
     }
 
-    setValue(id, val, callback) {
-        this.states[id] = val;
-        this.setState(id, val, true, callback);
+    setValue(id, value, callback) {
+        this.states[id] = value;
+        this.setState(id, { val: value, ack: true }, callback);
     }
 
-    setValueStat(id, val, callback) {
+    setValueStat(id, value, callback) {
         const ts = new Date();
         ts.setMinutes(ts.getMinutes() - 1);
         ts.setSeconds(59);
         ts.setMilliseconds(0);
 
-        this.states[id] = val;
-        this.setState(id, { val, ts: ts.getTime(), ack: true }, callback);
+        this.states[id] = value;
+        this.setState(id, { val: value, ts: ts.getTime(), ack: true }, callback);
     }
 
     checkValue(value, ts, id, type) {
@@ -494,7 +496,7 @@ class Statistics extends utils.Adapter {
         this.getValue(args.temp, (err, value) => {
             if (value !== null && value !== undefined) {
                 this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
-                this.setValueStat(args.save, roundValue(value, 4), () => this.setValue(args.temp, 0, callback));
+                this.setValueStat(args.save, roundValue(value, PRECISION), () => this.setValue(args.temp, 0, callback));
             } else {
                 this.log.debug(`[SAVE VALUES] Process ${args.temp} => no value found`);
                 callback && callback();
@@ -1099,7 +1101,6 @@ class Statistics extends utils.Adapter {
                         pl: `Temporary wartości dla ${name.pl || name.en}`,
                         'zh-cn': `${name['zh-cn'] || name.en} 的临时值`,
                     }
-                    // expert: true
                 },
                 native: {
                     addr: id
@@ -1472,7 +1473,7 @@ class Statistics extends utils.Adapter {
                             this.getValue(`temp.avg.${args.id}.daySum`, (err, sum) => {
                                 sum = sum ? sum + value : value;
                                 this.setValue(`temp.avg.${args.id}.daySum`, sum, () => {
-                                    this.setValue(`temp.avg.${args.id}.dayAvg`, roundValue(sum / count, 4), () => {
+                                    this.setValue(`temp.avg.${args.id}.dayAvg`, roundValue(sum / count, PRECISION), () => {
                                         this.getValue(`temp.avg.${args.id}.dayMin`, (err, tempMin) => {
                                             if (tempMin === null || tempMin > value) {
                                                 this.setValue(`temp.avg.${args.id}.dayMin`, value);
@@ -1702,57 +1703,66 @@ class Statistics extends utils.Adapter {
                                     });
                                 }
                             });
-                            // Calculation of consumption (what is a physical-sized pulse)
-                            if (this.typeObjects.sumCount &&
-                                this.typeObjects.sumCount.includes(args.id) &&
-                                this.statDP[args.id].impUnitPerImpulse) { // counter mit Verbrauch
-                                this.tasks.push({
-                                    name: 'async',
-                                    args: {
-                                        id: 'temp.sumCount.' + args.id + '.' + nameObjects.count.temp[s],
-                                        impUnitPerImpulse: this.statDP[args.id].impUnitPerImpulse
-                                    },
-                                    callback: (args, callback) => {
-                                        this.getValue(args.id, (err, consumption) => {
-                                            const value = consumption ? consumption + args.impUnitPerImpulse : args.impUnitPerImpulse;
-                                            this.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.impUnitPerImpulse} to ${value}`);
-                                            this.setValue(args.id, value, callback);
-                                        });
-                                    }
-                                });
-                                // add consumption to group
-                                if (this.statDP[args.id].sumGroup &&
-                                    this.groups[this.statDP[args.id].sumGroup] &&
-                                    this.groups[this.statDP[args.id].sumGroup].config &&
-                                    this.statDP[args.id].impUnitPerImpulse &&
-                                    this.statDP[args.id].groupFactor
-                                ) {
-                                    const factor = this.statDP[args.id].groupFactor;
-                                    const price = this.groups[this.statDP[args.id].sumGroup].config.price;
-                                    for (let i = 0; i < nameObjects.sumGroup.temp.length; i++) {
+                        }
+                    }
+
+                    // Calculation of consumption (what is a physical-sized pulse)
+                    if (this.typeObjects.sumCount &&
+                        this.typeObjects.sumCount.includes(args.id) &&
+                        this.statDP[args.id].impUnitPerImpulse) { // counter mit Verbrauch
+
+                        for (let s = 0; s < nameObjects.sumGroup.temp.length; s++) {
+                            this.tasks.push({
+                                name: 'async',
+                                args: {
+                                    id: args.id,
+                                    sumCountId: `temp.sumCount.${args.id}.${nameObjects.sumGroup.temp[s]}`,
+                                    sumGroupId: `temp.sumGroup.${this.statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[s]}`,
+                                    impUnitPerImpulse: this.statDP[args.id].impUnitPerImpulse
+                                },
+                                callback: (args, callback) => {
+                                    this.getValue(args.sumCountId, (err, consumption) => {
+                                        const value = consumption ? consumption + args.impUnitPerImpulse : args.impUnitPerImpulse;
+                                        this.log.debug(`[STATE CHANGE] Increase ${args.sumCountId} on ${args.impUnitPerImpulse} to ${value}`);
+                                        this.setValue(args.sumCountId, value, callback);
+                                    });
+
+                                    // add consumption to group
+                                    if (this.statDP[args.id].sumGroup &&
+                                        this.groups[this.statDP[args.id].sumGroup] &&
+                                        this.groups[this.statDP[args.id].sumGroup].config &&
+                                        this.statDP[args.id].groupFactor
+                                    ) {
+                                        const factor = this.statDP[args.id].groupFactor;
+                                        const price = this.groups[this.statDP[args.id].sumGroup].config.price;
+
+                                        const increaseValueBy = price * args.impUnitPerImpulse * factor;
+
                                         this.tasks.push({
                                             name: 'async',
                                             args: {
-                                                delta: this.statDP[args.id].impUnitPerImpulse * factor * price,
-                                                id: `temp.sumGroup.${this.statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[i]}`,
-                                                type: nameObjects.sumGroup.temp[i]
+                                                delta: increaseValueBy,
+                                                id: args.sumGroupId,
+                                                type: nameObjects.sumGroup.temp[s]
                                             },
-                                            callback: (args, callback) =>
+                                            callback: (args, callback) => {
                                                 this.getValue(args.id, (err, value, ts) => {
                                                     if (ts) {
                                                         value = this.checkValue(value || 0, ts, args.id, args.type);
                                                     }
-                                                    // value auf 4 stellen hinter dem Komma festgelegt
-                                                    value = roundValue(((value || 0) + args.delta), 4);
-                                                    this.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.delta} to ${value}`);
+
+                                                    value = roundValue(((value || 0) + args.delta), PRECISION);
+                                                    this.log.debug(`[STATE CHANGE] Increase group ${args.id} by ${args.delta} to ${value}`);
                                                     this.setValue(args.id, value, callback);
-                                                })
+                                                });
+                                            }
                                         });
                                     }
                                 }
-                            }
+                            });
                         }
                     }
+
                     callback();
                 }
             });
@@ -1882,8 +1892,7 @@ class Statistics extends utils.Adapter {
                             delta = value; // Difference between last value and overflow is error rate
                         }
                     }
-                    // delta auf 4 stellen hinter dem Komma begrenzen
-                    delta = roundValue(delta, 4);
+                    delta = roundValue(delta, PRECISION);
                     this.tasks.push({
                         name: 'async',
                         args: {
@@ -1907,8 +1916,8 @@ class Statistics extends utils.Adapter {
                                     if (ts) {
                                         value = this.checkValue(value, ts, args.id, args.type);
                                     }
-                                    // value auf 4 stellen hinter dem Komma begrenzen
-                                    value = roundValue((value || 0) + args.delta, 4);
+
+                                    value = roundValue((value || 0) + args.delta, PRECISION);
                                     this.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.delta} to ${value}`);
                                     this.setValue(args.id, value, callback);
                                 })
@@ -1939,8 +1948,8 @@ class Statistics extends utils.Adapter {
                                         if (ts) {
                                             value = this.checkValue(value || 0, ts, args.id, args.type);
                                         }
-                                        // value auf 4 stellen hinter dem Komma festgelegt
-                                        value = roundValue((value || 0) + args.delta, 4);
+
+                                        value = roundValue((value || 0) + args.delta, PRECISION);
                                         this.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.delta} to ${value}`);
                                         this.setValue(args.id, value, callback);
                                     })

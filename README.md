@@ -78,6 +78,8 @@ A german HowTo doc is available here: [howto_de](./doc/howto_de.md)
 -->
 ### __WORK IN PROGRESS__
 * (klein0r) Added support for translated object names
+* (klein0r) Fixed sum calculation
+* (klein0r) Increased precision to 5 digits
 
 ### 2.0.0 (2022-06-13)
 * (klein0r) Added Admin 5 configuration
