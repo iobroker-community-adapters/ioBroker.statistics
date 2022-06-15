@@ -46,6 +46,7 @@
         },
         "fiveMin": {
             "hidden": "customObj.common.type !== 'boolean' || !data.count",
+            "newLine": true,
             "type": "checkbox",
             "label": "5min values",
             "help": "Determines the consumption every 5 minutes",
@@ -132,7 +133,6 @@
         },
         "groupFactor": {
             "hidden": "(!data.sumDelta && !data.sumCount) || !data.sumGroup",
-            "newLine": true,
             "type": "number",
             "step": 0.001,
             "min": 0.001,

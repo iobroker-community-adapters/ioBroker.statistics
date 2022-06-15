@@ -21,7 +21,7 @@ const nameObjects = {
     sumDelta: {
         // Consumption from continuous quantities () Multiplication with price = costs
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'delta', 'last'],
-        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']//, 'last5Min']
+        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
     },
     sumGroup: {
         // Total consumption from consecutive quantities
@@ -1251,6 +1251,7 @@ class Statistics extends utils.Adapter {
                             temp5MinID = `temp.count.${args.id}.last5Min`;
                             actualID = `temp.count.${args.id}.day`;
                         }
+
                         this.getValue(actualID, (err, actual) => {
                             if (actual === null) {
                                 return callback();
