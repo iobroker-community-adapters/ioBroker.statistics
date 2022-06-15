@@ -97,7 +97,17 @@ class Statistics extends utils.Adapter {
         this.states = {}; // hold all states locally
         this.units = {};
 
-        this.typeObjects = {}; // to remember the used objects within the types (calculations)
+        // to remember the used objects within the types (calculations)
+        this.typeObjects = {
+            sumDelta: [],
+            sumGroup: [],
+            avg: [],
+            minmax: [],
+            count: [],
+            sumCount: [],
+            timeCount: [],
+            fiveMin: [],
+        };
         this.statDP = {};      // contains all custom object definitions (with Object-ID as key)
 
         this.on('ready', this.onReady.bind(this));
@@ -301,32 +311,32 @@ class Statistics extends utils.Adapter {
             if ((state.val === null) || (state.val === undefined) || isNaN(state.val)) {
                 this.log.warn(`[STATE CHANGE] wrong value => ${state.val} on ${id} => check the other adapter where value comes from `);
             } else {
-                if (this.typeObjects.sumDelta && this.typeObjects.sumDelta.includes(id)) {
+                if (this.typeObjects.sumDelta.includes(id)) {
                     this.log.debug(`[STATE CHANGE] starting onStateChangeSumDeltaValue for ${id}`);
                     this.onStateChangeSumDeltaValue(id, state.val);
                 }
 
-                if (this.typeObjects.avg && this.typeObjects.avg.includes(id)) {
+                if (this.typeObjects.avg.includes(id)) {
                     this.log.debug(`[STATE CHANGE] starting onStateChangeAvgValue for ${id}`);
                     this.onStateChangeAvgValue(id, state.val);
                 }
 
-                if (this.typeObjects.minmax && this.typeObjects.minmax.includes(id)) {
+                if (this.typeObjects.minmax.includes(id)) {
                     this.log.debug(`[STATE CHANGE] starting onStateChangeMinMaxValue for ${id}`);
                     this.onStateChangeMinMaxValue(id, state.val);
                 }
 
-                if (this.typeObjects.count && this.typeObjects.count.includes(id)) {
+                if (this.typeObjects.count.includes(id)) {
                     this.log.debug(`[STATE CHANGE] starting onStateChangeCountValue for ${id}`);
                     this.onStateChangeCountValue(id, state.val);
                 }
 
-                if (this.typeObjects.sumCount && this.typeObjects.sumCount.includes(id)) {
+                if (this.typeObjects.sumCount.includes(id)) {
                     this.log.debug(`[STATE CHANGE] starting onStateChangeSumCountValue for ${id}`);
                     this.onStateChangeSumCountValue(id, state.val);
                 }
 
-                if (this.typeObjects.timeCount && this.typeObjects.timeCount.includes(id)) {
+                if (this.typeObjects.timeCount.includes(id)) {
                     this.log.debug(`[STATE CHANGE] starting onStateChangeTimeCntValue for ${id}`);
                     this.onStateChangeTimeCntValue(id, state);
                 }
@@ -565,8 +575,6 @@ class Statistics extends utils.Adapter {
             return setImmediate(this.setupObjects.bind(this), ids, callback);
         }
 
-        this.subscribeForeignStates(id);
-
         if (!obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
             obj.groupFactor = 1;
         } else {
@@ -596,238 +604,77 @@ class Statistics extends utils.Adapter {
         if (obj.avg) {
             this.log.debug(`[CREATION] avg: ${id}`);
 
-            if (!this.typeObjects.avg || !this.typeObjects.avg.includes(id)) {
-                this.typeObjects.avg = this.typeObjects.avg || [];
+            if (!this.typeObjects.avg.includes(id)) {
                 this.typeObjects.avg.push(id);
             }
 
             this.defineObject('avg', id, logName); // type, id, name
-            this.tasks.push({
-                name: 'setObjectNotExists',
-                id: 'save.avg',
-                obj: {
-                    type: 'channel',
-                    common: {
-                        name: {
-                            en: 'Average values',
-                            de: 'Durchschnittswerte',
-                            ru: 'Среднее значение',
-                            pt: 'Valores médios',
-                            nl: 'Gemiddelde waarden',
-                            fr: 'Valeurs moyennes',
-                            it: 'Valori medi',
-                            es: 'Valores medios',
-                            pl: 'Average value',
-                            'zh-cn': '平均值'
-                        }
-                    },
-                    native: {}
-                }
-            });
         }
 
         // minMax
         if (obj.minmax) {
             this.log.debug(`[CREATION] minmax: ${id}`);
 
-            if (!this.typeObjects.minmax || !this.typeObjects.minmax.includes(id)) {
-                this.typeObjects.minmax = this.typeObjects.minmax || [];
+            if (!this.typeObjects.minmax.includes(id)) {
                 this.typeObjects.minmax.push(id);
             }
 
             this.defineObject('minmax', id, logName); // type, id, name
-            this.tasks.push({
-                name: 'setObjectNotExists',
-                id: 'save.minmax',
-                obj: {
-                    type: 'channel',
-                    common: {
-                        name: {
-                            en: 'Min/Max values',
-                            de: 'Min/Max Werte',
-                            ru: 'Мин/макс. значения',
-                            pt: 'Min/Max valores',
-                            nl: 'Min/Max waarden',
-                            fr: 'Valeurs Min/Max',
-                            it: 'Valori minimi/max',
-                            es: 'Valores Min/Max',
-                            pl: 'Wartości Min/Max',
-                            'zh-cn': 'Min/Max'
-                        }
-                    },
-                    native: {}
-                }
-            });
         }
 
         // 5minutes Values can only be determined when counting
         if (obj.fiveMin && obj.count) {
             this.log.debug(`[CREATION] fiveMin: ${id}`);
 
-            if (!this.typeObjects.fiveMin || !this.typeObjects.fiveMin.includes(id)) {
-                this.typeObjects.fiveMin = this.typeObjects.fiveMin || [];
+            if (!this.typeObjects.fiveMin.includes(id)) {
                 this.typeObjects.fiveMin.push(id);
             }
 
             this.defineObject('fiveMin', id, logName); // type, id, name
-            this.tasks.push({
-                name: 'setObjectNotExists',
-                id: 'save.fiveMin',
-                obj: {
-                    type: 'channel',
-                    common: {
-                        name: {
-                            en: 'Consumption (5 min.)',
-                            de: 'Verbrauch (5 min)',
-                            ru: 'Потребление (5 мин)',
-                            pt: 'Consumo (5 min)',
-                            nl: 'Consumptie (5 minuten)',
-                            fr: 'Consommation (5 min)',
-                            it: 'Consumo (5 min)',
-                            es: 'Consumo (5 min)',
-                            pl: '5 minut)',
-                            'zh-cn': '消费(5分钟)。'
-                        }
-                    },
-                    native: {}
-                }
-            });
         }
 
         // timeCount
         if (obj.timeCount) {
             this.log.debug(`[CREATION] timeCount: ${id}`);
 
-            if (!this.typeObjects.timeCount || !this.typeObjects.timeCount.includes(id)) {
-                this.typeObjects.timeCount = this.typeObjects.timeCount || [];
+            if (!this.typeObjects.timeCount.includes(id)) {
                 this.typeObjects.timeCount.push(id);
             }
 
             this.defineObject('timeCount', id, logName); // type, id, name
-            this.tasks.push({
-                name: 'setObjectNotExists',
-                id: 'save.timeCount',
-                obj: {
-                    type: 'channel',
-                    common: {
-                        name: {
-                            en: 'Operating time counter',
-                            de: 'Betriebszeitzähler',
-                            ru: 'Рабочий счетчик времени',
-                            pt: 'Contador de tempo operacional',
-                            nl: 'Operatie tijd tegen',
-                            fr: 'Compteur de temps de fonctionnement',
-                            it: 'Contatore orario',
-                            es: 'Contrato de tiempo de funcionamiento',
-                            pl: 'Czas kontrastowy',
-                            'zh-cn': '业务时间反击'
-                        }
-                    },
-                    native: {}
-                }
-            });
         }
 
         // count
         if (obj.count) {
             this.log.debug(`[CREATION] count: ${id}`);
 
-            if (!this.typeObjects.count || !this.typeObjects.count.includes(id)) {
-                this.typeObjects.count = this.typeObjects.count || [];
+            if (!this.typeObjects.count.includes(id)) {
                 this.typeObjects.count.push(id);
             }
 
             this.defineObject('count', id, logName); // type, id, name
-            this.tasks.push({
-                name: 'setObjectNotExists',
-                id: 'save.count',
-                obj: {
-                    type: 'channel',
-                    common: {
-                        name: {
-                            en: 'Impulse counter',
-                            de: 'Impulszähler',
-                            ru: 'Импульсный счетчик',
-                            pt: 'Contador de impulso',
-                            nl: 'Impulse contra',
-                            fr: 'Compteur Impulse',
-                            it: 'Contatore di impulso',
-                            es: 'Contrato impulsivo',
-                            pl: 'Przeciwstawić się',
-                            'zh-cn': '有罪不罚'
-                        }
-                    },
-                    native: {}
-                }
-            });
         }
 
         // sumCount
         if (obj.sumCount) {
             this.log.debug(`[CREATION] sumCount: ${id}`);
 
-            if (!this.typeObjects.sumCount || !this.typeObjects.sumCount.includes(id)) {
-                this.typeObjects.sumCount = this.typeObjects.sumCount || [];
+            if (!this.typeObjects.sumCount.includes(id)) {
                 this.typeObjects.sumCount.push(id);
             }
 
             this.defineObject('sumCount', id, logName, obj.unit); // type, id, name, Unit
-            this.tasks.push({
-                name: 'setObjectNotExists',
-                id: 'save.sumCount',
-                obj: {
-                    type: 'channel',
-                    common: {
-                        name: {
-                            en: 'Consumption from counting',
-                            de: 'Verbrauch aus der Zählung',
-                            ru: 'Потребление от подсчета',
-                            pt: 'Consumo de contar',
-                            nl: 'Consumptie van tellen',
-                            fr: 'Consommation du comptage',
-                            it: 'Consumo dal conteggio',
-                            es: 'Consumo por contar',
-                            pl: 'Zliczanie',
-                            'zh-cn': '消费'
-                        }
-                    },
-                    native: {}
-                }
-            });
         }
 
         // sumDelta
         if (obj.sumDelta) {
             this.log.debug(`[CREATION] sumDelta: ${id}`);
 
-            if (!this.typeObjects.sumDelta || !this.typeObjects.sumDelta.includes(id)) {
-                this.typeObjects.sumDelta = this.typeObjects.sumDelta || [];
+            if (!this.typeObjects.sumDelta.includes(id)) {
                 this.typeObjects.sumDelta.push(id);
             }
 
-            this.defineObject('sumDelta', id, logName); //type, id, name
-            this.tasks.push({
-                name: 'setObjectNotExists',
-                id: 'save.sumDelta',
-                obj: {
-                    type: 'channel',
-                    common: {
-                        name: {
-                            en: 'Consumption',
-                            de: 'Verbrauch',
-                            ru: 'Потребление',
-                            pt: 'Consumo',
-                            nl: 'Consumptie',
-                            fr: 'Consommation',
-                            it: 'Consumo',
-                            es: 'Consumo',
-                            pl: 'Consumowanie',
-                            'zh-cn': '消费'
-                        }
-                    },
-                    native: {}
-                }
-            });
+            this.defineObject('sumDelta', id, logName); // type, id, name
         }
 
         // sumGroup
@@ -836,51 +683,31 @@ class Statistics extends utils.Adapter {
 
             // submit sumgroupname for object creation
             if (this.groups[obj.sumGroup] && this.groups[obj.sumGroup].config) {
-                if (!this.typeObjects.sumGroup || !this.typeObjects.sumGroup.includes(obj.sumGroup)) {
-                    this.typeObjects.sumGroup = this.typeObjects.sumGroup || [];
+                if (!this.typeObjects.sumGroup.includes(obj.sumGroup)) {
                     this.typeObjects.sumGroup.push(obj.sumGroup);
                 }
 
                 this.defineObject('sumGroup', obj.sumGroup, `Sum for ${obj.sumGroup}`); // type, id ist der gruppenname, name
-                this.tasks.push({
-                    name: 'setObjectNotExists',
-                    id: 'save.sumGroup',
-                    obj: {
-                        type: 'channel',
-                        common: {
-                            name: {
-                                en: 'Total consumption',
-                                de: 'Gesamtverbrauch',
-                                ru: 'Общее потребление',
-                                pt: 'Consumo total',
-                                nl: 'Totale consumptie',
-                                fr: 'Total de la consommation',
-                                it: 'Consumo totale',
-                                es: 'Consumo total',
-                                pl: 'Łączna konsumpcja',
-                                'zh-cn': '总消费量'
-                            }
-                        },
-                        native: {}
-                    }
-                });
             } else {
                 this.log.error(`[CREATION] No group config found for ${obj.sumGroup}`);
             }
         }
+
+        this.subscribeForeignStates(id);
+
         setImmediate(this.setupObjects.bind(this), ids, callback);
     }
 
     removeObject(id) {
         Object.keys(this.typeObjects).forEach(key => {
-            if (this.typeObjects[key] && Array.isArray(this.typeObjects[key])) {
+            if (Array.isArray(this.typeObjects[key])) {
                 const pos = this.typeObjects[key].indexOf(id);
                 if (pos !== -1) {
                     this.log.debug(`found ${id} on pos ${this.typeObjects[key].indexOf(id)} of ${key} for removal`);
                     this.typeObjects[key].splice(pos, 1);
                 }
             } else {
-                this.log.error(`Invalid structure of groups: ${JSON.stringify(this.typeObjects[key])}`);
+                this.log.error(`Invalid structure of typeObjects: ${JSON.stringify(this.typeObjects[key])}`);
             }
         });
 
@@ -901,11 +728,7 @@ class Statistics extends utils.Adapter {
         const isStart = !this.tasks.length;
         const dayTypes = [];
         for (const key in this.typeObjects) {
-            if (Object.prototype.hasOwnProperty.call(this.typeObjects, key) &&
-                this.typeObjects[key] &&
-                this.typeObjects[key].length &&
-                copyToSave.includes(key)
-            ) {
+            if (this.typeObjects[key].length && copyToSave.includes(key)) {
                 dayTypes.push(key);
             }
         }
@@ -983,7 +806,7 @@ class Statistics extends utils.Adapter {
             }
         }
 
-        // saving the dayly fiveMin max/min
+        // saving the daily fiveMin max/min
         // Setzen auf den aktuellen Wert fehlt noch irgendwie ?
         if (timePeriod === 'day' && this.typeObjects.fiveMin) {
             for (let s = 0; s < this.typeObjects.fiveMin.length; s++) {
@@ -1098,6 +921,7 @@ class Statistics extends utils.Adapter {
                 }
             }
         });
+
         this.tasks.push({
             name: 'setObjectNotExists',
             id: `temp.${type}.${id}`,
@@ -1124,8 +948,7 @@ class Statistics extends utils.Adapter {
         });
 
         // states for the saved values
-        const nameObjectType = nameObjects[type];
-        let objects = nameObjectType.save;
+        let objects = nameObjects[type].save;
         for (let s = 0; s < objects.length; s++) {
             if (!stateObjects[objects[s]]) {
                 this.log.error(`[CREATION] State ${objects[s]} unknown`);
@@ -1136,10 +959,13 @@ class Statistics extends utils.Adapter {
                 this.log.error(`[CREATION] Unknown state: ${objects[s]}`);
                 continue;
             }
+
             obj.native.addr = id;
+
             if (unit && objects[s] !== 'dayCount') {
                 obj.common.unit = unit;
             }
+
             this.tasks.push({
                 name: 'setObjectNotExists',
                 id: `save.${type}.${id}.${objects[s]}`,
@@ -1148,7 +974,7 @@ class Statistics extends utils.Adapter {
         }
 
         // states for the temporary values
-        objects = nameObjectType.temp;
+        objects = nameObjects[type].temp;
         for (let s = 0; s < objects.length; s++) {
             if (!stateObjects[objects[s]]) {
                 this.log.error(`[CREATION] State ${objects[s]} unknown`);
@@ -1176,6 +1002,7 @@ class Statistics extends utils.Adapter {
                 obj
             });
         }
+
         isStart && this.processTasks();
         this.setInitial(type, id);
     }

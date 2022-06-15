@@ -204,6 +204,158 @@
       "native": {}
     },
     {
+      "_id": "save.avg",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Average values",
+          "de": "Durchschnittswerte",
+          "ru": "Среднее значение",
+          "pt": "Valores médios",
+          "nl": "Gemiddelde waarden",
+          "fr": "Valeurs moyennes",
+          "it": "Valori medi",
+          "es": "Valores medios",
+          "pl": "Average value",
+          "zh-cn": "平均值"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "save.minmax",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Min/Max values",
+          "de": "Min/Max Werte",
+          "ru": "Мин/макс. значения",
+          "pt": "Min/Max valores",
+          "nl": "Min/Max waarden",
+          "fr": "Valeurs Min/Max",
+          "it": "Valori minimi/max",
+          "es": "Valores Min/Max",
+          "pl": "Wartości Min/Max",
+          "zh-cn": "Min/Max"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "save.fiveMin",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Consumption (5 min.)",
+          "de": "Verbrauch (5 min)",
+          "ru": "Потребление (5 мин)",
+          "pt": "Consumo (5 min)",
+          "nl": "Consumptie (5 minuten)",
+          "fr": "Consommation (5 min)",
+          "it": "Consumo (5 min)",
+          "es": "Consumo (5 min)",
+          "pl": "5 minut)",
+          "zh-cn": "消费(5分钟)。"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "save.timeCount",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Operating time counter",
+          "de": "Betriebszeitzähler",
+          "ru": "Рабочий счетчик времени",
+          "pt": "Contador de tempo operacional",
+          "nl": "Operatie tijd tegen",
+          "fr": "Compteur de temps de fonctionnement",
+          "it": "Contatore orario",
+          "es": "Contrato de tiempo de funcionamiento",
+          "pl": "Czas kontrastowy",
+          "zh-cn": "业务时间反击"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "save.count",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Impulse counter",
+          "de": "Impulszähler",
+          "ru": "Импульсный счетчик",
+          "pt": "Contador de impulso",
+          "nl": "Impulse contra",
+          "fr": "Compteur Impulse",
+          "it": "Contatore di impulso",
+          "es": "Contrato impulsivo",
+          "pl": "Przeciwstawić się",
+          "zh-cn": "有罪不罚"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "save.sumCount",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Impulse counter (consumption)",
+          "de": "Impulszähler (Verbrauch)",
+          "ru": "Импульсный счетчик (потребление)",
+          "pt": "Contador de impulso (consumo)",
+          "nl": "Impulse contra (consumptie)",
+          "fr": "Compteur d ' impulsion (consommation)",
+          "it": "Impulso (consumo)",
+          "es": "Contrato impulso (consumo)",
+          "pl": "Impulse counter (consumption) (ang.)",
+          "zh-cn": "有罪不罚(消费)"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "save.sumDelta",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Delta sum",
+          "de": "Deltasumme",
+          "ru": "Дельта сумм",
+          "pt": "Soma Delta",
+          "nl": "Delta Sum",
+          "fr": "Delta sum",
+          "it": "Delta",
+          "es": "Delta sum",
+          "pl": "Suma delta",
+          "zh-cn": "Deltaum"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "save.sumGroup",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Total consumption by Group",
+          "de": "Gesamtverbrauch nach Gruppe",
+          "ru": "Полное потребление по группам",
+          "pt": "Consumo total por grupo",
+          "nl": "Totale consumptie",
+          "fr": "Consommation totale par groupe",
+          "it": "Consumo totale di Gruppo",
+          "es": "Consumo total por grupo",
+          "pl": "Spożycie grupowe",
+          "zh-cn": "集团消费总量"
+        }
+      },
+      "native": {}
+    },
+    {
       "_id": "temp",
       "type": "folder",
       "common": {
@@ -218,6 +370,158 @@
           "es": "Valores temporales",
           "pl": "Wartości tymczasowe",
           "zh-cn": "临时价值观"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "temp.avg",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Average values",
+          "de": "Durchschnittswerte",
+          "ru": "Среднее значение",
+          "pt": "Valores médios",
+          "nl": "Gemiddelde waarden",
+          "fr": "Valeurs moyennes",
+          "it": "Valori medi",
+          "es": "Valores medios",
+          "pl": "Average value",
+          "zh-cn": "平均值"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "temp.minmax",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Min/Max values",
+          "de": "Min/Max Werte",
+          "ru": "Мин/макс. значения",
+          "pt": "Min/Max valores",
+          "nl": "Min/Max waarden",
+          "fr": "Valeurs Min/Max",
+          "it": "Valori minimi/max",
+          "es": "Valores Min/Max",
+          "pl": "Wartości Min/Max",
+          "zh-cn": "Min/Max"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "temp.fiveMin",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Consumption (5 min.)",
+          "de": "Verbrauch (5 min)",
+          "ru": "Потребление (5 мин)",
+          "pt": "Consumo (5 min)",
+          "nl": "Consumptie (5 minuten)",
+          "fr": "Consommation (5 min)",
+          "it": "Consumo (5 min)",
+          "es": "Consumo (5 min)",
+          "pl": "5 minut)",
+          "zh-cn": "消费(5分钟)。"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "temp.timeCount",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Operating time counter",
+          "de": "Betriebszeitzähler",
+          "ru": "Рабочий счетчик времени",
+          "pt": "Contador de tempo operacional",
+          "nl": "Operatie tijd tegen",
+          "fr": "Compteur de temps de fonctionnement",
+          "it": "Contatore orario",
+          "es": "Contrato de tiempo de funcionamiento",
+          "pl": "Czas kontrastowy",
+          "zh-cn": "业务时间反击"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "temp.count",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Impulse counter",
+          "de": "Impulszähler",
+          "ru": "Импульсный счетчик",
+          "pt": "Contador de impulso",
+          "nl": "Impulse contra",
+          "fr": "Compteur Impulse",
+          "it": "Contatore di impulso",
+          "es": "Contrato impulsivo",
+          "pl": "Przeciwstawić się",
+          "zh-cn": "有罪不罚"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "temp.sumCount",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Impulse counter (consumption)",
+          "de": "Impulszähler (Verbrauch)",
+          "ru": "Импульсный счетчик (потребление)",
+          "pt": "Contador de impulso (consumo)",
+          "nl": "Impulse contra (consumptie)",
+          "fr": "Compteur d ' impulsion (consommation)",
+          "it": "Impulso (consumo)",
+          "es": "Contrato impulso (consumo)",
+          "pl": "Impulse counter (consumption) (ang.)",
+          "zh-cn": "有罪不罚(消费)"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "temp.sumDelta",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Delta sum",
+          "de": "Deltasumme",
+          "ru": "Дельта сумм",
+          "pt": "Soma Delta",
+          "nl": "Delta Sum",
+          "fr": "Delta sum",
+          "it": "Delta",
+          "es": "Delta sum",
+          "pl": "Suma delta",
+          "zh-cn": "Deltaum"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "temp.sumGroup",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Total consumption by Group",
+          "de": "Gesamtverbrauch nach Gruppe",
+          "ru": "Полное потребление по группам",
+          "pt": "Consumo total por grupo",
+          "nl": "Totale consumptie",
+          "fr": "Consommation totale par groupe",
+          "it": "Consumo totale di Gruppo",
+          "es": "Consumo total por grupo",
+          "pl": "Spożycie grupowe",
+          "zh-cn": "集团消费总量"
         }
       },
       "native": {}
