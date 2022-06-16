@@ -25,15 +25,40 @@
             "label": "Count",
             "help": "Count pulses or edge changes",
             "default": false,
-            "sm": 6
+            "sm": 4
+        },
+        "fiveMin": {
+            "hidden": "customObj.common.type !== 'boolean' || !data.count",
+            "type": "checkbox",
+            "label": "5min values",
+            "help": "Determines the consumption every 5 minutes",
+            "default": false,
+            "sm": 4
         },
         "sumCount": {
             "hidden": "customObj.common.type !== 'boolean'",
+            "newLine": true,
             "type": "checkbox",
             "label": "Counting -> Consumption",
             "help": "Determines the consumption from counting",
             "default": false,
-            "sm": 6
+            "sm": 4
+        },
+        "impUnitPerImpulse": {
+            "hidden": "customObj.common.type !== 'boolean' || !data.sumCount",
+            "type": "number",
+            "label": "Units per impulse",
+            "help": "One impulse is equal to this value",
+            "default": 1,
+            "sm": 4
+        },
+        "impUnit": {
+            "hidden": "customObj.common.type !== 'boolean' || !data.sumCount",
+            "type": "text",
+            "label": "Units",
+            "help": "kWh, m, liters, or similar",
+            "default": "",
+            "sm": 4
         },
         "timeCount": {
             "hidden": "customObj.common.type !== 'boolean'",
@@ -42,33 +67,7 @@
             "label": "Operating time",
             "help": "Determines times for values 0 and 1",
             "default": false,
-            "sm": 6
-        },
-        "fiveMin": {
-            "hidden": "customObj.common.type !== 'boolean' || !data.count",
-            "newLine": true,
-            "type": "checkbox",
-            "label": "5min values",
-            "help": "Determines the consumption every 5 minutes",
-            "default": false,
-            "sm": 6
-        },
-        "impUnitPerImpulse": {
-            "hidden": "customObj.common.type !== 'boolean'",
-            "newLine": true,
-            "type": "number",
-            "label": "Units per impulse",
-            "help": "One impulse is equal to this value",
-            "default": 1,
-            "sm": 6
-        },
-        "impUnit": {
-            "hidden": "customObj.common.type !== 'boolean'",
-            "type": "text",
-            "label": "Units",
-            "help": "kWh, m, liters, or similar",
-            "default": "",
-            "sm": 6
+            "sm": 4
         },
 
         "_analog": {
@@ -86,7 +85,7 @@
             "label": "Average",
             "help": "Creates avaerage / daily values",
             "default": false,
-            "sm": 6
+            "sm": 4
         },
         "minmax": {
             "hidden": "customObj.common.type !== 'number'",
@@ -94,7 +93,7 @@
             "label": "Min/Max values",
             "help": "Creates daily, weekly, monthly, quarterly and annual values",
             "default": false,
-            "sm": 6
+            "sm": 4
         },
         "sumDelta": {
             "hidden": "customObj.common.type !== 'number'",
@@ -103,7 +102,7 @@
             "label": "Delta consumption",
             "help": "Convert consecutive meter readings into consumption values",
             "default": false,
-            "sm": 6
+            "sm": 4
         },
         "sumIgnoreMinus": {
             "hidden": "customObj.common.type !== 'number' || !data.sumDelta",
@@ -111,7 +110,7 @@
             "label": "Ignore errors",
             "help": "Ignores difference if new value less than old one",
             "default": false,
-            "sm": 6
+            "sm": 4
         },
 
         "_group": {
