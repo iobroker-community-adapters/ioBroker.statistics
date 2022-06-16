@@ -668,7 +668,7 @@ class Statistics extends utils.Adapter {
                 this.typeObjects.sumCount.push(id);
             }
 
-            this.defineObject('sumCount', id, logName, obj.unit); // type, id, name, Unit
+            this.defineObject('sumCount', id, logName, obj.impUnit); // type, id, name, Unit
         }
 
         // sumDelta
@@ -706,25 +706,15 @@ class Statistics extends utils.Adapter {
     removeObject(id) {
         Object.keys(this.typeObjects).forEach(type => {
             if (Array.isArray(this.typeObjects[type])) {
-                const pos = this.typeObjects[type].indexOf(id);
-                if (pos !== -1) {
-                    this.log.debug(`found ${id} on pos ${this.typeObjects[type].indexOf(id)} of ${type} for removal`);
-                    this.typeObjects[type].splice(pos, 1);
-                }
-            } else {
-                this.log.error(`Invalid structure of typeObjects: ${JSON.stringify(this.typeObjects[key])}`);
+                this.typeObjects[type] = this.typeObjects[type].filter(typeId => typeId !== id);
             }
         });
 
         Object.keys(this.groups).forEach(g => {
-            if (this.groups[g] && this.groups[g].items && Array.isArray(this.groups[g].items)) {
-                const pos = this.groups[g].items.indexOf(id);
-                if (pos !== -1) {
-                    this.log.debug(`found ${id} on pos ${this.groups[g].items.indexOf(id)} of ${g} for removal`);
-                    this.groups[g].items.splice(pos, 1);
-                }
+            if (this.groups[g].items && Array.isArray(this.groups[g].items)) {
+                this.groups[g].items = this.groups[g].items.filter(groupId => groupId !== id);
             } else {
-                this.log.error(`Invalid structure of groups: ${JSON.stringify(this.groups[g].items)}`);
+                this.log.error(`Invalid structure of group "${g}": ${JSON.stringify(this.groups[g])}`);
             }
         });
     }
