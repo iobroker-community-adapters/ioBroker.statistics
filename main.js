@@ -924,7 +924,7 @@ class Statistics extends utils.Adapter {
                 type: 'channel',
                 common: {
                     name: {
-                        en: `Temporary values for ${name}`,
+                        en: `Temporary values for ${name.en}`,
                         de: `Vorläufige Werte für ${name.de || name.en}`,
                         ru: `Временные значения для ${name.ru || name.en}`,
                         pt: `Valores temporários para ${name.pt || name.en}`,
