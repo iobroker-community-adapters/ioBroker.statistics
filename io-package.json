@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "statistics",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "news": {
+      "2.1.1": {
+        "en": "Fixed usage of default values for groups",
+        "de": "Feste Verwendung von Standardwerten für Gruppen",
+        "ru": "Фиксированное использование значений по умолчанию для групп",
+        "pt": "Uso fixo de valores padrão para grupos",
+        "nl": "Gebruik van defecte waarden voor groepen",
+        "fr": "Utilisation fixe des valeurs par défaut pour les groupes",
+        "it": "Utilizzo fisso dei valori predefiniti per i gruppi",
+        "es": "Uso fijo de valores predeterminados para grupos",
+        "pl": "Wykorzystanie domyślnych wartości dla grup",
+        "zh-cn": "对集团采用缺省值"
+      },
       "2.1.0": {
         "en": "Added support for translated object names\nFixed sum calculation\nIncreased precision to 5 digits\nTranslated all objects",
         "de": "Unterstützung für übersetzte Objektnamen hinzugefügt\nBereinigte Summenberechnung\nErhöhte Präzision auf 5 Stellen\nÜbersetzt alle Objekte",
@@ -66,18 +78,6 @@
       "1.0.9": {
         "en": "Removed the warnings for js-controller 3.x",
         "de": "Die Warnungen für js-controller 3.x entfernt",
-        "ru": "Убраны предупреждения для js-controller 3.x",
-        "pt": "Removidos os avisos do js-controller 3.x",
-        "nl": "De waarschuwingen voor js-controller 3.x verwijderd",
-        "fr": "Suppression des avertissements pour js-controller 3.x",
-        "it": "Rimossi gli avvisi per js-controller 3.x",
-        "es": "Se eliminaron las advertencias para js-controller 3.x",
-        "pl": "Usunięto ostrzeżenia dla js-controller 3.x",
-        "zh-cn": "删除了 js-controller 3.x 的警告"
-      },
-      "1.0.8": {
-        "en": "Removed the warnings for js-controller 3.x",
-        "de": "Die Warnungen für js-controller 3.x wurden entfernt",
         "ru": "Убраны предупреждения для js-controller 3.x",
         "pt": "Removidos os avisos do js-controller 3.x",
         "nl": "De waarschuwingen voor js-controller 3.x verwijderd",

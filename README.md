@@ -52,7 +52,7 @@ iobroker add statistics
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
-### __WORK IN PROGRESS__
+### 2.1.1 (2022-06-16)
 * (klein0r) Fixed usage of default values for groups
 
 ### 2.1.0 (2022-06-16)
@@ -71,9 +71,6 @@ iobroker add statistics
 ### 1.1.0 (2022-03-24)
 * IMPORTANT: js-controller 3.2 is needed at least!
 * (Apollon77) Prepare for future js-controller compatibility
-
-### 1.0.10 (2021-11-14)
-* (Apollon77) prevent some crash cases
 
 ## License
 

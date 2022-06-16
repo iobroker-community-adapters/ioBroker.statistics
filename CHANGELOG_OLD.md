@@ -1,4 +1,7 @@
 # Older changes
+## 1.0.10 (2021-11-14)
+* (Apollon77) prevent some crash cases
+
 ## 1.0.9 (2021-07-29)
 * (bluefox) Removed the warnings for js-controller 3.x
 
