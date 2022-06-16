@@ -16,6 +16,7 @@
                 },
                 "impFactor": {
                     "type": "number",
+                    "step": 0.001,
                     "sm": 12,
                     "md": 4,
                     "lg": 4,

@@ -580,16 +580,17 @@ class Statistics extends utils.Adapter {
             return setImmediate(this.setupObjects.bind(this), ids, callback);
         }
 
-        if (!obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
-            obj.groupFactor = 1;
+        if (obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
+            obj.groupFactor = parseFloat(obj.groupFactor) || this.config.impFactor;
         } else {
-            obj.groupFactor = parseFloat(obj.groupFactor) || 1;
+            obj.groupFactor = this.config.impFactor;
         }
 
-        if (!obj.impUnitPerImpulse && obj.impUnitPerImpulse !== '0' && obj.impUnitPerImpulse !== 0) {
-            obj.impUnitPerImpulse = this.config.impUnitPerImpulse;
+        if (obj.impUnitPerImpulse && obj.impUnitPerImpulse !== '0' && obj.impUnitPerImpulse !== 0) {
+            obj.impUnitPerImpulse = parseFloat(obj.impUnitPerImpulse) || this.config.impUnitPerImpulse;
         } else {
-            obj.impUnitPerImpulse = parseInt(obj.impUnitPerImpulse, 10) || 1;
+            this.log.debug(`[CREATION] avg: ${id}`);
+            obj.impUnitPerImpulse = this.config.impUnitPerImpulse;
         }
 
         // merge der Kosten in den Datensatz
