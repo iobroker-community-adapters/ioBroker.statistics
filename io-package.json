@@ -116,7 +116,7 @@
     "mode": "daemon",
     "license": "MIT",
     "icon": "statistics.png",
-    "enabled": false,
+    "enabled": true,
     "preserveSettings": "custom",
     "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.statistics/master/admin/statistics.png",
     "keywords": [
