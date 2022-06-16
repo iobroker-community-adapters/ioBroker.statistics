@@ -1,15 +1,16 @@
-# Wie konfiguriere ich ioBroker.statistics?
+![Logo](../../admin/statistics.png)
 
-Der Adapter speichert für jedes aktive Objekt die Werte temporär in statistics.0.temp für die fortlaufende Bewertung.
+# ioBroker.statistics
 
-Zu vorgegebenen Zeiten (Tag, Woche, Monat, Quartal, Jahr) erfolgt die Übernahme der temporären Werte in die Struktur statistics.0.save.
+Der Adapter speichert für jedes aktive Objekt die Werte temporär in ``statistics.x.temp`` für die fortlaufende Bewertung.
+
+Zu vorgegebenen Zeiten (Tag, Woche, Monat, Quartal, Jahr) erfolgt die Übernahme der temporären Werte in die Struktur ``statistics.x.save``.
 
 Für bestimmte Werte sind auch 5min Zwischenwerte ermittelt, wie es z.B. bei den 433MHz Steckdosen von ELV der Fall ist, die einen Verbrauchswert alle 5min übermitteln.
 
 ## Impulse
 
 Stellt das binäre Objekt eine Impulsfolge dar, die z.B. aus Zählerimpulsen entsteht, so ist hier das Prinzip dargestellt:
-
 
 ![impulse](principle_pulses.PNG)
 
