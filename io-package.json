@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "statistics",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "news": {
+      "2.1.0": {
+        "en": "Added support for translated object names\nFixed sum calculation\nIncreased precision to 5 digits\nTranslated all objects",
+        "de": "Unterstützung für übersetzte Objektnamen hinzugefügt\nBereinigte Summenberechnung\nErhöhte Präzision auf 5 Stellen\nÜbersetzt alle Objekte",
+        "ru": "Добавлена поддержка переведенных объектов\nФиксированный расчет суммы\nПовышенная точность до 5 цифр\nПереведено все объекты",
+        "pt": "Adicionado suporte para nomes de objetos traduzidos\nCálculo fixo da soma\nAumento da precisão para 5 dígitos\nTraduzido todos os objetos",
+        "nl": "Vertaling:\nVertaling:\nVerhoogde precisie naar 5 cijfers\nVertaald alle objecten",
+        "fr": "Ajout du support pour les noms d'objets traduits\nCalcul forfaitaire\nPrécision accrue à 5 chiffres\nTraduit tous les objets",
+        "it": "Aggiunto supporto per i nomi degli oggetti tradotti\nCalcolo della somma fissa\nAumento della precisione a 5 cifre\nTradotto tutti gli oggetti",
+        "es": "Apoyo adicional para los nombres de objetos traducidos\nCálculo de la suma fija\nMayor precisión a 5 dígitos\nTraducidos todos los objetos",
+        "pl": "Wsparcie dla tłumaczonych nazw obiektów\nObliczenia sumowania Fixa\nDokładność do 5 cyfr\nWszystkie obiekty translacyjne",
+        "zh-cn": "增加对翻译目标名称的支持\n固定的计算\n精 度增加5个数\n适用于所有物体"
+      },
       "2.0.0": {
         "en": "Added Admin 5 configuration\nUpdated translations",
         "de": "Admin 5 Konfiguration hinzugefügt\nAktualisierte Übersetzungen",
@@ -64,18 +76,6 @@
         "zh-cn": "删除了 js-controller 3.x 的警告"
       },
       "1.0.8": {
-        "en": "Removed the warnings for js-controller 3.x",
-        "de": "Die Warnungen für js-controller 3.x wurden entfernt",
-        "ru": "Убраны предупреждения для js-controller 3.x",
-        "pt": "Removidos os avisos do js-controller 3.x",
-        "nl": "De waarschuwingen voor js-controller 3.x verwijderd",
-        "fr": "Suppression des avertissements pour js-controller 3.x",
-        "it": "Rimossi gli avvisi per js-controller 3.x",
-        "es": "Se eliminaron las advertencias para js-controller 3.x",
-        "pl": "Usunięto ostrzeżenia dla js-controller 3.x",
-        "zh-cn": "删除了 js-controller 3.x 的警告"
-      },
-      "1.0.7": {
         "en": "Removed the warnings for js-controller 3.x",
         "de": "Die Warnungen für js-controller 3.x wurden entfernt",
         "ru": "Убраны предупреждения для js-controller 3.x",
