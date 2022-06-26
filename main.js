@@ -30,7 +30,7 @@ const nameObjects = {
     },
     minmax: {
         // Min/Max timeframe
-        save: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax'],
+        save: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax', 'absMin', 'absMax'],
         temp: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax', 'last']
     },
     avg: {
@@ -83,8 +83,7 @@ class Statistics extends utils.Adapter {
     constructor(options) {
         super({
             ...options,
-            name: 'statistics',
-            useFormatDate: true,
+            name: 'statistics'
         });
 
         this.tasks = [];
@@ -1646,59 +1645,72 @@ class Statistics extends utils.Adapter {
                     value
                 }, callback: (args, callback) => {
                     this.log.debug(`[STATE CHANGE] new last for "temp.minmax.${args.id}.last: ${value}`);
-                    this.setValue(`temp.minmax.${args.id}.last`, value); //memorize current value to have it available when date change for actual=starting point of new time frame
-                    this.getValue(`temp.minmax.${args.id}.yearMin`, (err, tempMin) => {
+                    this.setValue(`temp.minmax.${args.id}.last`, value); // memorize current value to have it available when date change for actual=starting point of new time frame
+
+                    this.getValue(`save.minmax.${args.id}.absMin`, (err, tempMin) => {
                         if (tempMin === null || tempMin > value) {
-                            this.setValue(`temp.minmax.${args.id}.yearMin`, value);
-                            this.log.debug(`[STATE CHANGE] new year min for "${args.id}: ${value}`);
+                            this.setValue(`save.minmax.${args.id}.absMin`, value);
+                            this.log.debug(`[STATE CHANGE] new abs min for "${args.id}: ${value}`);
                         }
-                        this.getValue(`temp.minmax.${args.id}.yearMax`, (err, tempMax) => {
+                        this.getValue(`save.minmax.${args.id}.absMax`, (err, tempMax) => {
                             if (tempMax === null || tempMax < value) {
-                                this.setValue(`temp.minmax.${args.id}.yearMax`, value);
-                                this.log.debug(`[STATE CHANGE] new year max for "${args.id}: ${value}`);
+                                this.setValue(`save.minmax.${args.id}.absMax`, value);
+                                this.log.debug(`[STATE CHANGE] new abs max for "${args.id}: ${value}`);
                             }
-                            this.getValue(`temp.minmax.${args.id}.quarterMin`, (err, tempMin) => {
+                            this.getValue(`temp.minmax.${args.id}.yearMin`, (err, tempMin) => {
                                 if (tempMin === null || tempMin > value) {
-                                    this.setValue(`temp.minmax.${args.id}.quarterMin`, value);
-                                    this.log.debug(`[STATE CHANGE] new quarter min for "${args.id}: ${value}`);
+                                    this.setValue(`temp.minmax.${args.id}.yearMin`, value);
+                                    this.log.debug(`[STATE CHANGE] new year min for "${args.id}: ${value}`);
                                 }
-                                this.getValue(`temp.minmax.${args.id}.quarterMax`, (err, tempMax) => {
+                                this.getValue(`temp.minmax.${args.id}.yearMax`, (err, tempMax) => {
                                     if (tempMax === null || tempMax < value) {
-                                        this.setValue(`temp.minmax.${args.id}.quarterMax`, value);
-                                        this.log.debug(`[STATE CHANGE] new quarter max for "${args.id}: ${value}`);
+                                        this.setValue(`temp.minmax.${args.id}.yearMax`, value);
+                                        this.log.debug(`[STATE CHANGE] new year max for "${args.id}: ${value}`);
                                     }
-                                    this.getValue(`temp.minmax.${args.id}.monthMin`, (err, tempMin) => {
+                                    this.getValue(`temp.minmax.${args.id}.quarterMin`, (err, tempMin) => {
                                         if (tempMin === null || tempMin > value) {
-                                            this.setValue(`temp.minmax.${args.id}.monthMin`, value);
-                                            this.log.debug(`[STATE CHANGE] new month min for "${args.id}: ${value}`);
+                                            this.setValue(`temp.minmax.${args.id}.quarterMin`, value);
+                                            this.log.debug(`[STATE CHANGE] new quarter min for "${args.id}: ${value}`);
                                         }
-                                        this.getValue(`temp.minmax.${args.id}.monthMax`, (err, tempMax) => {
+                                        this.getValue(`temp.minmax.${args.id}.quarterMax`, (err, tempMax) => {
                                             if (tempMax === null || tempMax < value) {
-                                                this.setValue(`temp.minmax.${args.id}.monthMax`, value);
-                                                this.log.debug(`[STATE CHANGE] new month max for "${args.id}: ${value}`);
+                                                this.setValue(`temp.minmax.${args.id}.quarterMax`, value);
+                                                this.log.debug(`[STATE CHANGE] new quarter max for "${args.id}: ${value}`);
                                             }
-                                            this.getValue(`temp.minmax.${args.id}.weekMin`, (err, tempMin) => {
+                                            this.getValue(`temp.minmax.${args.id}.monthMin`, (err, tempMin) => {
                                                 if (tempMin === null || tempMin > value) {
-                                                    this.setValue(`temp.minmax.${args.id}.weekMin`, value);
-                                                    this.log.debug(`[STATE CHANGE] new week min for "${args.id}: ${value}`);
+                                                    this.setValue(`temp.minmax.${args.id}.monthMin`, value);
+                                                    this.log.debug(`[STATE CHANGE] new month min for "${args.id}: ${value}`);
                                                 }
-                                                this.getValue(`temp.minmax.${args.id}.weekMax`, (err, tempMax) => {
+                                                this.getValue(`temp.minmax.${args.id}.monthMax`, (err, tempMax) => {
                                                     if (tempMax === null || tempMax < value) {
-                                                        this.setValue(`temp.minmax.${args.id}.weekMax`, value);
-                                                        this.log.debug(`[STATE CHANGE] new week max for "${args.id}: ${value}`);
+                                                        this.setValue(`temp.minmax.${args.id}.monthMax`, value);
+                                                        this.log.debug(`[STATE CHANGE] new month max for "${args.id}: ${value}`);
                                                     }
-                                                    this.getValue(`temp.minmax.${args.id}.dayMin`, (err, tempMin) => {
+                                                    this.getValue(`temp.minmax.${args.id}.weekMin`, (err, tempMin) => {
                                                         if (tempMin === null || tempMin > value) {
-                                                            this.setValue(`temp.minmax.${args.id}.dayMin`, value);
-                                                            this.log.debug(`[STATE CHANGE] new day min for "${args.id}: ${value}`);
+                                                            this.setValue(`temp.minmax.${args.id}.weekMin`, value);
+                                                            this.log.debug(`[STATE CHANGE] new week min for "${args.id}: ${value}`);
                                                         }
-                                                        this.getValue(`temp.minmax.${args.id}.dayMax`, (err, tempMax) => {
+                                                        this.getValue(`temp.minmax.${args.id}.weekMax`, (err, tempMax) => {
                                                             if (tempMax === null || tempMax < value) {
-                                                                this.setValue(`temp.minmax.${args.id}.dayMax`, value, callback);
-                                                                this.log.debug(`[STATE CHANGE] new day max for "${args.id}: ${value}`);
-                                                            } else {
-                                                                callback && callback();
+                                                                this.setValue(`temp.minmax.${args.id}.weekMax`, value);
+                                                                this.log.debug(`[STATE CHANGE] new week max for "${args.id}: ${value}`);
                                                             }
+                                                            this.getValue(`temp.minmax.${args.id}.dayMin`, (err, tempMin) => {
+                                                                if (tempMin === null || tempMin > value) {
+                                                                    this.setValue(`temp.minmax.${args.id}.dayMin`, value);
+                                                                    this.log.debug(`[STATE CHANGE] new day min for "${args.id}: ${value}`);
+                                                                }
+                                                                this.getValue(`temp.minmax.${args.id}.dayMax`, (err, tempMax) => {
+                                                                    if (tempMax === null || tempMax < value) {
+                                                                        this.setValue(`temp.minmax.${args.id}.dayMax`, value, callback);
+                                                                        this.log.debug(`[STATE CHANGE] new day max for "${args.id}: ${value}`);
+                                                                    } else {
+                                                                        callback && callback();
+                                                                    }
+                                                                });
+                                                            });
                                                         });
                                                     });
                                                 });

@@ -52,6 +52,9 @@ iobroker add statistics
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
+### __WORK IN PROGRESS__
+* (klein0r) Added absolute min and max values
+
 ### 2.1.1 (2022-06-16)
 * (klein0r) Fixed usage of default values for groups
 

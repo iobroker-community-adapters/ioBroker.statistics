@@ -89,6 +89,7 @@
         },
         "minmax": {
             "hidden": "customObj.common.type !== 'number'",
+            "newLine": true,
             "type": "checkbox",
             "label": "Min/Max values",
             "help": "Creates daily, weekly, monthly, quarterly and annual values",
