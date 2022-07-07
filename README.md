@@ -52,7 +52,7 @@ iobroker add statistics
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
-### __WORK IN PROGRESS__
+### 2.2.0 (2022-07-07)
 * (klein0r) Added absolute min and max values
 
 ### 2.1.1 (2022-06-16)
@@ -70,10 +70,6 @@ iobroker add statistics
 
 ### 1.1.1 (2022-04-17)
 * Prevent warn logs when using non-number states as statistic source
-
-### 1.1.0 (2022-03-24)
-* IMPORTANT: js-controller 3.2 is needed at least!
-* (Apollon77) Prepare for future js-controller compatibility
 
 ## License
 

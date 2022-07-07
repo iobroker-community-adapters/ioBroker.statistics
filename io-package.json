@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "statistics",
-    "version": "2.1.1",
+    "version": "2.2.0",
     "news": {
+      "2.2.0": {
+        "en": "Added absolute min and max values",
+        "de": "Absolute min und max Werte hinzugefügt",
+        "ru": "Добавлены абсолютные значения мин и макс",
+        "pt": "Adicionado absoluto min e valores máximos",
+        "nl": "Absolute min en maximale waarden",
+        "fr": "Valeurs absolues min et max",
+        "it": "Aggiunti i valori assoluti min e max",
+        "es": "Valores absolutos min y max",
+        "pl": "Dodać wartości bezwzględnej i max",
+        "zh-cn": "增加绝对值和最大值"
+      },
       "2.1.1": {
         "en": "Fixed usage of default values for groups",
         "de": "Feste Verwendung von Standardwerten für Gruppen",
@@ -74,18 +86,6 @@
         "es": "prevenir algunos casos de accidentes",
         "pl": "zapobiec niektórym przypadkom awarii",
         "zh-cn": "防止一些崩溃案例"
-      },
-      "1.0.9": {
-        "en": "Removed the warnings for js-controller 3.x",
-        "de": "Die Warnungen für js-controller 3.x entfernt",
-        "ru": "Убраны предупреждения для js-controller 3.x",
-        "pt": "Removidos os avisos do js-controller 3.x",
-        "nl": "De waarschuwingen voor js-controller 3.x verwijderd",
-        "fr": "Suppression des avertissements pour js-controller 3.x",
-        "it": "Rimossi gli avvisi per js-controller 3.x",
-        "es": "Se eliminaron las advertencias para js-controller 3.x",
-        "pl": "Usunięto ostrzeżenia dla js-controller 3.x",
-        "zh-cn": "删除了 js-controller 3.x 的警告"
       }
     },
     "titleLang": {

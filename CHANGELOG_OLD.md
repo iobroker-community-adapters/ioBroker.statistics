@@ -1,4 +1,8 @@
 # Older changes
+## 1.1.0 (2022-03-24)
+* IMPORTANT: js-controller 3.2 is needed at least!
+* (Apollon77) Prepare for future js-controller compatibility
+
 ## 1.0.10 (2021-11-14)
 * (Apollon77) prevent some crash cases
 
