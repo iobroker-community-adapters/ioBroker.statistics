@@ -1,4 +1,4 @@
-![Logo](admin/statistics.png)
+![Logo](../admin/statistics.png)
 
 # ioBroker.statistics
 
