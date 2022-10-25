@@ -519,5 +519,83 @@ tests.integration(path.join(__dirname, '..'), {
                 await assertStateEquals(harness, `${tempId}.dayMax`, 40);
             });
         });
+
+        suite('Test Boolean count', (getHarness) => {
+            /**
+             * @type {IntegrationTestHarness}
+             */
+            let harness;
+
+            const customBooleanObjId = '0_userdata.0.myCountBoolean';
+
+            before(async function () {
+                this.timeout(60000);
+
+                harness = getHarness();
+                harness.changeAdapterConfig(harness.adapterName, {
+                    native: {
+                        impUnitPerImpulse: 1,
+                        impFactor: 1,
+                        timezone: 'Europe/Berlin',
+                        groups: []
+                    }
+                });
+
+                // Create test object
+                await harness.objects.setObjectAsync(customBooleanObjId, {
+                    type: 'state',
+                    common: {
+                        name: 'Test count boolean',
+                        type: 'boolean',
+                        role: 'value',
+                        read: true,
+                        write: true,
+                        custom: {
+                            'statistics.0': {
+                                enabled: true, // relevant for this test
+                                count: true, // relevant for this test
+                                fiveMin: false,
+                                sumCount: false,
+                                impUnitPerImpulse: 1,
+                                impUnit: '',
+                                timeCount: false,
+                                avg: false,
+                                minmax: false,
+                                sumDelta: false,
+                                sumIgnoreMinus: false,
+                                groupFactor: 1,
+                                logName: 'myCountBoolean'
+                            }
+                        }
+                    },
+                    native: {},
+                });
+
+                return harness.startAdapterAndWait();
+            });
+
+            after(async function() {
+                await harness.objects.delObjectAsync(customBooleanObjId);
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                return sleep(1000);
+            });
+
+            it('calculation', async function () {
+                this.timeout(60000);
+                const tempId = `${harness.adapterName}.0.temp.count.${customBooleanObjId}`;
+
+                for (let i = 0; i < 10; i++) {
+                    await harness.states.setStateAsync(customBooleanObjId, { val: true, ack: true });
+                    await sleep(100);
+                    await harness.states.setStateAsync(customBooleanObjId, { val: false, ack: true });
+                    await sleep(200);
+                }
+
+                await assertStateEquals(harness, `${tempId}.day`, 10);
+            });
+        });
     }
 });
