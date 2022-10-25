@@ -354,6 +354,8 @@ class Statistics extends utils.Adapter {
      * @param {ioBroker.Message} msg
      */
     onMessage(msg) {
+        this.log.debug(`[onMessage] Received ${JSON.stringify(msg)}`);
+
         if (msg.command === 'groups' && msg.callback) {
             this.sendTo(msg.from, msg.command, (this.config.groups || []).map(item => ({ label: item.name, value: item.id })), msg.callback);
         } else if (msg.command === 'enableStatistics') {
@@ -435,6 +437,11 @@ class Statistics extends utils.Adapter {
                         }
                     }
                 });
+            } else {
+                this.sendTo(msg.from, msg.command, {
+                    success: false,
+                    err: `Configuration missing - please set at least { id: 'your.object.id' }`
+                }, msg.callback);
             }
         }
     }
