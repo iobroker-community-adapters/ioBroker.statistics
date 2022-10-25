@@ -5,7 +5,7 @@ const { tests } = require('@iobroker/testing');
 const chai = require('chai');
 const expect = chai.expect;
 
-function sleep(duration) {
+async function sleep(duration) {
     return new Promise((resolve) => {
         setTimeout(resolve, duration);
     });
@@ -285,6 +285,12 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.objects.delObjectAsync(customNumberObjId);
             });
 
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                this.timeout(60000);
+                return sleep(5000);
+            });
+
             it('calculation', async function () {
                 this.timeout(60000);
 
@@ -387,6 +393,12 @@ tests.integration(path.join(__dirname, '..'), {
 
             after(async function() {
                 await harness.objects.delObjectAsync(customNumberObjId);
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                this.timeout(60000);
+                return sleep(5000);
             });
 
             it('calculation', async function () {

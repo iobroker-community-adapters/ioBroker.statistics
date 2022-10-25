@@ -1108,7 +1108,7 @@ class Statistics extends utils.Adapter {
                 callback: (args, callback) => {
                     this.log.debug(`[SET INITIAL] ${args.trueId} ${args.type} ${args.name}`);
                     this.getValue(args.id, (err, value) => {
-                        this.log.debug(`[SET INITIAL] ${args.trueId} value ${args.id} exists ?  ${value} in obj: ${args.id}`);
+                        this.log.debug(`[SET INITIAL] ${args.trueId} value ${args.id} exists ? ${value} in obj: ${args.id}`);
                         if (value === null) {
                             this.log.debug(`[SET INITIAL] ${args.trueId} replace with 0 -> ${args.id}`);
                             if (args.type === 'avg') {
