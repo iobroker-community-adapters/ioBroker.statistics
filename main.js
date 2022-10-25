@@ -1847,9 +1847,6 @@ class Statistics extends utils.Adapter {
                     if (delta < 0) {
                         if (this.statDP[args.id].sumIgnoreMinus) {
                             delta = 0;
-                        } else {
-                            // Counter overflow!
-                            delta = value; // Difference between last value and overflow is error rate
                         }
                     }
                     delta = roundValue(delta, PRECISION);

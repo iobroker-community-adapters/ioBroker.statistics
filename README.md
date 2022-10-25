@@ -56,6 +56,7 @@ iobroker add statistics
 NodeJS 14.5.0 is required
 
 * (klein0r) Added option to enable statistics for objects via sendTo
+* (klein0r) Allow sum delta to substract values (negative delta)
 
 ### 2.2.0 (2022-07-07)
 * (klein0r) Added absolute min and max values
