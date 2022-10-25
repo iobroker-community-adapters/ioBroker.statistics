@@ -160,7 +160,7 @@
       }
     },
     "connectionType": "none",
-    "dataSource": "push",
+    "dataSource": "none",
     "tier": 3
   },
   "native": {
