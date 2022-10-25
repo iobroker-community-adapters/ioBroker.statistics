@@ -35,7 +35,7 @@ iobroker add statistics
 
 ## Documentation
 
-[🇺🇸 Documentation](./docs/en/README.md)
+[🇪🇳 Documentation](./docs/en/README.md)
 
 [🇩🇪 Dokumentation](./docs/de/README.md)
 
