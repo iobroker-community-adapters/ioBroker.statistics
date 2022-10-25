@@ -12,7 +12,7 @@ Für bestimmte Werte sind auch 5min Zwischenwerte ermittelt, wie es z.B. bei den
 
 Stellt das binäre Objekt eine Impulsfolge dar, die z.B. aus Zählerimpulsen entsteht, so ist hier das Prinzip dargestellt:
 
-![impulse](principle_pulses.PNG)
+![impulse](img/count.png)
 
 Der Adapter zählt die Impulse und es wird mit einer Zählerkonstanten multipliziert.
 So ergibt sich aus den 0/1 Wechseln eine analoge Größe, die auch dann im Adapter sofort weiter benutzt werden kann (z.B. für Summendelta)
@@ -24,7 +24,7 @@ Die sich ergebende Analoggröße ist eine stetig steigende.
 Stellt das binäre Objekt Schalzustände dar, so kann daraus die Zeit für den Zustand mit logisch 1 und die Zeit mit logisch 0 ermittelt werden.
 Diese Betriebszeitzählung sollte nicht auf Impulse aus Zählern angewendet werden.
 
-![binary](principle_bzz.PNG)
+![binary](img/timeCount.png)
 
 
 
@@ -36,7 +36,7 @@ Der Durchschnitt ist der arithmetische Mittelwert.
 Für einen fortlaufenden Verbrauchswert wie er bei der Energiezählung entsteht kann man eine Delta ermitteln um die Verbräuche je Zeiteinheit darzustellen. 
 Dies kann auch auf Verbräuche angewendet werden, die aus Impulszählung entstehen.
 
-![impulse](principle_sumdelta.PNG)
+![impulse](img/sumDelta.png)
 
 ## sinnvolle Kombinationen für state-Konfiguration
 ### analoger state
