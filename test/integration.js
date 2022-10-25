@@ -444,5 +444,139 @@ tests.integration(path.join(__dirname, '..'), {
                 expect(sumDeltaDayStateRound3.val).to.equal(1.5);
             });
         });
+
+        suite('Test Number sumDelta based on avg', (getHarness) => {
+            /**
+             * @type {IntegrationTestHarness}
+             */
+            let harness;
+
+            const customNumberObjId = '0_userdata.0.mySumDeltaAvgNumber';
+
+            before(async function () {
+                this.timeout(60000);
+
+                harness = getHarness();
+                harness.changeAdapterConfig(harness.adapterName, {
+                    native: {
+                        impUnitPerImpulse: 1,
+                        impFactor: 1,
+                        timezone: 'Europe/Berlin',
+                        groups: []
+                    }
+                });
+
+                // Create test object
+                await harness.objects.setObjectAsync(customNumberObjId, {
+                    type: 'state',
+                    common: {
+                        name: 'Test sum delta avg number',
+                        type: 'number',
+                        role: 'value',
+                        read: true,
+                        write: true,
+                        custom: {
+                            'statistics.0': {
+                                enabled: true, // relevant for all tests
+                                count: false,
+                                fiveMin: false,
+                                sumCount: false,
+                                impUnitPerImpulse: 1,
+                                impUnit: '',
+                                timeCount: false,
+                                avg: true, // relevant for this test
+                                minmax: true, // relevant for this test
+                                sumDelta: true, // relevant for this test
+                                sumIgnoreMinus: false, // relevant for this test
+                                groupFactor: 1,
+                                logName: 'mySumDeltaAvgNumber'
+                            }
+                        }
+                    },
+                    native: {},
+                });
+
+                await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
+
+                return harness.startAdapterAndWait();
+            });
+
+            after(async function() {
+                await harness.objects.delObjectAsync(customNumberObjId);
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                this.timeout(60000);
+                return sleep(5000);
+            });
+
+            it('calculation', async function () {
+                this.timeout(60000);
+
+                const saveId = `${harness.adapterName}.0.save.sumDelta.${customNumberObjId}`;
+                const tempId = `${harness.adapterName}.0.temp.avg.${customNumberObjId}`;
+
+                // Round 1
+                await harness.states.setStateAsync(customNumberObjId, { val: 30, ack: true });
+                await sleep(1000);
+
+                const sumDeltaLastStateRound1 = await harness.states.getStateAsync(`${saveId}.last`);
+                const sumDeltaDeltaStateRound1 = await harness.states.getStateAsync(`${saveId}.delta`);
+                const avgLastStateRound1 = await harness.states.getStateAsync(`${tempId}.last`);
+                const avgDayCountStateRound1 = await harness.states.getStateAsync(`${tempId}.dayCount`);
+                const avgDayAvgStateRound1 = await harness.states.getStateAsync(`${tempId}.dayAvg`);
+                const avgDayMinStateRound1 = await harness.states.getStateAsync(`${tempId}.dayMin`);
+                const avgDayMaxStateRound1 = await harness.states.getStateAsync(`${tempId}.dayMax`);
+
+                expect(sumDeltaLastStateRound1.val).to.equal(30);
+                expect(sumDeltaDeltaStateRound1).to.be.null;
+                expect(avgLastStateRound1.val).to.equal(10);
+                expect(avgDayCountStateRound1.val).to.equal(1);
+                expect(avgDayAvgStateRound1.val).to.equal(10);
+                expect(avgDayMinStateRound1.val).to.equal(10);
+                expect(avgDayMaxStateRound1.val).to.equal(10);
+
+                // Round 2
+                await harness.states.setStateAsync(customNumberObjId, { val: 60, ack: true });
+                await sleep(1000);
+
+                const sumDeltaLastStateRound2 = await harness.states.getStateAsync(`${saveId}.last`);
+                const sumDeltaDeltaStateRound2 = await harness.states.getStateAsync(`${saveId}.delta`);
+                const avgLastStateRound2 = await harness.states.getStateAsync(`${tempId}.last`);
+                const avgDayCountStateRound2 = await harness.states.getStateAsync(`${tempId}.dayCount`);
+                const avgDayAvgStateRound2 = await harness.states.getStateAsync(`${tempId}.dayAvg`);
+                const avgDayMinStateRound2 = await harness.states.getStateAsync(`${tempId}.dayMin`);
+                const avgDayMaxStateRound2 = await harness.states.getStateAsync(`${tempId}.dayMax`);
+
+                expect(sumDeltaLastStateRound2.val).to.equal(60);
+                expect(sumDeltaDeltaStateRound2.val).to.equal(30);
+                expect(avgLastStateRound2.val).to.equal(30);
+                expect(avgDayCountStateRound2.val).to.equal(2);
+                expect(avgDayAvgStateRound2.val).to.equal(20);
+                expect(avgDayMinStateRound2.val).to.equal(10);
+                expect(avgDayMaxStateRound2.val).to.equal(30);
+
+                // Round 3
+                await harness.states.setStateAsync(customNumberObjId, { val: 100, ack: true });
+                await sleep(1000);
+
+                const sumDeltaLastStateRound3 = await harness.states.getStateAsync(`${saveId}.last`);
+                const sumDeltaDeltaStateRound3 = await harness.states.getStateAsync(`${saveId}.delta`);
+                const avgLastStateRound3 = await harness.states.getStateAsync(`${tempId}.last`);
+                const avgDayCountStateRound3 = await harness.states.getStateAsync(`${tempId}.dayCount`);
+                const avgDayAvgStateRound3 = await harness.states.getStateAsync(`${tempId}.dayAvg`);
+                const avgDayMinStateRound3 = await harness.states.getStateAsync(`${tempId}.dayMin`);
+                const avgDayMaxStateRound3 = await harness.states.getStateAsync(`${tempId}.dayMax`);
+
+                expect(sumDeltaLastStateRound3.val).to.equal(100);
+                expect(sumDeltaDeltaStateRound3.val).to.equal(40);
+                expect(avgLastStateRound3.val).to.equal(40);
+                expect(avgDayCountStateRound3.val).to.equal(3);
+                expect(avgDayAvgStateRound3.val).to.equal(26.66667);
+                expect(avgDayMinStateRound3.val).to.equal(10);
+                expect(avgDayMaxStateRound3.val).to.equal(40);
+            });
+        });
     }
 });
