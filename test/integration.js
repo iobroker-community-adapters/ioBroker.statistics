@@ -187,7 +187,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 1
                 await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${tempId}.last`, 10);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 1);
@@ -197,7 +197,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 50, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${tempId}.last`, 50);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 2);
@@ -207,7 +207,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 20, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${tempId}.last`, 20);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 3);
@@ -279,8 +279,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                this.timeout(60000);
-                return sleep(5000);
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -291,7 +290,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 1
                 await harness.states.setStateAsync(customNumberObjId, { val: 1050, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 1050);
                 await assertStateIsNull(harness, `${saveId}.delta`);
@@ -299,7 +298,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 1051.5, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 1051.5);
                 await assertStateEquals(harness, `${saveId}.delta`, 1.5);
@@ -307,7 +306,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 1010, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 1010);
                 await assertStateEquals(harness, `${saveId}.delta`, -41.5);
@@ -377,8 +376,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                this.timeout(60000);
-                return sleep(5000);
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -389,7 +387,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 1
                 await harness.states.setStateAsync(customNumberObjId, { val: 1050, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 1050);
                 await assertStateIsNull(harness, `${saveId}.delta`);
@@ -397,7 +395,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 1051.5, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 1051.5);
                 await assertStateEquals(harness, `${saveId}.delta`, 1.5);
@@ -405,7 +403,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 1010, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 1010);
                 await assertStateEquals(harness, `${saveId}.delta`, 0);
@@ -475,8 +473,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                this.timeout(60000);
-                return sleep(5000);
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -487,7 +484,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 1
                 await harness.states.setStateAsync(customNumberObjId, { val: 30, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 30);
                 await assertStateIsNull(harness, `${saveId}.delta`);
@@ -499,7 +496,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 60, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 60);
                 await assertStateEquals(harness, `${saveId}.delta`, 30);
@@ -511,7 +508,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 100, ack: true });
-                await sleep(1000);
+                await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 100);
                 await assertStateEquals(harness, `${saveId}.delta`, 40);
