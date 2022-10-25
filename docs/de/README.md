@@ -18,15 +18,12 @@ Der Adapter zählt die Impulse und es wird mit einer Zählerkonstanten multipliz
 So ergibt sich aus den 0/1 Wechseln eine analoge Größe, die auch dann im Adapter sofort weiter benutzt werden kann (z.B. für Summendelta)
 Die sich ergebende Analoggröße ist eine stetig steigende.
 
-
 ## Binärzustände
 
 Stellt das binäre Objekt Schalzustände dar, so kann daraus die Zeit für den Zustand mit logisch 1 und die Zeit mit logisch 0 ermittelt werden.
 Diese Betriebszeitzählung sollte nicht auf Impulse aus Zählern angewendet werden.
 
 ![binary](img/timeCount.png)
-
-
 
 ## Analogwerte
 
@@ -38,11 +35,57 @@ Dies kann auch auf Verbräuche angewendet werden, die aus Impulszählung entsteh
 
 ![impulse](img/sumDelta.png)
 
-## sinnvolle Kombinationen für state-Konfiguration
-### analoger state
-|avg|delta|...|Description|
-|--------|-------|:-:|--------|
+## Optionen
 
-### binärer state
-|count|delta|...|Description|
-|--------|-------|:-:|--------|
+```json
+"custom": {
+    "statistics.0": {
+        "enabled": true,
+        "count": false,
+        "fiveMin": false,
+        "sumCount": false,
+        "impUnitPerImpulse": 1,
+        "impUnit": "",
+        "timeCount": false,
+        "avg": true,
+        "minmax": true,
+        "sumDelta": true,
+        "sumIgnoreMinus": true,
+        "groupFactor": 2,
+        "logName": "mynumber",
+        "sumGroup": "energy"
+    }
+}
+```
+
+## sendTo
+
+```javascript
+sendTo('statistics.0', 'enableStatistics', {
+    id: '0_userdata.0.manual'
+}, (data) => {
+    if (data.success) {
+        console.log(`Added statistics`);
+    } else {
+        console.error(data.err);
+    }
+});
+```
+
+```javascript
+sendTo('statistics.0', 'enableStatistics', {
+    id: '0_userdata.0.mynumber',
+    options: {
+        avg: true,
+        minmax: true,
+        sumDelta: true,
+        sumIgnoreMinus: true
+    }
+}, (data) => {
+    if (data.success) {
+        console.log(`Added statistics`);
+    } else {
+        console.error(data.err);
+    }
+});
+```

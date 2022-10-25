@@ -356,6 +356,86 @@ class Statistics extends utils.Adapter {
     onMessage(msg) {
         if (msg.command === 'groups' && msg.callback) {
             this.sendTo(msg.from, msg.command, (this.config.groups || []).map(item => ({ label: item.name, value: item.id })), msg.callback);
+        } else if (msg.command === 'enableStatistics') {
+            if (typeof msg.message === 'object' && msg.message?.id) {
+                const objId = msg.message.id;
+
+                this.getForeignObject(objId, (err, obj) => {
+                    if (err || !obj) {
+                        this.sendTo(msg.from, msg.command, {
+                            success: false,
+                            err: `Unable to get object with ID ${objId}`
+                        }, msg.callback);
+                    } else {
+                        if (obj?.type === 'state') {
+
+                            const objCustomOptions = {
+                                common: {
+                                    custom: {}
+                                }
+                            };
+
+                            const objCustomDefaults = {
+                                enabled: true,
+
+                                // for boolean states
+                                count: false,
+                                fiveMin: false, // requires .count = true
+                                sumCount: false,
+                                impUnitPerImpulse: 1, // requires .sumCount = true
+                                impUnit: '', // requires .sumCount = true
+                                timeCount: false,
+
+                                // for number states
+                                avg: false,
+                                minmax: false,
+                                sumDelta: false,
+                                sumIgnoreMinus: false,
+
+                                sumGroup: undefined, // requires .sumCount = true or .sumDelta = true
+                                groupFactor: 1, // requres sumGroup
+
+                                logName: String(obj._id).split('.').pop()
+                            };
+
+                            if (typeof msg.message === 'object' && typeof msg.message?.options === 'object') {
+                                objCustomOptions.common.custom[this.namespace] = {
+                                    ...objCustomDefaults,
+                                    ...msg.message.options
+                                };
+                            } else {
+                                objCustomOptions.common.custom[this.namespace] = {
+                                    ...objCustomDefaults,
+                                    count: obj.common.type === 'boolean',
+                                    avg: obj.common.type === 'number'
+                                };
+                            }
+
+                            this.log.debug(`Extending state ${JSON.stringify(obj)} with ${JSON.stringify(objCustomOptions)}`);
+                            this.extendForeignObject(objId, objCustomOptions, (err) => {
+                                if (err) {
+                                    this.log.error(`enableStatistics of ${objId} failed: ${err}`);
+                                    this.sendTo(msg.from, msg.command, {
+                                        success: false,
+                                        err: err
+                                    }, msg.callback);
+                                } else {
+                                    this.sendTo(msg.from, msg.command, {
+                                        success: true,
+                                        err: null
+                                    }, msg.callback);
+                                }
+                            });
+
+                        } else {
+                            this.sendTo(msg.from, msg.command, {
+                                success: false,
+                                err: `Object with ID ${objId} is not a state: ${obj?.type}`
+                            }, msg.callback);
+                        }
+                    }
+                });
+            }
         }
     }
 

@@ -35,7 +35,7 @@ iobroker add statistics
 
 ## Documentation
 
-[🇪🇳 Documentation](./docs/en/README.md)
+[🇺🇸 Documentation](./docs/en/README.md)
 
 [🇩🇪 Dokumentation](./docs/de/README.md)
 
@@ -52,6 +52,11 @@ iobroker add statistics
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
+### __WORK IN PROGRESS__
+NodeJS 14.5.0 is required
+
+* (klein0r) Added option to enable statistics for objects via sendTo
+
 ### 2.2.0 (2022-07-07)
 * (klein0r) Added absolute min and max values
 
