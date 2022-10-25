@@ -11,6 +11,16 @@ async function sleep(duration) {
     });
 }
 
+async function assertStateEquals(harness, id, value) {
+    const state = await harness.states.getStateAsync(id);
+    expect(state.val, `${id} should have value ${value}`).to.equal(value);
+}
+
+async function assertStateIsNull(harness, id) {
+    const state = await harness.states.getStateAsync(id);
+    expect(state, `${id} should be null`).to.be.null;
+}
+
 // Run integration tests - See https://github.com/ioBroker/testing for a detailed explanation and further options
 tests.integration(path.join(__dirname, '..'), {
     allowedExitCodes: [11],
@@ -179,49 +189,31 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
                 await sleep(1000);
 
-                const avgLastStateRound1 = await harness.states.getStateAsync(`${tempId}.last`);
-                const avgDayCountStateRound1 = await harness.states.getStateAsync(`${tempId}.dayCount`);
-                const avgDayAvgStateRound1 = await harness.states.getStateAsync(`${tempId}.dayAvg`);
-                const avgDayMinStateRound1 = await harness.states.getStateAsync(`${tempId}.dayMin`);
-                const avgDayMaxStateRound1 = await harness.states.getStateAsync(`${tempId}.dayMax`);
-
-                expect(avgLastStateRound1.val).to.equal(10);
-                expect(avgDayCountStateRound1.val).to.equal(1);
-                expect(avgDayAvgStateRound1.val).to.equal(10);
-                expect(avgDayMinStateRound1.val).to.equal(10);
-                expect(avgDayMaxStateRound1.val).to.equal(10);
+                await assertStateEquals(harness, `${tempId}.last`, 10);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 1);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 10);
+                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
+                await assertStateEquals(harness, `${tempId}.dayMax`, 10);
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 50, ack: true });
                 await sleep(1000);
 
-                const avgLastStateRound2 = await harness.states.getStateAsync(`${tempId}.last`);
-                const avgDayCountStateRound2 = await harness.states.getStateAsync(`${tempId}.dayCount`);
-                const avgDayAvgStateRound2 = await harness.states.getStateAsync(`${tempId}.dayAvg`);
-                const avgDayMinStateRound2 = await harness.states.getStateAsync(`${tempId}.dayMin`);
-                const avgDayMaxStateRound2 = await harness.states.getStateAsync(`${tempId}.dayMax`);
-
-                expect(avgLastStateRound2.val).to.equal(50);
-                expect(avgDayCountStateRound2.val).to.equal(2);
-                expect(avgDayAvgStateRound2.val).to.equal(30);
-                expect(avgDayMinStateRound2.val).to.equal(10);
-                expect(avgDayMaxStateRound2.val).to.equal(50);
+                await assertStateEquals(harness, `${tempId}.last`, 50);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 2);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 30);
+                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
+                await assertStateEquals(harness, `${tempId}.dayMax`, 50);
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 20, ack: true });
                 await sleep(1000);
 
-                const avgLastStateRound3 = await harness.states.getStateAsync(`${tempId}.last`);
-                const avgDayCountStateRound3 = await harness.states.getStateAsync(`${tempId}.dayCount`);
-                const avgDayAvgStateRound3 = await harness.states.getStateAsync(`${tempId}.dayAvg`);
-                const avgDayMinStateRound3 = await harness.states.getStateAsync(`${tempId}.dayMin`);
-                const avgDayMaxStateRound3 = await harness.states.getStateAsync(`${tempId}.dayMax`);
-
-                expect(avgLastStateRound3.val).to.equal(20);
-                expect(avgDayCountStateRound3.val).to.equal(3);
-                expect(avgDayAvgStateRound3.val).to.equal(26.66667);
-                expect(avgDayMinStateRound3.val).to.equal(10);
-                expect(avgDayMaxStateRound3.val).to.equal(50);
+                await assertStateEquals(harness, `${tempId}.last`, 20);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 3);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 26.66667);
+                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
+                await assertStateEquals(harness, `${tempId}.dayMax`, 50);
             });
         });
 
@@ -301,37 +293,25 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId, { val: 1050, ack: true });
                 await sleep(1000);
 
-                const sumDeltaLastStateRound1 = await harness.states.getStateAsync(`${saveId}.last`);
-                const sumDeltaDeltaStateRound1 = await harness.states.getStateAsync(`${saveId}.delta`);
-                const sumDeltaDayStateRound1 = await harness.states.getStateAsync(`${tempId}.day`);
-
-                expect(sumDeltaLastStateRound1.val).to.equal(1050);
-                expect(sumDeltaDeltaStateRound1).to.be.null;
-                expect(sumDeltaDayStateRound1).to.be.null;
+                await assertStateEquals(harness, `${saveId}.last`, 1050);
+                await assertStateIsNull(harness, `${saveId}.delta`);
+                await assertStateIsNull(harness, `${tempId}.day`);
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 1051.5, ack: true });
                 await sleep(1000);
 
-                const sumDeltaLastStateRound2 = await harness.states.getStateAsync(`${saveId}.last`);
-                const sumDeltaDeltaStateRound2 = await harness.states.getStateAsync(`${saveId}.delta`);
-                const sumDeltaDayStateRound2 = await harness.states.getStateAsync(`${tempId}.day`);
-
-                expect(sumDeltaLastStateRound2.val).to.equal(1051.5);
-                expect(sumDeltaDeltaStateRound2.val).to.equal(1.5);
-                expect(sumDeltaDayStateRound2.val).to.equal(1.5);
+                await assertStateEquals(harness, `${saveId}.last`, 1051.5);
+                await assertStateEquals(harness, `${saveId}.delta`, 1.5);
+                await assertStateEquals(harness, `${tempId}.day`, 1.5);
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 1010, ack: true });
                 await sleep(1000);
 
-                const sumDeltaLastStateRound3 = await harness.states.getStateAsync(`${saveId}.last`);
-                const sumDeltaDeltaStateRound3 = await harness.states.getStateAsync(`${saveId}.delta`);
-                const sumDeltaDayStateRound3 = await harness.states.getStateAsync(`${tempId}.day`);
-
-                expect(sumDeltaLastStateRound3.val).to.equal(1010);
-                expect(sumDeltaDeltaStateRound3.val).to.equal(-41.5);
-                expect(sumDeltaDayStateRound3.val).to.equal(-40);
+                await assertStateEquals(harness, `${saveId}.last`, 1010);
+                await assertStateEquals(harness, `${saveId}.delta`, -41.5);
+                await assertStateEquals(harness, `${tempId}.day`, -40);
             });
         });
 
@@ -411,37 +391,25 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId, { val: 1050, ack: true });
                 await sleep(1000);
 
-                const sumDeltaLastStateRound1 = await harness.states.getStateAsync(`${saveId}.last`);
-                const sumDeltaDeltaStateRound1 = await harness.states.getStateAsync(`${saveId}.delta`);
-                const sumDeltaDayStateRound1 = await harness.states.getStateAsync(`${tempId}.day`);
-
-                expect(sumDeltaLastStateRound1.val).to.equal(1050);
-                expect(sumDeltaDeltaStateRound1).to.be.null;
-                expect(sumDeltaDayStateRound1).to.be.null;
+                await assertStateEquals(harness, `${saveId}.last`, 1050);
+                await assertStateIsNull(harness, `${saveId}.delta`);
+                await assertStateIsNull(harness, `${tempId}.day`);
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 1051.5, ack: true });
                 await sleep(1000);
 
-                const sumDeltaLastStateRound2 = await harness.states.getStateAsync(`${saveId}.last`);
-                const sumDeltaDeltaStateRound2 = await harness.states.getStateAsync(`${saveId}.delta`);
-                const sumDeltaDayStateRound2 = await harness.states.getStateAsync(`${tempId}.day`);
-
-                expect(sumDeltaLastStateRound2.val).to.equal(1051.5);
-                expect(sumDeltaDeltaStateRound2.val).to.equal(1.5);
-                expect(sumDeltaDayStateRound2.val).to.equal(1.5);
+                await assertStateEquals(harness, `${saveId}.last`, 1051.5);
+                await assertStateEquals(harness, `${saveId}.delta`, 1.5);
+                await assertStateEquals(harness, `${tempId}.day`, 1.5);
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 1010, ack: true });
                 await sleep(1000);
 
-                const sumDeltaLastStateRound3 = await harness.states.getStateAsync(`${saveId}.last`);
-                const sumDeltaDeltaStateRound3 = await harness.states.getStateAsync(`${saveId}.delta`);
-                const sumDeltaDayStateRound3 = await harness.states.getStateAsync(`${tempId}.day`);
-
-                expect(sumDeltaLastStateRound3.val).to.equal(1010);
-                expect(sumDeltaDeltaStateRound3.val).to.equal(0);
-                expect(sumDeltaDayStateRound3.val).to.equal(1.5);
+                await assertStateEquals(harness, `${saveId}.last`, 1010);
+                await assertStateEquals(harness, `${saveId}.delta`, 0);
+                await assertStateEquals(harness, `${tempId}.day`, 1.5);
             });
         });
 
@@ -521,61 +489,37 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId, { val: 30, ack: true });
                 await sleep(1000);
 
-                const sumDeltaLastStateRound1 = await harness.states.getStateAsync(`${saveId}.last`);
-                const sumDeltaDeltaStateRound1 = await harness.states.getStateAsync(`${saveId}.delta`);
-                const avgLastStateRound1 = await harness.states.getStateAsync(`${tempId}.last`);
-                const avgDayCountStateRound1 = await harness.states.getStateAsync(`${tempId}.dayCount`);
-                const avgDayAvgStateRound1 = await harness.states.getStateAsync(`${tempId}.dayAvg`);
-                const avgDayMinStateRound1 = await harness.states.getStateAsync(`${tempId}.dayMin`);
-                const avgDayMaxStateRound1 = await harness.states.getStateAsync(`${tempId}.dayMax`);
-
-                expect(sumDeltaLastStateRound1.val).to.equal(30);
-                expect(sumDeltaDeltaStateRound1).to.be.null;
-                expect(avgLastStateRound1.val).to.equal(10);
-                expect(avgDayCountStateRound1.val).to.equal(1);
-                expect(avgDayAvgStateRound1.val).to.equal(10);
-                expect(avgDayMinStateRound1.val).to.equal(10);
-                expect(avgDayMaxStateRound1.val).to.equal(10);
+                await assertStateEquals(harness, `${saveId}.last`, 30);
+                await assertStateIsNull(harness, `${saveId}.delta`);
+                await assertStateEquals(harness, `${tempId}.last`, 10);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 1);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 10);
+                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
+                await assertStateEquals(harness, `${tempId}.dayMax`, 10);
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 60, ack: true });
                 await sleep(1000);
 
-                const sumDeltaLastStateRound2 = await harness.states.getStateAsync(`${saveId}.last`);
-                const sumDeltaDeltaStateRound2 = await harness.states.getStateAsync(`${saveId}.delta`);
-                const avgLastStateRound2 = await harness.states.getStateAsync(`${tempId}.last`);
-                const avgDayCountStateRound2 = await harness.states.getStateAsync(`${tempId}.dayCount`);
-                const avgDayAvgStateRound2 = await harness.states.getStateAsync(`${tempId}.dayAvg`);
-                const avgDayMinStateRound2 = await harness.states.getStateAsync(`${tempId}.dayMin`);
-                const avgDayMaxStateRound2 = await harness.states.getStateAsync(`${tempId}.dayMax`);
-
-                expect(sumDeltaLastStateRound2.val).to.equal(60);
-                expect(sumDeltaDeltaStateRound2.val).to.equal(30);
-                expect(avgLastStateRound2.val).to.equal(30);
-                expect(avgDayCountStateRound2.val).to.equal(2);
-                expect(avgDayAvgStateRound2.val).to.equal(20);
-                expect(avgDayMinStateRound2.val).to.equal(10);
-                expect(avgDayMaxStateRound2.val).to.equal(30);
+                await assertStateEquals(harness, `${saveId}.last`, 60);
+                await assertStateEquals(harness, `${saveId}.delta`, 30);
+                await assertStateEquals(harness, `${tempId}.last`, 30);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 2);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 20);
+                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
+                await assertStateEquals(harness, `${tempId}.dayMax`, 30);
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 100, ack: true });
                 await sleep(1000);
 
-                const sumDeltaLastStateRound3 = await harness.states.getStateAsync(`${saveId}.last`);
-                const sumDeltaDeltaStateRound3 = await harness.states.getStateAsync(`${saveId}.delta`);
-                const avgLastStateRound3 = await harness.states.getStateAsync(`${tempId}.last`);
-                const avgDayCountStateRound3 = await harness.states.getStateAsync(`${tempId}.dayCount`);
-                const avgDayAvgStateRound3 = await harness.states.getStateAsync(`${tempId}.dayAvg`);
-                const avgDayMinStateRound3 = await harness.states.getStateAsync(`${tempId}.dayMin`);
-                const avgDayMaxStateRound3 = await harness.states.getStateAsync(`${tempId}.dayMax`);
-
-                expect(sumDeltaLastStateRound3.val).to.equal(100);
-                expect(sumDeltaDeltaStateRound3.val).to.equal(40);
-                expect(avgLastStateRound3.val).to.equal(40);
-                expect(avgDayCountStateRound3.val).to.equal(3);
-                expect(avgDayAvgStateRound3.val).to.equal(26.66667);
-                expect(avgDayMinStateRound3.val).to.equal(10);
-                expect(avgDayMaxStateRound3.val).to.equal(40);
+                await assertStateEquals(harness, `${saveId}.last`, 100);
+                await assertStateEquals(harness, `${saveId}.delta`, 40);
+                await assertStateEquals(harness, `${tempId}.last`, 40);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 3);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 26.66667);
+                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
+                await assertStateEquals(harness, `${tempId}.dayMax`, 40);
             });
         });
     }

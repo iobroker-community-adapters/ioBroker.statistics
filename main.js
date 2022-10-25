@@ -1515,7 +1515,7 @@ class Statistics extends utils.Adapter {
                     state
                 },
                 callback: (args, callback) => {
-                    this.getValue(`temp.timeCount.${args.id}.last`, (err, actual) => { //Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
+                    this.getValue(`temp.timeCount.${args.id}.last`, (err, actual) => { // Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
                         if (isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für ON-Zeitraum von 0->1 bis jetzt 1->0
                             this.getValue(`temp.timeCount.${args.id}.last01`, (err, last) => {
                                 let delta = last ? state.ts - last : 0;
@@ -1525,7 +1525,7 @@ class Statistics extends utils.Adapter {
                                     delta = Math.floor(delta / 1000);
                                 }
                                 this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
-                                this.setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
+                                this.setValue(`temp.timeCount.${args.id}.last`, state.val, () => { // setzen des last-Werte auf derzeitig verarbeiteten Wert
                                     this.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${state.ts} ${timeConverter(state.ts)}`);
                                     this.setValue(`temp.timeCount.${args.id}.last10`, state.ts, () => {
                                         this.log.debug(`[STATE CHANGE] 1->0 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
