@@ -307,12 +307,9 @@ class Statistics extends utils.Adapter {
      * @param {ioBroker.State | null | undefined} state
      */
     onStateChange(id, state) {
-        // Warning, state can be null if it was deleted
-        this.log.debug(`[STATE CHANGE] ======================= ${id} =======================`);
-
-        // you can use the ack flag to detect if it is status (true) or command (false)
-        if (state && state.ack) {
-            this.log.debug(`[STATE CHANGE] stateChange => ${state.val} [${state.ack}]`);
+        if (id && state && state.ack) {
+            this.log.debug(`[STATE CHANGE] ======================= ${id} =======================`);
+            this.log.debug(`[STATE CHANGE] stateChange => ${state.val}`);
 
             if ((state.val === null) || (state.val === undefined) || isNaN(state.val)) {
                 this.log.warn(`[STATE CHANGE] wrong value => ${state.val} on ${id} => check the other adapter where value comes from `);
@@ -501,6 +498,11 @@ class Statistics extends utils.Adapter {
     setValue(id, value, callback) {
         this.states[id] = value;
         this.setState(id, { val: value, ack: true }, callback);
+    }
+
+    async setValueAsync(id, value) {
+        this.states[id] = value;
+        return this.setStateAsync(id, { val: value, ack: true });
     }
 
     setValueStat(id, value, callback) {
@@ -1829,61 +1831,40 @@ class Statistics extends utils.Adapter {
             name: 'async',
             args: { id },
             callback: (args, callback) => {
-                this.getValue(`save.sumDelta.${args.id}.last`, (err, old) => {
+                this.getValue(`save.sumDelta.${args.id}.last`, async (err, prevValue) => {
                     if (!this.statDP[args.id]) {
                         return callback && callback();
                     }
 
-                    this.tasks.push({
-                        name: 'async',
-                        args: { id: `save.sumDelta.${args.id}.last`, value },
-                        callback: (args, callback) => this.setValue(args.id, args.value, callback)
-                    });
+                    await this.setValueAsync(`save.sumDelta.${args.id}.last`, value);
 
-                    if (old === null) {
+                    if (prevValue === null) {
                         return callback();
                     }
-                    let delta = value - old;
+
+                    let delta = value - prevValue;
                     if (delta < 0) {
                         if (this.statDP[args.id].sumIgnoreMinus) {
                             delta = 0;
                         }
                     }
                     delta = roundValue(delta, PRECISION);
-                    this.tasks.push({
-                        name: 'async',
-                        args: {
-                            delta,
-                            id: `save.sumDelta.${args.id}.delta`
-                        },
-                        callback: (args, callback) => this.setValue(args.id, args.delta, callback)
-                    });
+
+                    await this.setValueAsync(`save.sumDelta.${args.id}.delta`, delta);
 
                     for (let i = 0; i < nameObjects.sumDelta.temp.length; i++) {
-                        this.tasks.push({
-                            name: 'async',
-                            args: {
-                                delta,
-                                id: `temp.sumDelta.${args.id}.${nameObjects.sumDelta.temp[i]}`,
-                                type: nameObjects.sumDelta.temp[i]
-                            },
-                            callback: (args, callback) =>
-                                this.getValue(args.id, (err, value, ts) => {
-                                    // Check if the value not older than interval
-                                    if (ts) {
-                                        value = this.checkValue(value, ts, args.id, args.type);
-                                    }
+                        const sumDeltaId = `temp.sumDelta.${args.id}.${nameObjects.sumDelta.temp[i]}`;
 
-                                    value = roundValue((value || 0) + args.delta, PRECISION);
-                                    this.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.delta} to ${value}`);
-                                    this.setValue(args.id, value, callback);
-                                })
+                        this.getValue(sumDeltaId, async (err, value, ts) => {
+                            // Check if the value not older than interval
+                            if (ts) {
+                                value = this.checkValue(value, ts, sumDeltaId, nameObjects.sumDelta.temp[i]);
+                            }
+
+                            value = roundValue((value || 0) + delta, PRECISION);
+                            this.log.debug(`[STATE CHANGE] Increase ${sumDeltaId} on ${delta} to ${value}`);
+                            await this.setValueAsync(sumDeltaId, value);
                         });
-                    }
-
-                    // calculate average based on delta (skipped in onStateChange)
-                    if (this.typeObjects.avg.includes(args.id)) {
-                        this.onStateChangeAvgValue(args.id, delta);
                     }
 
                     if (this.statDP[args.id].sumGroup &&
@@ -1894,27 +1875,27 @@ class Statistics extends utils.Adapter {
                         const factor = this.statDP[args.id].groupFactor;
                         const price = this.groups[this.statDP[args.id].sumGroup].config.price;
                         for (let i = 0; i < nameObjects.sumGroup.temp.length; i++) {
-                            this.tasks.push({
-                                name: 'async',
-                                args: {
-                                    delta: delta * factor * price,
-                                    id: `temp.sumGroup.${this.statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[i]}`,
-                                    type: nameObjects.sumGroup.temp[i]
-                                },
-                                callback: (args, callback) =>
-                                    this.getValue(args.id, (err, value, ts) => {
-                                        // Check if the value not older than interval
-                                        if (ts) {
-                                            value = this.checkValue(value || 0, ts, args.id, args.type);
-                                        }
+                            const sumGroupId = `temp.sumGroup.${this.statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[i]}`;
+                            const sumGroupDelta = delta * factor * price;
 
-                                        value = roundValue((value || 0) + args.delta, PRECISION);
-                                        this.log.debug(`[STATE CHANGE] Increase ${args.id} on ${args.delta} to ${value}`);
-                                        this.setValue(args.id, value, callback);
-                                    })
+                            this.getValue(sumGroupId, async (err, value, ts) => {
+                                // Check if the value not older than interval
+                                if (ts) {
+                                    value = this.checkValue(value || 0, ts, sumGroupId, nameObjects.sumGroup.temp[i]);
+                                }
+
+                                value = roundValue((value || 0) + sumGroupDelta, PRECISION);
+                                this.log.debug(`[STATE CHANGE] Increase ${sumGroupId} on ${sumGroupDelta} to ${value}`);
+                                await this.setValueAsync(sumGroupId, value);
                             });
                         }
                     }
+
+                    // calculate average based on delta (skipped in onStateChange)
+                    if (this.typeObjects.avg.includes(args.id)) {
+                        this.onStateChangeAvgValue(args.id, delta);
+                    }
+
                     callback();
                 });
             }
