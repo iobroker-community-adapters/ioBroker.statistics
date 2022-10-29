@@ -1760,7 +1760,7 @@ class Statistics extends utils.Adapter {
                         this.log.debug(`[STATE CHANGE] new month min for "${args.id}: ${value}`);
                     }
 
-                    const monthMax = await this.getValueAsync(`temp.minmax.${args.id}.monthMax`)
+                    const monthMax = await this.getValueAsync(`temp.minmax.${args.id}.monthMax`);
                     if (monthMax === null || monthMax < value) {
                         await this.setValueAsync(`temp.minmax.${args.id}.monthMax`, value);
                         this.log.debug(`[STATE CHANGE] new month max for "${args.id}: ${value}`);
