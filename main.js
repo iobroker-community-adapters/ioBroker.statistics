@@ -1660,11 +1660,11 @@ class Statistics extends utils.Adapter {
         // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
         if (this.isTrueNew(id, value, 'sumCount')) {
             this.tasks.push({
-                name: 'async',
+                name: 'promise',
                 args: { id },
-                callback: (args, callback) => {
+                callback: async (args) => {
                     if (!this.statDP[args.id]) {
-                        return callback && callback();
+                        return false;
                     }
 
                     // Calculation of consumption (what is a physical-sized pulse)
@@ -1673,58 +1673,43 @@ class Statistics extends utils.Adapter {
                         this.statDP[args.id].impUnitPerImpulse) { // counter mit Verbrauch
 
                         for (let s = 0; s < nameObjects.sumGroup.temp.length; s++) {
-                            this.tasks.push({
-                                name: 'async',
-                                args: {
-                                    id: args.id,
-                                    sumCountId: `temp.sumCount.${args.id}.${nameObjects.sumGroup.temp[s]}`,
-                                    sumGroupId: `temp.sumGroup.${this.statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[s]}`,
-                                    impUnitPerImpulse: this.statDP[args.id].impUnitPerImpulse
-                                },
-                                callback: (args, callback) => {
-                                    this.getValue(args.sumCountId, (err, consumption) => {
-                                        const value = consumption ? consumption + args.impUnitPerImpulse : args.impUnitPerImpulse;
-                                        this.log.debug(`[STATE CHANGE] Increase ${args.sumCountId} on ${args.impUnitPerImpulse} to ${value}`);
-                                        this.setValue(args.sumCountId, value, callback);
-                                    });
 
-                                    // add consumption to group
-                                    if (this.statDP[args.id].sumGroup &&
-                                        this.groups[this.statDP[args.id].sumGroup] &&
-                                        this.groups[this.statDP[args.id].sumGroup].config &&
-                                        this.statDP[args.id].groupFactor
-                                    ) {
-                                        const factor = this.statDP[args.id].groupFactor;
-                                        const price = this.groups[this.statDP[args.id].sumGroup].config.price;
+                            const sumCountId = `temp.sumCount.${args.id}.${nameObjects.sumGroup.temp[s]}`;
+                            const sumGroupId = `temp.sumGroup.${this.statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[s]}`;
 
-                                        const increaseValueBy = price * args.impUnitPerImpulse * factor;
+                            const impUnitPerImpulse = this.statDP[args.id].impUnitPerImpulse;
 
-                                        this.tasks.push({
-                                            name: 'async',
-                                            args: {
-                                                delta: increaseValueBy,
-                                                id: args.sumGroupId,
-                                                type: nameObjects.sumGroup.temp[s]
-                                            },
-                                            callback: (args, callback) => {
-                                                this.getValue(args.id, (err, value, ts) => {
-                                                    if (ts) {
-                                                        value = this.checkValue(value || 0, ts, args.id, args.type);
-                                                    }
+                            const prevValue = await this.getValueAsync(sumCountId);
+                            const newValue = prevValue ? prevValue + impUnitPerImpulse : impUnitPerImpulse;
 
-                                                    value = roundValue(((value || 0) + args.delta), PRECISION);
-                                                    this.log.debug(`[STATE CHANGE] Increase group ${args.id} by ${args.delta} to ${value}`);
-                                                    this.setValue(args.id, value, callback);
-                                                });
-                                            }
-                                        });
-                                    }
+                            this.log.debug(`[STATE CHANGE] Increase ${sumCountId} on ${impUnitPerImpulse} to ${newValue}`);
+                            await this.setValueAsync(sumCountId, newValue);
+
+                            // add consumption to group
+                            if (this.statDP[args.id].sumGroup &&
+                                this.groups[this.statDP[args.id].sumGroup] &&
+                                this.groups[this.statDP[args.id].sumGroup].config &&
+                                this.statDP[args.id].groupFactor
+                            ) {
+                                const factor = this.statDP[args.id].groupFactor;
+                                const price = this.groups[this.statDP[args.id].sumGroup].config.price;
+
+                                const increaseValueBy = price * args.impUnitPerImpulse * factor;
+
+                                let prevVal = await this.getValueAsync(sumGroupId);
+                                // TODO
+                                /*
+                                if (ts) {
+                                    prevVal = this.checkValue(prevVal || 0, ts, sumGroupId, args.type);
                                 }
-                            });
+                                */
+
+                                prevVal = roundValue(((prevVal || 0) + increaseValueBy), PRECISION);
+                                this.log.debug(`[STATE CHANGE] Increase group ${sumGroupId} by ${increaseValueBy} to ${prevVal}`);
+                                await this.setValueAsync(sumGroupId, prevVal);
+                            }
                         }
                     }
-
-                    callback();
                 }
             });
         }
@@ -1886,6 +1871,7 @@ class Statistics extends utils.Adapter {
                 ) {
                     const factor = this.statDP[args.id].groupFactor;
                     const price = this.groups[this.statDP[args.id].sumGroup].config.price;
+
                     for (let i = 0; i < nameObjects.sumGroup.temp.length; i++) {
                         const sumGroupId = `temp.sumGroup.${this.statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[i]}`;
                         const sumGroupDelta = delta * factor * price;
