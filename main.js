@@ -1694,19 +1694,19 @@ class Statistics extends utils.Adapter {
                                 const factor = this.statDP[args.id].groupFactor;
                                 const price = this.groups[this.statDP[args.id].sumGroup].config.price;
 
-                                const sumGroupDelta = args.impUnitPerImpulse * factor * price;
+                                const sumGroupDelta = impUnitPerImpulse * factor * price;
 
-                                let prevVal = await this.getValueAsync(sumGroupId);
+                                const prevValue = await this.getValueAsync(sumGroupId);
                                 // TODO
                                 /*
                                 if (ts) {
-                                    prevVal = this.checkValue(prevVal || 0, ts, sumGroupId, args.type);
+                                    prevValue = this.checkValue(prevValue || 0, ts, sumGroupId, nameObjects.sumGroup.temp[s]);
                                 }
                                 */
 
-                                prevVal = roundValue(((prevVal || 0) + sumGroupDelta), PRECISION);
-                                this.log.debug(`[STATE CHANGE] Increase group ${sumGroupId} by ${sumGroupDelta} to ${prevVal}`);
-                                await this.setValueAsync(sumGroupId, prevVal);
+                                const newValue = roundValue(((prevValue || 0) + sumGroupDelta), PRECISION);
+                                this.log.debug(`[STATE CHANGE] Increase group ${sumGroupId} by ${sumGroupDelta} to ${newValue}`);
+                                await this.setValueAsync(sumGroupId, newValue);
                             }
                         }
                     }
