@@ -107,7 +107,7 @@ class Statistics extends utils.Adapter {
             timeCount: [],
             fiveMin: [],
         };
-        this.statDP = {};      // contains all custom object definitions (with Object-ID as key)
+        this.statDP = {}; // contains all custom object definitions (with Object-ID as key)
 
         this.on('ready', this.onReady.bind(this));
         this.on('objectChange', this.onObjectChange.bind(this));
@@ -315,30 +315,30 @@ class Statistics extends utils.Adapter {
                 this.log.warn(`[STATE CHANGE] wrong value => ${state.val} on ${id} => check the other adapter where value comes from `);
             } else {
                 if (this.typeObjects.sumDelta.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] starting onStateChangeSumDeltaValue for ${id}`);
+                    this.log.debug(`[STATE CHANGE] schedule onStateChangeSumDeltaValue for ${id}`);
                     this.onStateChangeSumDeltaValue(id, state.val);
                 } else if (this.typeObjects.avg.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] starting onStateChangeAvgValue for ${id}`);
+                    this.log.debug(`[STATE CHANGE] schedule onStateChangeAvgValue for ${id}`);
                     this.onStateChangeAvgValue(id, state.val);
                 }
 
                 if (this.typeObjects.minmax.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] starting onStateChangeMinMaxValue for ${id}`);
+                    this.log.debug(`[STATE CHANGE] schedule onStateChangeMinMaxValue for ${id}`);
                     this.onStateChangeMinMaxValue(id, state.val);
                 }
 
                 if (this.typeObjects.count.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] starting onStateChangeCountValue for ${id}`);
+                    this.log.debug(`[STATE CHANGE] schedule onStateChangeCountValue for ${id}`);
                     this.onStateChangeCountValue(id, state.val);
                 }
 
                 if (this.typeObjects.sumCount.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] starting onStateChangeSumCountValue for ${id}`);
+                    this.log.debug(`[STATE CHANGE] schedule onStateChangeSumCountValue for ${id}`);
                     this.onStateChangeSumCountValue(id, state.val);
                 }
 
                 if (this.typeObjects.timeCount.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] starting onStateChangeTimeCntValue for ${id}`);
+                    this.log.debug(`[STATE CHANGE] schedule onStateChangeTimeCntValue for ${id}`);
                     this.onStateChangeTimeCntValue(id, state);
                 }
 
@@ -1402,16 +1402,22 @@ class Statistics extends utils.Adapter {
         value = parseFloat(value); // || 0; if NaN we should not put a zero inside, better to skip everything
 
         if (!isNaN(value)) {
-            this.log.debug(`[STATE CHANGE] avg call: ${id} value ${value}`);
             this.tasks.push({
                 name: 'promise',
                 args: {
                     id,
                     value
                 }, callback: async (args) => {
-                    this.log.debug(`[STATE CHANGE] new last for "temp.avg.${args.id}.last: ${value}`);
+                    this.log.debug(`[EXECUTING] avg call ${args.id}`);
+
+                    if (!this.statDP[args.id]) {
+                        this.log.warn(`[ABORTING] avg call ${args.id} - object no longer exists`);
+                        return false;
+                    }
+
+                    this.log.debug(`[STATE CHANGE] new last for "temp.avg.${args.id}.last: ${args.value}`);
                     // memorize current value to have it available when date change for actual=starting point of new time frame
-                    await this.setValueAsync(`temp.avg.${args.id}.last`, value);
+                    await this.setValueAsync(`temp.avg.${args.id}.last`, args.value);
 
                     let count = await this.getValueAsync(`temp.avg.${args.id}.dayCount`);
                     count = count ? count + 1 : 1;
@@ -1419,21 +1425,21 @@ class Statistics extends utils.Adapter {
                     await this.setValueAsync(`temp.avg.${args.id}.dayCount`, count);
 
                     let sum = await this.getValueAsync(`temp.avg.${args.id}.daySum`);
-                    sum = sum ? sum + value : value;
+                    sum = sum ? sum + args.value : args.value;
 
                     await this.setValueAsync(`temp.avg.${args.id}.daySum`);
                     await this.setValueAsync(`temp.avg.${args.id}.dayAvg`, roundValue(sum / count, PRECISION));
 
                     const tempMin = await this.getValueAsync(`temp.avg.${args.id}.dayMin`);
-                    if (tempMin === null || tempMin > value) {
-                        await this.setValueAsync(`temp.avg.${args.id}.dayMin`, value);
-                        this.log.debug(`[STATE CHANGE] new min for "temp.avg.${args.id}.dayMin: ${value}`);
+                    if (tempMin === null || tempMin > args.value) {
+                        await this.setValueAsync(`temp.avg.${args.id}.dayMin`, args.value);
+                        this.log.debug(`[STATE CHANGE] new min for "temp.avg.${args.id}.dayMin: ${args.value}`);
                     }
 
                     const tempMax = await this.getValueAsync(`temp.avg.${args.id}.dayMax`);
-                    if (tempMax === null || tempMax < value) {
-                        await this.setValueAsync(`temp.avg.${args.id}.dayMax`, value);
-                        this.log.debug(`[STATE CHANGE] new max for "temp.avg.${args.id}.dayMax: ${value}`);
+                    if (tempMax === null || tempMax < args.value) {
+                        await this.setValueAsync(`temp.avg.${args.id}.dayMax`, args.value);
+                        this.log.debug(`[STATE CHANGE] new max for "temp.avg.${args.id}.dayMax: ${args.value}`);
                     }
                 }
             });
@@ -1451,7 +1457,6 @@ class Statistics extends utils.Adapter {
         Addition of time
         no change but re-trigger counts up the time of respective state
         */
-        this.log.debug(`[STATE CHANGE] time count call ${id} with ${state.val}`); // !! val ist hier falsch da state komplett übergeben
         if (isTrue(state.val)) {
             this.tasks.push({
                 name: 'promise',
@@ -1460,6 +1465,13 @@ class Statistics extends utils.Adapter {
                     state
                 },
                 callback: async (args) => {
+                    this.log.debug(`[EXECUTING] time count ${args.id}`);
+
+                    if (!this.statDP[args.id]) {
+                        this.log.warn(`[ABORTING] time count ${args.id} - object no longer exists`);
+                        return false;
+                    }
+
                     const actual = await this.getValueAsync(`temp.timeCount.${args.id}.last`);
 
                     if (!isTrue(actual)) {
@@ -1529,6 +1541,13 @@ class Statistics extends utils.Adapter {
                     state
                 },
                 callback: async (args) => {
+                    this.log.debug(`[EXECUTING] time count ${args.id}`);
+
+                    if (!this.statDP[args.id]) {
+                        this.log.warn(`[ABORTING] time count ${args.id} - object no longer exists`);
+                        return false;
+                    }
+
                     const actual = await this.getValueAsync(`temp.timeCount.${args.id}.last`);
 
                     if (isTrue(actual)) {
@@ -1603,7 +1622,6 @@ class Statistics extends utils.Adapter {
             Change to 1 -> increase by 1
             Value greater threshold -> increase by 1
         */
-        this.log.debug(`[STATE CHANGE] count call ${id} with ${value}`);
         // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
         // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
         if (this.isTrueNew(id, value, 'count')) {
@@ -1611,7 +1629,10 @@ class Statistics extends utils.Adapter {
                 name: 'promise',
                 args: { id },
                 callback: async (args) => {
+                    this.log.debug(`[EXECUTING] count call ${args.id}`);
+
                     if (!this.statDP[args.id]) {
+                        this.log.warn(`[ABORTING] count call ${args.id} - object no longer exists`);
                         return false;
                     }
 
@@ -1640,7 +1661,6 @@ class Statistics extends utils.Adapter {
             Change to 1 -> increase by 1
             Value greater threshold -> increase by 1
         */
-        this.log.debug(`[STATE CHANGE] sum count call ${id} with ${value}`);
         // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
         // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
         if (this.isTrueNew(id, value, 'sumCount')) {
@@ -1648,7 +1668,10 @@ class Statistics extends utils.Adapter {
                 name: 'promise',
                 args: { id },
                 callback: async (args) => {
+                    this.log.debug(`[EXECUTING] sum count ${args.id}`);
+
                     if (!this.statDP[args.id]) {
+                        this.log.warn(`[ABORTING] sum count ${args.id} - object no longer exists`);
                         return false;
                     }
 
@@ -1698,6 +1721,7 @@ class Statistics extends utils.Adapter {
                 }
             });
         }
+
         isStart && this.processTasks();
     }
 
@@ -1707,90 +1731,98 @@ class Statistics extends utils.Adapter {
          * Comparison between last min / max and now transmitted value
          */
         value = parseFloat(value) || 0;
+
         if (!isNaN(value)) {
-            this.log.debug(`[STATE CHANGE] minmax call: ${id} value ${value}`);
             this.tasks.push({
                 name: 'promise',
                 args: {
                     id,
                     value
                 }, callback: async (args) => {
-                    this.log.debug(`[STATE CHANGE] new last for "temp.minmax.${args.id}.last: ${value}`);
-                    await this.setValueAsync(`temp.minmax.${args.id}.last`, value); // memorize current value to have it available when date change for actual=starting point of new time frame
+                    this.log.debug(`[EXECUTING] minmax ${args.id}`);
+
+                    if (!this.statDP[args.id]) {
+                        this.log.warn(`[ABORTING] minmax ${args.id} - object no longer exists`);
+                        return false;
+                    }
+
+                    this.log.debug(`[STATE CHANGE] new last for "temp.minmax.${args.id}.last: ${args.value}`);
+                    await this.setValueAsync(`temp.minmax.${args.id}.last`, args.value); // memorize current value to have it available when date change for actual=starting point of new time frame
 
                     const absMin = await this.getValueAsync(`save.minmax.${args.id}.absMin`);
-                    if (absMin === null || absMin > value) {
-                        await this.setValueAsync(`save.minmax.${args.id}.absMin`, value);
-                        this.log.debug(`[STATE CHANGE] new abs min for "${args.id}: ${value}`);
+                    if (absMin === null || absMin > args.value) {
+                        await this.setValueAsync(`save.minmax.${args.id}.absMin`, args.value);
+                        this.log.debug(`[STATE CHANGE] new abs min for "${args.id}: ${args.value}`);
                     }
 
                     const absMax = await this.getValueAsync(`save.minmax.${args.id}.absMax`);
-                    if (absMax === null || absMax < value) {
-                        await this.setValueAsync(`save.minmax.${args.id}.absMax`, value);
-                        this.log.debug(`[STATE CHANGE] new abs max for "${args.id}: ${value}`);
+                    if (absMax === null || absMax < args.value) {
+                        await this.setValueAsync(`save.minmax.${args.id}.absMax`, args.value);
+                        this.log.debug(`[STATE CHANGE] new abs max for "${args.id}: ${args.value}`);
                     }
 
                     const yearMin = await this.getValueAsync(`temp.minmax.${args.id}.yearMin`);
-                    if (yearMin === null || yearMin > value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.yearMin`, value);
-                        this.log.debug(`[STATE CHANGE] new year min for "${args.id}: ${value}`);
+                    if (yearMin === null || yearMin > args.value) {
+                        await this.setValueAsync(`temp.minmax.${args.id}.yearMin`, args.value);
+                        this.log.debug(`[STATE CHANGE] new year min for "${args.id}: ${args.value}`);
                     }
 
                     const yearMax = await this.getValueAsync(`temp.minmax.${args.id}.yearMax`);
-                    if (yearMax === null || yearMax < value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.yearMax`, value);
-                        this.log.debug(`[STATE CHANGE] new year max for "${args.id}: ${value}`);
+                    if (yearMax === null || yearMax < args.value) {
+                        await this.setValueAsync(`temp.minmax.${args.id}.yearMax`, args.value);
+                        this.log.debug(`[STATE CHANGE] new year max for "${args.id}: ${args.value}`);
                     }
 
                     const quarterMin = await this.getValueAsync(`temp.minmax.${args.id}.quarterMin`);
-                    if (quarterMin === null || quarterMin > value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.quarterMin`, value);
-                        this.log.debug(`[STATE CHANGE] new quarter min for "${args.id}: ${value}`);
+                    if (quarterMin === null || quarterMin > args.value) {
+                        await this.setValueAsync(`temp.minmax.${args.id}.quarterMin`, args.value);
+                        this.log.debug(`[STATE CHANGE] new quarter min for "${args.id}: ${args.value}`);
                     }
 
                     const quarterMax = await this.getValueAsync(`temp.minmax.${args.id}.quarterMax`);
-                    if (quarterMax === null || quarterMax < value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.quarterMax`, value);
-                        this.log.debug(`[STATE CHANGE] new quarter max for "${args.id}: ${value}`);
+                    if (quarterMax === null || quarterMax < args.value) {
+                        await this.setValueAsync(`temp.minmax.${args.id}.quarterMax`, args.value);
+                        this.log.debug(`[STATE CHANGE] new quarter max for "${args.id}: ${args.value}`);
                     }
 
                     const monthMin = await this.getValueAsync(`temp.minmax.${args.id}.monthMin`);
-                    if (monthMin === null || monthMin > value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.monthMin`, value);
-                        this.log.debug(`[STATE CHANGE] new month min for "${args.id}: ${value}`);
+                    if (monthMin === null || monthMin > args.value) {
+                        await this.setValueAsync(`temp.minmax.${args.id}.monthMin`, args.value);
+                        this.log.debug(`[STATE CHANGE] new month min for "${args.id}: ${args.value}`);
                     }
 
                     const monthMax = await this.getValueAsync(`temp.minmax.${args.id}.monthMax`);
-                    if (monthMax === null || monthMax < value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.monthMax`, value);
-                        this.log.debug(`[STATE CHANGE] new month max for "${args.id}: ${value}`);
+                    if (monthMax === null || monthMax < args.value) {
+                        await this.setValueAsync(`temp.minmax.${args.id}.monthMax`, args.value);
+                        this.log.debug(`[STATE CHANGE] new month max for "${args.id}: ${args.value}`);
                     }
 
                     const weekMin = await this.getValueAsync(`temp.minmax.${args.id}.weekMin`);
-                    if (weekMin === null || weekMin > value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.weekMin`, value);
-                        this.log.debug(`[STATE CHANGE] new week min for "${args.id}: ${value}`);
+                    if (weekMin === null || weekMin > args.value) {
+                        await this.setValueAsync(`temp.minmax.${args.id}.weekMin`, args.value);
+                        this.log.debug(`[STATE CHANGE] new week min for "${args.id}: ${args.value}`);
                     }
 
                     const weekMax = await this.getValueAsync(`temp.minmax.${args.id}.weekMax`);
-                    if (weekMax === null || weekMax < value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.weekMax`, value);
-                        this.log.debug(`[STATE CHANGE] new week max for "${args.id}: ${value}`);
+                    if (weekMax === null || weekMax < args.value) {
+                        await this.setValueAsync(`temp.minmax.${args.id}.weekMax`, args.value);
+                        this.log.debug(`[STATE CHANGE] new week max for "${args.id}: ${args.value}`);
                     }
 
                     const dayMin = await this.getValueAsync(`temp.minmax.${args.id}.dayMin`);
-                    if (dayMin === null || dayMin > value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.dayMin`, value);
-                        this.log.debug(`[STATE CHANGE] new day min for "${args.id}: ${value}`);
+                    if (dayMin === null || dayMin > args.value) {
+                        await this.setValueAsync(`temp.minmax.${args.id}.dayMin`, args.value);
+                        this.log.debug(`[STATE CHANGE] new day min for "${args.id}: ${args.value}`);
                     }
 
                     const dayMax = await this.getValueAsync(`temp.minmax.${args.id}.dayMax`);
-                    if (dayMax === null || dayMax < value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.dayMax`, value);
-                        this.log.debug(`[STATE CHANGE] new day max for "${args.id}: ${value}`);
+                    if (dayMax === null || dayMax < args.value) {
+                        await this.setValueAsync(`temp.minmax.${args.id}.dayMax`, args.value);
+                        this.log.debug(`[STATE CHANGE] new day max for "${args.id}: ${args.value}`);
                     }
                 }
             });
+
             isStart && this.processTasks();
         }
     }
@@ -1806,17 +1838,24 @@ class Statistics extends utils.Adapter {
              - treat own values differently (datapoint name)
         */
         value = parseFloat(value) || 0; // here we can probably leave the 0, if undefined then we have 0
+
         this.tasks.push({
             name: 'promise',
-            args: { id },
+            args: {
+                id,
+                value
+            },
             callback: async (args) => {
-                const prevValue = await this.getValueAsync(`save.sumDelta.${args.id}.last`);
+                this.log.debug(`[EXECUTING] sum delta ${args.id}`);
 
                 if (!this.statDP[args.id]) {
+                    this.log.warn(`[ABORTING] sum delta ${args.id} - object no longer exists`);
                     return false;
                 }
 
-                await this.setValueAsync(`save.sumDelta.${args.id}.last`, value);
+                const prevValue = await this.getValueAsync(`save.sumDelta.${args.id}.last`);
+
+                await this.setValueAsync(`save.sumDelta.${args.id}.last`, args.value);
 
                 if (prevValue === null) {
                     return false;
@@ -1883,6 +1922,7 @@ class Statistics extends utils.Adapter {
                 }
             }
         });
+
         isStart && this.processTasks();
     }
 }
