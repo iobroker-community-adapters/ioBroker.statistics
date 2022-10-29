@@ -1451,159 +1451,144 @@ class Statistics extends utils.Adapter {
         Addition of time
         no change but re-trigger counts up the time of respective state
         */
-        this.log.debug(`[STATE CHANGE] timecount call ${id} with ${state.val}`); // !! val ist hier falsch da state komplett übergeben
+        this.log.debug(`[STATE CHANGE] time count call ${id} with ${state.val}`); // !! val ist hier falsch da state komplett übergeben
         if (isTrue(state.val)) {
             this.tasks.push({
-                name: 'async',
+                name: 'promise',
                 args: {
                     id,
                     state
                 },
-                callback: (args, callback) => {
-                    this.getValue(`temp.timeCount.${args.id}.last`, (err, actual) => { //Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
-                        if (!isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für OFF-Zeitraum von 1->0 bis jetzt 0->1
-                            this.getValue(`temp.timeCount.${args.id}.last10`, (err, last) => {
-                                let delta = last ? state.ts - last : 0; // wenn last true dann delta, ansonsten 0
-                                if (delta < 0) {
-                                    delta = 0;
-                                } else {
-                                    delta = Math.floor(delta / 1000);
-                                }
-                                this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
-                                this.setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    this.log.debug(`[STATE CHANGE] new last01 temp.timeCount.${args.id}.last01: ${state.ts}  ${timeConverter(state.ts)}` );
-                                    this.setValue(`temp.timeCount.${args.id}.last01`, state.ts, () => {
-                                        this.log.debug(`[STATE CHANGE] 0->1 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
-                                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
-                                            if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
-                                                this.tasks.push({
-                                                    name: 'async',
-                                                    args: {
-                                                        id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
-                                                    },
-                                                    callback: (args, callback) =>
-                                                        this.getValue(args.id, (err, time) => {
-                                                            this.log.debug(`[STATE CHANGE] 0->1 new val ${args.id}: ${(time || 0) + delta}`);
-                                                            this.setValue(args.id, (time || 0) + delta, callback);
-                                                        })
-                                                });
-                                            }
-                                        }
-                                        callback();
-                                    });
-                                });
-                            });
-                        } else { // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update ON-Zeitraum von letzten 0->1 bis jetzt 0->1
-                            this.getValue(`temp.timeCount.${args.id}.last01`, (err, last) => {
-                                let delta = last ? state.ts - last : 0; // wenn last true dann delta, ansonsten 0
-                                if (delta < 0) {
-                                    delta = 0;
-                                } else {
-                                    delta = Math.floor(delta / 1000);
-                                }
-                                this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
-                                this.setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    this.log.debug(`[STATE CHANGE] new last01 temp.timeCount.${args.id}.last01: ${state.ts} ${timeConverter(state.ts)}`);
-                                    this.setValue(`temp.timeCount.${args.id}.last01`, state.ts, () => {
-                                        this.log.debug(`[STATE EQUAL] 1->1 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
-                                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
-                                            if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) { // ^ wegen on in Month
-                                                this.tasks.push({
-                                                    name: 'async',
-                                                    args: {
-                                                        id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
-                                                    },
-                                                    callback: (args, callback) =>
-                                                        this.getValue(args.id, (err, time) => {
-                                                            this.log.debug(`[STATE EQUAL] 1->1 new val ${args.id}: ${(time || 0) + delta}`);
-                                                            this.setValue(args.id, (time || 0) + delta, callback);
-                                                        })
-                                                });
-                                            }
-                                        }
-                                        callback();
-                                    });
-                                });
-                            });
+                callback: async (args) => {
+                    const actual = await this.getValueAsync(`temp.timeCount.${args.id}.last`);
+
+                    if (!isTrue(actual)) {
+                        // ein echter Signalwechsel, somit Bestimmung delta für OFF-Zeitraum von 1->0 bis jetzt 0->1
+
+                        const last = await this.getValueAsync(`temp.timeCount.${args.id}.last10`);
+                        let delta = last ? args.state.ts - last : 0; // wenn last true dann delta, ansonsten 0
+                        if (delta < 0) {
+                            delta = 0;
+                        } else {
+                            delta = Math.floor(delta / 1000);
                         }
-                    });
+
+                        this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${args.state.val}`);
+                        await this.setValueAsync(`temp.timeCount.${args.id}.last`, args.state.val);
+
+                        this.log.debug(`[STATE CHANGE] new last01 temp.timeCount.${args.id}.last01: ${args.state.ts} ${timeConverter(args.state.ts)}` );
+                        await this.setValueAsync(`temp.timeCount.${args.id}.last01`, args.state.ts);
+
+                        this.log.debug(`[STATE CHANGE] 0->1 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`);
+
+                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
+                            if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
+                                const timeCountId = `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`;
+
+                                const time = await this.getValueAsync(timeCountId);
+                                this.log.debug(`[STATE CHANGE] 0->1 new val ${timeCountId}: ${(time || 0) + delta}`);
+                                await this.setValueAsync(timeCountId, (time || 0) + delta);
+                            }
+                        }
+                    } else {
+                        // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update ON-Zeitraum von letzten 0->1 bis jetzt 0->1
+
+                        const last = await this.getValueAsync(`temp.timeCount.${args.id}.last01`);
+                        let delta = last ? args.state.ts - last : 0; // wenn last true dann delta, ansonsten 0
+                        if (delta < 0) {
+                            delta = 0;
+                        } else {
+                            delta = Math.floor(delta / 1000);
+                        }
+
+                        this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${args.state.val}`);
+                        await this.setValueAsync(`temp.timeCount.${args.id}.last`, args.state.val);
+
+                        this.log.debug(`[STATE CHANGE] new last01 temp.timeCount.${args.id}.last01: ${args.state.ts} ${timeConverter(args.state.ts)}`);
+                        await this.setValueAsync(`temp.timeCount.${args.id}.last01`, args.state.ts);
+
+                        this.log.debug(`[STATE EQUAL] 1->1 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`);
+
+                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
+                            if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) {
+                                const timeCountId = `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`;
+
+                                const time = await this.getValueAsync(timeCountId);
+                                this.log.debug(`[STATE EQUAL] 1->1 new val ${timeCountId}: ${(time || 0) + delta}`);
+                                await this.setValueAsync(timeCountId, (time || 0) + delta);
+                            }
+                        }
+                    }
                 }
             });
         } else if (isFalse(state.val)) {
             this.tasks.push({
-                name: 'async',
+                name: 'promise',
                 args: {
                     id,
                     state
                 },
-                callback: (args, callback) => {
-                    this.getValue(`temp.timeCount.${args.id}.last`, (err, actual) => { // Bestimmung letzter Zustand, wegen mehrfach gleicher Wert
-                        if (isTrue(actual)) { // ein echter Signalwechsel, somit Bestimmung delta für ON-Zeitraum von 0->1 bis jetzt 1->0
-                            this.getValue(`temp.timeCount.${args.id}.last01`, (err, last) => {
-                                let delta = last ? state.ts - last : 0;
-                                if (delta < 0) {
-                                    delta = 0;
-                                } else {
-                                    delta = Math.floor(delta / 1000);
-                                }
-                                this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
-                                this.setValue(`temp.timeCount.${args.id}.last`, state.val, () => { // setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    this.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${state.ts} ${timeConverter(state.ts)}`);
-                                    this.setValue(`temp.timeCount.${args.id}.last10`, state.ts, () => {
-                                        this.log.debug(`[STATE CHANGE] 1->0 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
-                                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
-                                            if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) { // on auch in Month drin, deswegen ^
-                                                this.tasks.push({
-                                                    name: 'async',
-                                                    args: {
-                                                        id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
-                                                    },
-                                                    callback: (args, callback) =>
-                                                        this.getValue(args.id, (err, time) => {
-                                                            this.log.debug(`[STATE CHANGE] 1->0 new val ${args.id}: ${(time || 0) + delta}`);
-                                                            this.setValue(args.id, (time || 0) + delta, callback);
-                                                        })
-                                                });
-                                            }
-                                        }
-                                        callback();
-                                    });
-                                });
-                            });
-                        } else { // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update OFF-Zeitraum von letzten 1->0 bis jetzt 1->0
-                            this.getValue(`temp.timeCount.${args.id}.last10`, (err, last) => {
-                                let delta = last ? state.ts - last : 0;
-                                if (delta < 0) {
-                                    delta = 0;
-                                } else {
-                                    delta = Math.floor(delta / 1000);
-                                }
-                                this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${state.val}`);
-                                this.setValue(`temp.timeCount.${args.id}.last`, state.val, () => { //setzen des last-Werte auf derzeitig verarbeiteten Wert
-                                    this.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${state.ts} ${timeConverter(state.ts)}`);
-                                    this.setValue(`temp.timeCount.${args.id}.last10`, state.ts, () => {
-                                        this.log.debug(`[STATE EQUAL] 0->0 delta ${delta} state ${timeConverter(state.ts)} last ${timeConverter(last)}`);
-                                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
-                                            if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
-                                                this.tasks.push({
-                                                    name: 'async',
-                                                    args: {
-                                                        id: `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`
-                                                    },
-                                                    callback: (args, callback) =>
-                                                        this.getValue(args.id, (err, time) => {
-                                                            this.log.debug(`[STATE EQUAL] 0->0 new val ${args.id}: ${(time || 0) + delta}`);
-                                                            this.setValue(args.id, (time || 0) + delta, callback);
-                                                        })
-                                                });
-                                            }
-                                        }
-                                        callback();
-                                    });
-                                });
-                            });
+                callback: async (args) => {
+                    const actual = await this.getValueAsync(`temp.timeCount.${args.id}.last`);
+
+                    if (isTrue(actual)) {
+                        // ein echter Signalwechsel, somit Bestimmung delta für ON-Zeitraum von 0->1 bis jetzt 1->0
+
+                        const last = await this.getValueAsync(`temp.timeCount.${args.id}.last01`);
+                        let delta = last ? args.state.ts - last : 0;
+                        if (delta < 0) {
+                            delta = 0;
+                        } else {
+                            delta = Math.floor(delta / 1000);
                         }
-                    });
+
+                        this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${args.state.val}`);
+                        await this.setValueAsync(`temp.timeCount.${args.id}.last`, args.state.val);
+
+                        this.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${args.state.ts} ${timeConverter(args.state.ts)}`);
+                        this.setValue(`temp.timeCount.${args.id}.last10`, args.state.ts);
+
+                        this.log.debug(`[STATE CHANGE] 1->0 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`);
+
+                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
+                            if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) {
+                                const timeCountId = `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`;
+
+                                const time = await this.getValueAsync(timeCountId);
+                                this.log.debug(`[STATE CHANGE] 1->0 new val ${timeCountId}: ${(time || 0) + delta}`);
+                                await this.setValueAsync(timeCountId, (time || 0) + delta);
+                            }
+                        }
+                    } else {
+                        // kein Signalwechsel, nochmal gleicher Zustand, somit Bestimmung delta für update OFF-Zeitraum von letzten 1->0 bis jetzt 1->0
+
+                        const last = await this.getValueAsync(`temp.timeCount.${args.id}.last10`);
+
+                        let delta = last ? args.state.ts - last : 0;
+                        if (delta < 0) {
+                            delta = 0;
+                        } else {
+                            delta = Math.floor(delta / 1000);
+                        }
+
+                        this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${args.state.val}`);
+                        await this.setValueAsync(`temp.timeCount.${args.id}.last`, args.state.val);
+
+                        this.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${args.state.ts} ${timeConverter(args.state.ts)}`);
+                        await this.setValueAsync(`temp.timeCount.${args.id}.last10`, args.state.ts);
+
+                        this.log.debug(`[STATE EQUAL] 0->0 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`);
+
+                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
+                            if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
+                                const timeCountId = `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`;
+
+                                const time = await this.getValueAsync(timeCountId);
+                                this.log.debug(`[STATE EQUAL] 0->0 new val ${timeCountId}: ${(time || 0) + delta}`);
+                                await this.setValueAsync(timeCountId, (time || 0) + delta);
+                            }
+                        }
+                    }
                 }
             });
         }
