@@ -1670,7 +1670,7 @@ class Statistics extends utils.Adapter {
                     // Calculation of consumption (what is a physical-sized pulse)
                     if (this.typeObjects.sumCount &&
                         this.typeObjects.sumCount.includes(args.id) &&
-                        this.statDP[args.id].impUnitPerImpulse) { // counter mit Verbrauch
+                        this.statDP[args.id].impUnitPerImpulse) {
 
                         for (let s = 0; s < nameObjects.sumGroup.temp.length; s++) {
 
@@ -1694,7 +1694,7 @@ class Statistics extends utils.Adapter {
                                 const factor = this.statDP[args.id].groupFactor;
                                 const price = this.groups[this.statDP[args.id].sumGroup].config.price;
 
-                                const increaseValueBy = price * args.impUnitPerImpulse * factor;
+                                const sumGroupDelta = args.impUnitPerImpulse * factor * price;
 
                                 let prevVal = await this.getValueAsync(sumGroupId);
                                 // TODO
@@ -1704,8 +1704,8 @@ class Statistics extends utils.Adapter {
                                 }
                                 */
 
-                                prevVal = roundValue(((prevVal || 0) + increaseValueBy), PRECISION);
-                                this.log.debug(`[STATE CHANGE] Increase group ${sumGroupId} by ${increaseValueBy} to ${prevVal}`);
+                                prevVal = roundValue(((prevVal || 0) + sumGroupDelta), PRECISION);
+                                this.log.debug(`[STATE CHANGE] Increase group ${sumGroupId} by ${sumGroupDelta} to ${prevVal}`);
                                 await this.setValueAsync(sumGroupId, prevVal);
                             }
                         }
@@ -1850,18 +1850,18 @@ class Statistics extends utils.Adapter {
                 for (let i = 0; i < nameObjects.sumDelta.temp.length; i++) {
                     const sumDeltaId = `temp.sumDelta.${args.id}.${nameObjects.sumDelta.temp[i]}`;
 
-                    let prevVal = await this.getValueAsync(sumDeltaId);
+                    const prevValue = await this.getValueAsync(sumDeltaId);
                     // Check if the value not older than interval
                     // TODO
                     /*
                     if (ts) {
-                        prevVal = this.checkValue(prevVal, ts, sumDeltaId, nameObjects.sumDelta.temp[i]);
+                        prevValue = this.checkValue(prevValue, ts, sumDeltaId, nameObjects.sumDelta.temp[i]);
                     }
                     */
 
-                    prevVal = roundValue((prevVal || 0) + delta, PRECISION);
-                    this.log.debug(`[STATE CHANGE] Increase ${sumDeltaId} on ${delta} to ${prevVal}`);
-                    await this.setValueAsync(sumDeltaId, prevVal);
+                    const newValue = roundValue((prevValue || 0) + delta, PRECISION);
+                    this.log.debug(`[STATE CHANGE] Increase ${sumDeltaId} on ${delta} to ${newValue}`);
+                    await this.setValueAsync(sumDeltaId, newValue);
                 }
 
                 if (this.statDP[args.id].sumGroup &&
@@ -1876,19 +1876,19 @@ class Statistics extends utils.Adapter {
                         const sumGroupId = `temp.sumGroup.${this.statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[i]}`;
                         const sumGroupDelta = delta * factor * price;
 
-                        let prevVal = await this.getValueAsync(sumGroupId);
+                        const prevValue = await this.getValueAsync(sumGroupId);
 
                         // Check if the value not older than interval
                         // TODO
                         /*
                         if (ts) {
-                            prevVal = this.checkValue(prevVal || 0, ts, sumGroupId, nameObjects.sumGroup.temp[i]);
+                            prevValue = this.checkValue(prevValue || 0, ts, sumGroupId, nameObjects.sumGroup.temp[i]);
                         }
                         */
 
-                        prevVal = roundValue((prevVal || 0) + sumGroupDelta, PRECISION);
-                        this.log.debug(`[STATE CHANGE] Increase ${sumGroupId} on ${sumGroupDelta} to ${prevVal}`);
-                        await this.setValueAsync(sumGroupId, prevVal);
+                        const newValue = roundValue((prevValue || 0) + sumGroupDelta, PRECISION);
+                        this.log.debug(`[STATE CHANGE] Increase ${sumGroupId} on ${sumGroupDelta} to ${newValue}`);
+                        await this.setValueAsync(sumGroupId, newValue);
                     }
                 }
 
