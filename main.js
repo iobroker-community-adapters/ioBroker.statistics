@@ -1623,32 +1623,24 @@ class Statistics extends utils.Adapter {
         // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
         if (this.isTrueNew(id, value, 'count')) {
             this.tasks.push({
-                name: 'async',
+                name: 'promise',
                 args: { id },
-                callback: (args, callback) => {
+                callback: async (args) => {
                     if (!this.statDP[args.id]) {
-                        return callback && callback();
+                        return false;
                     }
 
                     for (let s = 0; s < nameObjects.count.temp.length; s++) {
                         if (nameObjects.count.temp[s] !== 'lastPulse') {
-                            this.tasks.push({
-                                name: 'async',
-                                args: {
-                                    id: `temp.count.${id}.${nameObjects.count.temp[s]}`
-                                },
-                                callback: (args, callback) => {
-                                    this.getValue(args.id, (err, oldVal) => {
-                                        oldVal = oldVal ? oldVal + 1 : 1;
-                                        this.log.debug(`[STATE CHANGE] Increase ${args.id} on 1 to ${oldVal}`);
-                                        this.setValue(args.id, oldVal, callback);
-                                    });
-                                }
-                            });
+                            const countId = `temp.count.${id}.${nameObjects.count.temp[s]}`;
+
+                            let prevValue = await this.getValueAsync(countId);
+                            prevValue = prevValue ? prevValue + 1 : 1;
+
+                            this.log.debug(`[STATE CHANGE] Increase ${countId} on 1 to ${prevValue}`);
+                            await this.setValueAsync(countId, prevValue);
                         }
                     }
-
-                    callback();
                 }
             });
         }
@@ -1663,7 +1655,7 @@ class Statistics extends utils.Adapter {
             Change to 1 -> increase by 1
             Value greater threshold -> increase by 1
         */
-        this.log.debug(`[STATE CHANGE] count call ${id} with ${value}`);
+        this.log.debug(`[STATE CHANGE] sum count call ${id} with ${value}`);
         // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
         // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
         if (this.isTrueNew(id, value, 'sumCount')) {
