@@ -16,11 +16,6 @@ async function assertStateEquals(harness, id, value) {
     expect(state.val, `${id} should have value ${value}`).to.equal(value);
 }
 
-async function assertStateIsNull(harness, id) {
-    const state = await harness.states.getStateAsync(id);
-    expect(state, `${id} should be null`).to.be.null;
-}
-
 // Run integration tests - See https://github.com/ioBroker/testing for a detailed explanation and further options
 tests.integration(path.join(__dirname, '..'), {
     allowedExitCodes: [11],
@@ -724,6 +719,84 @@ tests.integration(path.join(__dirname, '..'), {
                 }
 
                 await assertStateEquals(harness, `${tempId}.day`, 11);
+            });
+        });
+
+        suite('Test Boolean count to consumption', (getHarness) => {
+            /**
+             * @type {IntegrationTestHarness}
+             */
+            let harness;
+
+            const customBooleanObjId = '0_userdata.0.myCountConsumptionBoolean';
+
+            before(async function () {
+                this.timeout(60000);
+
+                harness = getHarness();
+                harness.changeAdapterConfig(harness.adapterName, {
+                    native: {
+                        impUnitPerImpulse: 1,
+                        impFactor: 1,
+                        timezone: 'Europe/Berlin',
+                        groups: []
+                    }
+                });
+
+                // Create test object
+                await harness.objects.setObjectAsync(customBooleanObjId, {
+                    type: 'state',
+                    common: {
+                        name: 'Test count consumption boolean',
+                        type: 'boolean',
+                        role: 'value',
+                        read: true,
+                        write: true,
+                        custom: {
+                            'statistics.0': {
+                                enabled: true, // relevant for this test
+                                count: false,
+                                fiveMin: false,
+                                sumCount: true,  // relevant for this test
+                                impUnitPerImpulse: 3,  // relevant for this test
+                                impUnit: 'Wh',  // relevant for this test
+                                timeCount: false,
+                                avg: false,
+                                minmax: false,
+                                sumDelta: false,
+                                sumIgnoreMinus: false,
+                                groupFactor: 1,
+                                logName: 'myCountConsumptionBoolean'
+                            }
+                        }
+                    },
+                    native: {},
+                });
+
+                return harness.startAdapterAndWait();
+            });
+
+            after(async function() {
+                await harness.objects.delObjectAsync(customBooleanObjId);
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                return sleep(1000);
+            });
+
+            it('calculation', async function () {
+                this.timeout(60000);
+                const tempId = `${harness.adapterName}.temp.sumCount.${customBooleanObjId}`;
+
+                for (let i = 0; i < 10; i++) {
+                    await harness.states.setStateAsync(customBooleanObjId, { val: true, ack: true });
+                    await sleep(100);
+                    await harness.states.setStateAsync(customBooleanObjId, { val: false, ack: true });
+                    await sleep(200);
+                }
+
+                await assertStateEquals(harness, `${tempId}.day`, 30);
             });
         });
     }
