@@ -6,23 +6,39 @@ const stateObjects = require('./lib/objects');
 
 const PRECISION = 5;
 
+const MIN15 = '15Min';
+const HOUR = 'hour';
+const DAY = 'day';
+const WEEK = 'week';
+const MONTH = 'month';
+const QUARTER = 'quarter';
+const YEAR = 'year';
+
 // Which objects should be created (see lib/objects.js)
 const nameObjects = {
     count: {
-        save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
-        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'last5Min', 'lastPulse']
+        save: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR],
+        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, 'last5Min', 'lastPulse']
     },
     sumCount: {
-        save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
-        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'lastPulse']
+        save: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR],
+        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, 'lastPulse']
     },
     sumDelta: {
-        save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'delta', 'last'],
-        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
+        save: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, 'delta', 'last'],
+        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR]
     },
     minmax: {
-        save: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax', 'absMin', 'absMax'],
-        temp: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax', 'last']
+        save: [
+            'dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin',
+            'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax',
+            'absMin', 'absMax'
+        ],
+        temp: [
+            'dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin',
+            'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax',
+            'last'
+        ]
     },
     avg: {
         save: ['15MinAvg', 'hourAvg', 'dayAvg', 'weekAvg', 'monthAvg', 'quarterAvg', 'yearAvg'],
@@ -38,20 +54,27 @@ const nameObjects = {
         ]
     },
     timeCount: {
-        save: ['onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear', 'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear'],
-        temp: ['onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear', 'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear', 'last01', 'last10', 'last']
+        save: [
+            'onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear',
+            'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear'
+        ],
+        temp: [
+            'onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear',
+            'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear',
+            'last01', 'last10', 'last'
+        ]
     },
     fiveMin: {
         save: ['mean5Min', 'dayMax5Min', 'dayMin5Min'],
         temp: ['mean5Min', 'dayMax5Min', 'dayMin5Min']
     },
     sumGroup: {
-        save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
-        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
+        save: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR],
+        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR]
     }
 };
 
-const column = ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'];
+const column = [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR];
 const copyToSave = ['count', 'sumCount', 'sumGroup', 'sumDelta'];
 
 function isTrue(val) {
@@ -164,7 +187,7 @@ class Statistics extends utils.Adapter {
         // Every 15 minutes
         try {
             this.crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
-                () => this.saveValues('15Min'),
+                () => this.saveValues(MIN15),
                 () => this.log.debug('stopped fifteenMinSave'), // This function is executed when the job stops
                 true,
                 timezone
@@ -176,7 +199,7 @@ class Statistics extends utils.Adapter {
         // Hourly at 00 min
         try {
             this.crons.hourSave = new CronJob('0 * * * *',
-                () => this.saveValues('hour'),
+                () => this.saveValues(HOUR),
                 () => this.log.debug('stopped hourSave'), // This function is executed when the job stops
                 true,
                 timezone
@@ -200,7 +223,7 @@ class Statistics extends utils.Adapter {
         // daily um 00:00
         try {
             this.crons.daySave = new CronJob('0 0 * * *',
-                () => this.saveValues('day'),
+                () => this.saveValues(DAY),
                 () => this.log.debug('stopped daySave'), // This function is executed when the job stops
                 true,
                 timezone
@@ -212,7 +235,7 @@ class Statistics extends utils.Adapter {
         // Monday 00:00
         try {
             this.crons.weekSave = new CronJob('0 0 * * 1',
-                () => this.saveValues('week'),
+                () => this.saveValues(WEEK),
                 () => this.log.debug('stopped weekSave'), // This function is executed when the job stops
                 true,
                 timezone
@@ -224,7 +247,7 @@ class Statistics extends utils.Adapter {
         // Monthly at 1 of every month at 00:00
         try {
             this.crons.monthSave = new CronJob('0 0 1 * *',
-                () => this.saveValues('month'),
+                () => this.saveValues(MONTH),
                 () => this.log.debug('stopped monthSave'), // This function is executed when the job stops
                 true,
                 timezone
@@ -236,7 +259,7 @@ class Statistics extends utils.Adapter {
         // Quarter
         try {
             this.crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
-                () => this.saveValues('quarter'),
+                () => this.saveValues(QUARTER),
                 () => this.log.debug('stopped quarterSave'), // This function is executed when the job stops
                 true,
                 timezone
@@ -248,7 +271,7 @@ class Statistics extends utils.Adapter {
         // New year
         try {
             this.crons.yearSave = new CronJob('0 0 1 0 *',
-                () => this.saveValues('year'), // Months is value range 0-11
+                () => this.saveValues(YEAR), // Months is value range 0-11
                 () => this.log.debug('stopped yearSave'),
                 true,
                 timezone
@@ -560,33 +583,33 @@ class Statistics extends utils.Adapter {
         now.setSeconds(0);
         now.setMilliseconds(0);
 
-        if (type === '15Min') {
+        if (type === MIN15) {
             // value may not be older than 15 min
             now.setMinutes(now.getMinutes() - now.getMinutes() % 15);
-        } else if (type === 'hour') {
+        } else if (type === HOUR) {
             // value may not be older than full hour
             now.setMinutes(0);
-        } else if (type === 'day') {
+        } else if (type === DAY) {
             // value may not be older than 00:00 of today
             now.setMinutes(0);
             now.setHours(0);
-        } else if (type === 'week') {
+        } else if (type === WEEK) {
             // value may not be older than 00:00 of today
             now.setMinutes(0);
             now.setHours(0);
-        } else if (type === 'month') {
+        } else if (type === MONTH) {
             // value may not be older than 00:00 of today
             now.setMinutes(0);
             now.setHours(0);
             now.setDate(1);
-        } else if (type === 'quarter') {
+        } else if (type === QUARTER) {
             // value may not be older than 00:00 of today
             now.setMinutes(0);
             now.setHours(0);
             now.setDate(1);
             // 0, 3, 6, 9
             now.setMonth(now.getMonth() - now.getMonth() % 3);
-        } else if (type === 'year') {
+        } else if (type === YEAR) {
             // value may not be older than 1 Januar of today
             now.setMinutes(0);
             now.setHours(0);
@@ -822,23 +845,22 @@ class Statistics extends utils.Adapter {
 
         this.log.debug(`[SAVE VALUES] saving ${timePeriod} values`);
 
-        const day = column.indexOf(timePeriod); // nameObjects[day] contains the time-related object value
+        const tp = column.indexOf(timePeriod); // nameObjects[day] contains the time-related object value
 
         // Schleife für alle Werte die durch day-variable bestimmt sind, gilt durch copyToSave für 'count', 'sumCount', 'sumGroup', 'sumDelta'
         // avg, timeCount /fivemin braucht extra Behandlung
         for (let t = 0; t < dayTypes.length; t++) {
             for (let s = 0; s < this.typeObjects[dayTypes[t]].length; s++) {
                 // ignore last5min
-                if (nameObjects[dayTypes[t]].temp[day] === 'last5Min') {
+                if (nameObjects[dayTypes[t]].temp[tp] === 'last5Min') {
                     continue;
                 }
                 const id = this.typeObjects[dayTypes[t]][s];
                 this.tasks.push({
                     name: 'promise',
                     args: {
-                        dayType: dayTypes[t],
-                        temp: `temp.${dayTypes[t]}.${id}.${nameObjects[dayTypes[t]].temp[day]}`,
-                        save: `save.${dayTypes[t]}.${id}.${nameObjects[dayTypes[t]].temp[day]}`
+                        temp: `temp.${dayTypes[t]}.${id}.${nameObjects[dayTypes[t]].temp[tp]}`,
+                        save: `save.${dayTypes[t]}.${id}.${nameObjects[dayTypes[t]].temp[tp]}`
                     },
                     callback: async (args) => {
                         await this.copyValue(args.temp, args.save);
@@ -869,7 +891,7 @@ class Statistics extends utils.Adapter {
         }
 
         // saving the daily fiveMin max/min
-        if (timePeriod === 'day' && this.typeObjects.fiveMin) {
+        if (timePeriod === DAY && this.typeObjects.fiveMin) {
             for (let s = 0; s < this.typeObjects.fiveMin.length; s++) {
                 const id = this.typeObjects.fiveMin[s];
 
@@ -899,7 +921,7 @@ class Statistics extends utils.Adapter {
 
         // timeCount hat andere Objektbezeichnungen und deswegen kann day aus timeperiod nicht benutzt werden
         // day erst ab 2ter Stelle im Array (ohne 15min und hour soll benutzt werden) -> also (day > 1) und [day-2]
-        if (day > 1) {
+        if (tp > 1) {
             if (this.typeObjects.timeCount) {
                 for (let s = 0; s < this.typeObjects.timeCount.length; s++) {
                     const id = this.typeObjects.timeCount[s];
@@ -907,8 +929,8 @@ class Statistics extends utils.Adapter {
                     this.tasks.push({
                         name: 'promise',
                         args: {
-                            temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2], // 0 is onDay
-                            save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2],
+                            temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[tp - 2], // 0 is onDay
+                            save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[tp - 2],
                         },
                         callback: async (args) => {
                             await this.copyValue(args.temp, args.save);
@@ -918,8 +940,8 @@ class Statistics extends utils.Adapter {
                     this.tasks.push({
                         name: 'promise',
                         args: {
-                            temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3], // +5 is offDay
-                            save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3],
+                            temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[tp + 3], // +5 is offDay
+                            save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[tp + 3],
                         },
                         callback: async (args) => {
                             await this.copyValue(args.temp, args.save);
@@ -931,15 +953,15 @@ class Statistics extends utils.Adapter {
 
         // minmax hat andere Objektbezeichnungen und deswegen kann day aus timeperiod nicht benutzt werden
         // day erst ab 2ter Stelle im Array (ohne 15min und hour soll benutzt werden) -> also (day > 1) und [day-2]
-        if (day > 1) { // bezieht sich auf column array
+        if (tp >= 2) { // DAY, WEEK, MONTH, QUARTER, YEAR
             if (this.typeObjects.minmax) {
                 for (let s = 0; s < this.typeObjects.minmax.length; s++) {
                     const id = this.typeObjects.minmax[s];
                     this.tasks.push({
                         name: 'promise',
                         args: {
-                            temp: 'temp.minmax.' + id + '.' + nameObjects.minmax.temp[day - 2], // 0 ist minDay
-                            save: 'save.minmax.' + id + '.' + nameObjects.minmax.temp[day - 2],
+                            temp: 'temp.minmax.' + id + '.' + nameObjects.minmax.temp[tp - 2], // 0 ist minDay
+                            save: 'save.minmax.' + id + '.' + nameObjects.minmax.temp[tp - 2],
                             actual: 'temp.minmax.' + id + '.last',
                         },
                         callback: this.copyValueActMinMax.bind(this)
@@ -947,8 +969,8 @@ class Statistics extends utils.Adapter {
                     this.tasks.push({
                         name: 'promise',
                         args: {
-                            temp: 'temp.minmax.' + id + '.' + nameObjects.minmax.temp[day + 3], // +5 ist maxDay
-                            save: 'save.minmax.' + id + '.' + nameObjects.minmax.temp[day + 3],
+                            temp: 'temp.minmax.' + id + '.' + nameObjects.minmax.temp[tp + 3], // +5 ist maxDay
+                            save: 'save.minmax.' + id + '.' + nameObjects.minmax.temp[tp + 3],
                             actual: 'temp.minmax.' + id + '.last',
                         },
                         callback: this.copyValueActMinMax.bind(this)
@@ -1372,18 +1394,18 @@ class Statistics extends utils.Adapter {
                     await this.setValueAsync(`temp.avg.${args.id}.last`, args.value);
 
                     for (let c = 0; c < column.length; c++) {
-                        const timeFrame = column[c];
+                        const timePeriod = column[c];
 
-                        let count = await this.getValueAsync(`temp.avg.${args.id}.${timeFrame}Count`);
+                        let count = await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}Count`);
                         count = count ? count + 1 : 1;
 
-                        await this.setValueAsync(`temp.avg.${args.id}.${timeFrame}Count`, count);
+                        await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Count`, count);
 
-                        let sum = await this.getValueAsync(`temp.avg.${args.id}.${timeFrame}Sum`);
+                        let sum = await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}Sum`);
                         sum = sum ? sum + args.value : args.value;
 
-                        await this.setValueAsync(`temp.avg.${args.id}.${timeFrame}Sum`, sum);
-                        await this.setValueAsync(`temp.avg.${args.id}.${timeFrame}Avg`, roundValue(sum / count, PRECISION));
+                        await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Sum`, sum);
+                        await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Avg`, roundValue(sum / count, PRECISION));
                     }
                 }
             });
@@ -1692,7 +1714,7 @@ class Statistics extends utils.Adapter {
                     }
 
                     this.log.debug(`[STATE CHANGE] new last for "temp.minmax.${args.id}.last: ${args.value}`);
-                    await this.setValueAsync(`temp.minmax.${args.id}.last`, args.value); // memorize current value to have it available when date change for actual=starting point of new time frame
+                    await this.setValueAsync(`temp.minmax.${args.id}.last`, args.value);
 
                     const absMin = await this.getValueAsync(`save.minmax.${args.id}.absMin`);
                     if (absMin === null || absMin > args.value) {
@@ -1706,64 +1728,20 @@ class Statistics extends utils.Adapter {
                         this.log.debug(`[STATE CHANGE] new abs max for "${args.id}: ${args.value}`);
                     }
 
-                    const yearMin = await this.getValueAsync(`temp.minmax.${args.id}.yearMin`);
-                    if (yearMin === null || yearMin > args.value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.yearMin`, args.value);
-                        this.log.debug(`[STATE CHANGE] new year min for "${args.id}: ${args.value}`);
-                    }
+                    for (let c = 2; c < column.length; c++) {
+                        const timePeriod = column[c];
 
-                    const yearMax = await this.getValueAsync(`temp.minmax.${args.id}.yearMax`);
-                    if (yearMax === null || yearMax < args.value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.yearMax`, args.value);
-                        this.log.debug(`[STATE CHANGE] new year max for "${args.id}: ${args.value}`);
-                    }
+                        const min = await this.getValueAsync(`temp.minmax.${args.id}.${timePeriod}Min`);
+                        if (min === null || min > args.value) {
+                            await this.setValueAsync(`temp.minmax.${args.id}.${timePeriod}Min`, args.value);
+                            this.log.debug(`[STATE CHANGE] new ${timePeriod} min for "${args.id}: ${args.value}`);
+                        }
 
-                    const quarterMin = await this.getValueAsync(`temp.minmax.${args.id}.quarterMin`);
-                    if (quarterMin === null || quarterMin > args.value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.quarterMin`, args.value);
-                        this.log.debug(`[STATE CHANGE] new quarter min for "${args.id}: ${args.value}`);
-                    }
-
-                    const quarterMax = await this.getValueAsync(`temp.minmax.${args.id}.quarterMax`);
-                    if (quarterMax === null || quarterMax < args.value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.quarterMax`, args.value);
-                        this.log.debug(`[STATE CHANGE] new quarter max for "${args.id}: ${args.value}`);
-                    }
-
-                    const monthMin = await this.getValueAsync(`temp.minmax.${args.id}.monthMin`);
-                    if (monthMin === null || monthMin > args.value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.monthMin`, args.value);
-                        this.log.debug(`[STATE CHANGE] new month min for "${args.id}: ${args.value}`);
-                    }
-
-                    const monthMax = await this.getValueAsync(`temp.minmax.${args.id}.monthMax`);
-                    if (monthMax === null || monthMax < args.value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.monthMax`, args.value);
-                        this.log.debug(`[STATE CHANGE] new month max for "${args.id}: ${args.value}`);
-                    }
-
-                    const weekMin = await this.getValueAsync(`temp.minmax.${args.id}.weekMin`);
-                    if (weekMin === null || weekMin > args.value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.weekMin`, args.value);
-                        this.log.debug(`[STATE CHANGE] new week min for "${args.id}: ${args.value}`);
-                    }
-
-                    const weekMax = await this.getValueAsync(`temp.minmax.${args.id}.weekMax`);
-                    if (weekMax === null || weekMax < args.value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.weekMax`, args.value);
-                        this.log.debug(`[STATE CHANGE] new week max for "${args.id}: ${args.value}`);
-                    }
-
-                    const dayMin = await this.getValueAsync(`temp.minmax.${args.id}.dayMin`);
-                    if (dayMin === null || dayMin > args.value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.dayMin`, args.value);
-                        this.log.debug(`[STATE CHANGE] new day min for "${args.id}: ${args.value}`);
-                    }
-
-                    const dayMax = await this.getValueAsync(`temp.minmax.${args.id}.dayMax`);
-                    if (dayMax === null || dayMax < args.value) {
-                        await this.setValueAsync(`temp.minmax.${args.id}.dayMax`, args.value);
-                        this.log.debug(`[STATE CHANGE] new day max for "${args.id}: ${args.value}`);
+                        const max = await this.getValueAsync(`temp.minmax.${args.id}.${timePeriod}Max`);
+                        if (max === null || max < args.value) {
+                            await this.setValueAsync(`temp.minmax.${args.id}.${timePeriod}Max`, args.value);
+                            this.log.debug(`[STATE CHANGE] new ${timePeriod} max for "${args.id}: ${args.value}`);
+                        }
                     }
                 }
             });
