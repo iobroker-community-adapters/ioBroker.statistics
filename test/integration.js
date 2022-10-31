@@ -173,6 +173,8 @@ tests.integration(path.join(__dirname, '..'), {
                     native: {},
                 });
 
+                await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
+
                 return harness.startAdapterAndWait();
             });
 
@@ -185,35 +187,37 @@ tests.integration(path.join(__dirname, '..'), {
 
                 const tempId = `${harness.adapterName}.0.temp.avg.${customNumberObjId}`;
 
-                // Round 1
-                await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
-                await sleep(500);
-
                 await assertStateEquals(harness, `${tempId}.last`, 10);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 1);
+                await assertStateEquals(harness, `${tempId}.daySum`, 10);
                 await assertStateEquals(harness, `${tempId}.dayAvg`, 10);
-                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
-                await assertStateEquals(harness, `${tempId}.dayMax`, 10);
+
+                // Round 1
+                await harness.states.setStateAsync(customNumberObjId, { val: 20, ack: true });
+                await sleep(500);
+
+                await assertStateEquals(harness, `${tempId}.last`, 20);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 2);
+                await assertStateEquals(harness, `${tempId}.daySum`, 30);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 15);
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 50, ack: true });
                 await sleep(500);
 
                 await assertStateEquals(harness, `${tempId}.last`, 50);
-                await assertStateEquals(harness, `${tempId}.dayCount`, 2);
-                await assertStateEquals(harness, `${tempId}.dayAvg`, 30);
-                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
-                await assertStateEquals(harness, `${tempId}.dayMax`, 50);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 3);
+                await assertStateEquals(harness, `${tempId}.daySum`, 80);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 26.66667);
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 20, ack: true });
                 await sleep(500);
 
                 await assertStateEquals(harness, `${tempId}.last`, 20);
-                await assertStateEquals(harness, `${tempId}.dayCount`, 3);
-                await assertStateEquals(harness, `${tempId}.dayAvg`, 26.66667);
-                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
-                await assertStateEquals(harness, `${tempId}.dayMax`, 50);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 4);
+                await assertStateEquals(harness, `${tempId}.daySum`, 100);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 25);
             });
         });
 
@@ -268,7 +272,7 @@ tests.integration(path.join(__dirname, '..'), {
                     native: {},
                 });
 
-                await harness.states.setStateAsync(customNumberObjId, { val: 1000, ack: true });
+                await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
 
                 return harness.startAdapterAndWait();
             });
@@ -288,21 +292,25 @@ tests.integration(path.join(__dirname, '..'), {
                 const saveId = `${harness.adapterName}.0.save.sumDelta.${customNumberObjId}`;
                 const tempId = `${harness.adapterName}.0.temp.sumDelta.${customNumberObjId}`;
 
+                await assertStateEquals(harness, `${saveId}.last`, 10);
+                await assertStateEquals(harness, `${saveId}.delta`, 0);
+                await assertStateEquals(harness, `${tempId}.day`, 0);
+
                 // Round 1
-                await harness.states.setStateAsync(customNumberObjId, { val: 1050, ack: true });
+                await harness.states.setStateAsync(customNumberObjId, { val: 50, ack: true });
                 await sleep(500);
 
-                await assertStateEquals(harness, `${saveId}.last`, 1050);
-                await assertStateIsNull(harness, `${saveId}.delta`);
-                await assertStateIsNull(harness, `${tempId}.day`);
+                await assertStateEquals(harness, `${saveId}.last`, 50);
+                await assertStateEquals(harness, `${saveId}.delta`, 40);
+                await assertStateEquals(harness, `${tempId}.day`, 40);
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 1051.5, ack: true });
                 await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 1051.5);
-                await assertStateEquals(harness, `${saveId}.delta`, 1.5);
-                await assertStateEquals(harness, `${tempId}.day`, 1.5);
+                await assertStateEquals(harness, `${saveId}.delta`, 1001.5);
+                await assertStateEquals(harness, `${tempId}.day`, 1041.5);
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 1010, ack: true });
@@ -310,7 +318,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await assertStateEquals(harness, `${saveId}.last`, 1010);
                 await assertStateEquals(harness, `${saveId}.delta`, -41.5);
-                await assertStateEquals(harness, `${tempId}.day`, -40);
+                await assertStateEquals(harness, `${tempId}.day`, 1000);
             });
         });
 
@@ -365,7 +373,7 @@ tests.integration(path.join(__dirname, '..'), {
                     native: {},
                 });
 
-                await harness.states.setStateAsync(customNumberObjId, { val: 1000, ack: true });
+                await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
 
                 return harness.startAdapterAndWait();
             });
@@ -385,21 +393,25 @@ tests.integration(path.join(__dirname, '..'), {
                 const saveId = `${harness.adapterName}.0.save.sumDelta.${customNumberObjId}`;
                 const tempId = `${harness.adapterName}.0.temp.sumDelta.${customNumberObjId}`;
 
+                await assertStateEquals(harness, `${saveId}.last`, 10);
+                await assertStateEquals(harness, `${saveId}.delta`, 0);
+                await assertStateEquals(harness, `${tempId}.day`, 0);
+
                 // Round 1
-                await harness.states.setStateAsync(customNumberObjId, { val: 1050, ack: true });
+                await harness.states.setStateAsync(customNumberObjId, { val: 50, ack: true });
                 await sleep(500);
 
-                await assertStateEquals(harness, `${saveId}.last`, 1050);
-                await assertStateIsNull(harness, `${saveId}.delta`);
-                await assertStateIsNull(harness, `${tempId}.day`);
+                await assertStateEquals(harness, `${saveId}.last`, 50);
+                await assertStateEquals(harness, `${saveId}.delta`, 40);
+                await assertStateEquals(harness, `${tempId}.day`, 40);
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 1051.5, ack: true });
                 await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 1051.5);
-                await assertStateEquals(harness, `${saveId}.delta`, 1.5);
-                await assertStateEquals(harness, `${tempId}.day`, 1.5);
+                await assertStateEquals(harness, `${saveId}.delta`, 1001.5);
+                await assertStateEquals(harness, `${tempId}.day`, 1041.5);
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 1010, ack: true });
@@ -407,7 +419,15 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await assertStateEquals(harness, `${saveId}.last`, 1010);
                 await assertStateEquals(harness, `${saveId}.delta`, 0);
-                await assertStateEquals(harness, `${tempId}.day`, 1.5);
+                await assertStateEquals(harness, `${tempId}.day`, 1041.5);
+
+                // Round 4
+                await harness.states.setStateAsync(customNumberObjId, { val: 1011, ack: true });
+                await sleep(500);
+
+                await assertStateEquals(harness, `${saveId}.last`, 1011);
+                await assertStateEquals(harness, `${saveId}.delta`, 1);
+                await assertStateEquals(harness, `${tempId}.day`, 1042.5);
             });
         });
 
@@ -482,17 +502,23 @@ tests.integration(path.join(__dirname, '..'), {
                 const saveId = `${harness.adapterName}.0.save.sumDelta.${customNumberObjId}`;
                 const tempId = `${harness.adapterName}.0.temp.avg.${customNumberObjId}`;
 
+                await assertStateEquals(harness, `${saveId}.last`, 10);
+                await assertStateEquals(harness, `${saveId}.delta`, 0);
+                await assertStateEquals(harness, `${tempId}.last`, 10);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 1);
+                await assertStateEquals(harness, `${tempId}.daySum`, 10);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 10);
+
                 // Round 1
                 await harness.states.setStateAsync(customNumberObjId, { val: 30, ack: true });
                 await sleep(500);
 
                 await assertStateEquals(harness, `${saveId}.last`, 30);
-                await assertStateIsNull(harness, `${saveId}.delta`);
-                await assertStateEquals(harness, `${tempId}.last`, 10);
-                await assertStateEquals(harness, `${tempId}.dayCount`, 1);
-                await assertStateEquals(harness, `${tempId}.dayAvg`, 10);
-                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
-                await assertStateEquals(harness, `${tempId}.dayMax`, 10);
+                await assertStateEquals(harness, `${saveId}.delta`, 20);
+                await assertStateEquals(harness, `${tempId}.last`, 20);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 2);
+                await assertStateEquals(harness, `${tempId}.daySum`, 30);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 15);
 
                 // Round 2
                 await harness.states.setStateAsync(customNumberObjId, { val: 60, ack: true });
@@ -501,10 +527,9 @@ tests.integration(path.join(__dirname, '..'), {
                 await assertStateEquals(harness, `${saveId}.last`, 60);
                 await assertStateEquals(harness, `${saveId}.delta`, 30);
                 await assertStateEquals(harness, `${tempId}.last`, 30);
-                await assertStateEquals(harness, `${tempId}.dayCount`, 2);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 3);
+                await assertStateEquals(harness, `${tempId}.daySum`, 60);
                 await assertStateEquals(harness, `${tempId}.dayAvg`, 20);
-                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
-                await assertStateEquals(harness, `${tempId}.dayMax`, 30);
 
                 // Round 3
                 await harness.states.setStateAsync(customNumberObjId, { val: 100, ack: true });
@@ -513,10 +538,9 @@ tests.integration(path.join(__dirname, '..'), {
                 await assertStateEquals(harness, `${saveId}.last`, 100);
                 await assertStateEquals(harness, `${saveId}.delta`, 40);
                 await assertStateEquals(harness, `${tempId}.last`, 40);
-                await assertStateEquals(harness, `${tempId}.dayCount`, 3);
-                await assertStateEquals(harness, `${tempId}.dayAvg`, 26.66667);
-                await assertStateEquals(harness, `${tempId}.dayMin`, 10);
-                await assertStateEquals(harness, `${tempId}.dayMax`, 40);
+                await assertStateEquals(harness, `${tempId}.dayCount`, 4);
+                await assertStateEquals(harness, `${tempId}.daySum`, 100);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 25);
             });
         });
 
@@ -595,6 +619,18 @@ tests.integration(path.join(__dirname, '..'), {
                 }
 
                 await assertStateEquals(harness, `${tempId}.day`, 10);
+            });
+
+            it('calculation no false', async function () {
+                this.timeout(60000);
+                const tempId = `${harness.adapterName}.0.temp.count.${customBooleanObjId}`;
+
+                for (let i = 0; i < 10; i++) {
+                    await harness.states.setStateAsync(customBooleanObjId, { val: true, ack: true });
+                    await sleep(10);
+                }
+
+                await assertStateEquals(harness, `${tempId}.day`, 11);
             });
         });
 
@@ -677,7 +713,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await assertStateEquals(harness, `${saveId}.last`, 1016.5);
                 await assertStateEquals(harness, `${saveId}.delta`, 3.3);
-                await assertStateEquals(harness, `${tempId}.day`, 13.2);
+                await assertStateEquals(harness, `${tempId}.day`, 16.5);
             });
         });
     }

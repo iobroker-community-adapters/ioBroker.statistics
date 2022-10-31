@@ -9,42 +9,34 @@ const PRECISION = 5;
 // Which objects should be created (see lib/objects.js)
 const nameObjects = {
     count: {
-        // Count impulses or counting operations
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'last5Min', 'lastPulse']
     },
     sumCount: {
-        // Addition of analogue values (consumption from pulses) Multiplication with price = costs
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'lastPulse']
     },
     sumDelta: {
-        // Consumption from continuous quantities () Multiplication with price = costs
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'delta', 'last'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
     },
     minmax: {
-        // Min/Max timeframe
         save: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax', 'absMin', 'absMax'],
         temp: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax', 'last']
     },
     avg: {
-        // Mean values etc.
         save: ['dayAvg'],
         temp: ['dayAvg', 'dayCount', 'daySum', 'last']
     },
     timeCount: {
-        // Operating time counting from status change
         save: ['onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear', 'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear'],
         temp: ['onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear', 'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear', 'last01', 'last10', 'last']
     },
     fiveMin: {
-        // 5 minutes, etc. only useful with impulses
         save: ['mean5Min', 'dayMax5Min', 'dayMin5Min'],
         temp: ['mean5Min', 'dayMax5Min', 'dayMin5Min']
     },
     sumGroup: {
-        // Total consumption from consecutive quantities
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
     }
