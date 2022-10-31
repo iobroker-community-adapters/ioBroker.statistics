@@ -799,5 +799,152 @@ tests.integration(path.join(__dirname, '..'), {
                 await assertStateEquals(harness, `${tempId}.day`, 30);
             });
         });
+
+        suite('Test SumGroup based on sumDelta', (getHarness) => {
+            /**
+             * @type {IntegrationTestHarness}
+             */
+            let harness;
+
+            const customNumberObjId1 = '0_userdata.0.mySumGroupByDeltaNumber1';
+            const customNumberObjId2 = '0_userdata.0.mySumGroupByDeltaNumber2';
+
+            before(async function () {
+                this.timeout(60000);
+
+                harness = getHarness();
+                harness.changeAdapterConfig(harness.adapterName, {
+                    native: {
+                        impUnitPerImpulse: 1,
+                        impFactor: 1,
+                        timezone: 'Europe/Berlin',
+                        groups: [
+                            {
+                                id: 'energy',
+                                name: 'total energy',
+                                price: 0.28,
+                                priceUnit: '€/kWh'
+                            }
+                        ]
+                    }
+                });
+
+                // Create test object
+                await harness.objects.setObjectAsync(customNumberObjId1, {
+                    type: 'state',
+                    common: {
+                        name: 'Test sum group by delta number',
+                        type: 'number',
+                        role: 'value',
+                        read: true,
+                        write: true,
+                        custom: {
+                            'statistics.0': {
+                                enabled: true, // relevant for this test
+                                count: false,
+                                fiveMin: false,
+                                sumCount: false,
+                                impUnitPerImpulse: 1,
+                                impUnit: '',
+                                timeCount: false,
+                                avg: false,
+                                minmax: false,
+                                sumDelta: true, // relevant for this test
+                                sumIgnoreMinus: true, // relevant for this test
+                                groupFactor: 0.001, // relevant for this test
+                                sumGroup: 'energy', // relevant for this test
+                                logName: 'mySumGroupByDeltaNumber'
+                            }
+                        }
+                    },
+                    native: {},
+                });
+
+                await harness.objects.setObjectAsync(customNumberObjId2, {
+                    type: 'state',
+                    common: {
+                        name: 'Test sum group by delta number',
+                        type: 'number',
+                        role: 'value',
+                        read: true,
+                        write: true,
+                        custom: {
+                            'statistics.0': {
+                                enabled: true, // relevant for this test
+                                count: false,
+                                fiveMin: false,
+                                sumCount: false,
+                                impUnitPerImpulse: 1,
+                                impUnit: '',
+                                timeCount: false,
+                                avg: false,
+                                minmax: false,
+                                sumDelta: true, // relevant for this test
+                                sumIgnoreMinus: false, // relevant for this test
+                                groupFactor: 0.005, // relevant for this test
+                                sumGroup: 'energy', // relevant for this test
+                                logName: 'mySumGroupByDeltaNumber'
+                            }
+                        }
+                    },
+                    native: {},
+                });
+
+                await harness.states.setStateAsync(customNumberObjId1, { val: 10, ack: true });
+                await harness.states.setStateAsync(customNumberObjId2, { val: 50, ack: true });
+
+                return harness.startAdapterAndWait();
+            });
+
+            after(async function() {
+                await harness.objects.delObjectAsync(customNumberObjId1);
+                await harness.objects.delObjectAsync(customNumberObjId2);
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                return sleep(1000);
+            });
+
+            it('calculation', async function () {
+                this.timeout(60000);
+
+                const tempId1 = `${harness.adapterName}.0.temp.sumDelta.${customNumberObjId1}`;
+                const tempId2 = `${harness.adapterName}.0.temp.sumDelta.${customNumberObjId2}`;
+                const sumGroupTempId = `${harness.adapterName}.0.temp.sumGroup.energy`;
+
+                await assertStateEquals(harness, `${tempId1}.day`, 0);
+                await assertStateEquals(harness, `${tempId2}.day`, 0);
+                //await assertStateEquals(harness, `${sumGroupTempId}.day`, 0);
+
+                // Round 1
+                await harness.states.setStateAsync(customNumberObjId1, { val: 20, ack: true }); // + 10
+                await harness.states.setStateAsync(customNumberObjId2, { val: 70, ack: true }); // + 20
+                await sleep(500);
+
+                await assertStateEquals(harness, `${tempId1}.day`, 10);
+                await assertStateEquals(harness, `${tempId2}.day`, 20);
+                await assertStateEquals(harness, `${sumGroupTempId}.day`, 0.0308); // (10 * 0.001 * 0.28) + (20 * 0.005 * 0.28)
+
+                // Round 2
+                await harness.states.setStateAsync(customNumberObjId1, { val: 50.5, ack: true }); // + 30.5
+                await harness.states.setStateAsync(customNumberObjId2, { val: 72.25, ack: true }); // + 2.25
+                await sleep(500);
+
+                await assertStateEquals(harness, `${tempId1}.day`, 40.5);
+                await assertStateEquals(harness, `${tempId2}.day`, 22.25);
+                await assertStateEquals(harness, `${sumGroupTempId}.day`, 0.04249); // (30.5 * 0.001 * 0.28) + (2.25 * 0.005 * 0.28)
+
+                // Round 3
+                await harness.states.setStateAsync(customNumberObjId1, { val: 40, ack: true }); // 0 (sumIgnoreMinus: true)
+                await harness.states.setStateAsync(customNumberObjId2, { val: 62.25, ack: true }); // - 10
+                await sleep(500);
+
+                await assertStateEquals(harness, `${tempId1}.day`, 40.5);
+                await assertStateEquals(harness, `${tempId2}.day`, 12.25);
+                await assertStateEquals(harness, `${sumGroupTempId}.day`, 0.02849); // (0 * 0.001 * 0.28) + (-10 * 0.005 * 0.28)
+
+            });
+        });
     }
 });
