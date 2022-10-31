@@ -61,6 +61,7 @@ NodeJS 14.5.0 is required
 * (klein0r) Allow sum delta to substract values (negative delta)
 * (klein0r) Delete states when option in unchecked
 * (klein0r) Removed dayMin and dayMax from avg (use minmax for that case!)
+* (klein0r) Fix: Calculation of avg when no change of value
 
 ### 2.2.0 (2022-07-07)
 * (klein0r) Added absolute min and max values

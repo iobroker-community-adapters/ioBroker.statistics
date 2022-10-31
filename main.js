@@ -596,22 +596,20 @@ class Statistics extends utils.Adapter {
         return value;
     }
 
-    // normales Umspeichern, temp wird auf 0 gesetzt!!
-    async copyValue(args) {
-        let value = await this.getValueAsync(args.temp);
+    async copyValue(sourceId, targetId) {
+        let value = await this.getValueAsync(sourceId);
 
         if (value !== null && value !== undefined) {
-            this.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
+            this.log.debug(`[SAVE VALUES] Process ${sourceId} = ${value}`);
             value = value || 0; // protect against NaN
 
-            await this.setValueStatAsync(args.save, value);
-            await this.setValueAsync(args.temp, 0);
+            await this.setValueStatAsync(targetId, value);
+            await this.setValueAsync(sourceId, 0);
         } else {
-            this.log.debug('[SAVE VALUES] Process ' + args.temp + ' => no value found');
+            this.log.debug(`[SAVE VALUES] Process ${targetId} => no value found`);
         }
     }
 
-    // Setzen der Ausgangspunkte für Min/Max mit aktuelle Wert, anstatt mit 0
     async copyValueActMinMax(args) {
         let value = await this.getValueAsync(args.temp);
 
@@ -630,28 +628,6 @@ class Statistics extends utils.Adapter {
             this.log.debug(`[SAVE VALUES & SET DAILY START MINMAX] Process ${args.temp} => no value found`);
             return false;
         }
-    }
-
-    // für gruppenwerte
-    async copyValueRound(args) {
-        const value = await this.getValueAsync(args.temp);
-
-        if (value !== null && value !== undefined) {
-            this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
-            await this.setValueStatAsync(args.save, roundValue(value, PRECISION));
-            await this.setValueAsync(args.temp, 0);
-        } else {
-            this.log.debug(`[SAVE VALUES] Process ${args.temp} => no value found`);
-        }
-    }
-
-    async copyValue0(sourceId, targetId) {
-        let value = await this.getValueAsync(sourceId);
-        value = value || 0;
-
-        this.log.debug(`[SAVE VALUES] Process ${sourceId} = ${value} to ${targetId}`);
-        await this.setValueStatAsync(targetId, value);
-        await this.setValueAsync(sourceId, 0);
     }
 
     setTimeCountMidnight() {
@@ -771,7 +747,7 @@ class Statistics extends utils.Adapter {
                 await this.defineObject('timeCount', id, logName); // type, id, name
             }
 
-            // 5minutes Values can only be determined when counting
+            // fiveMin
             if (obj.fiveMin && obj.count) {
                 this.log.debug(`[CREATION] fiveMin: ${id}`);
 
@@ -856,29 +832,28 @@ class Statistics extends utils.Adapter {
                         save: `save.${dayTypes[t]}.${id}.${nameObjects[dayTypes[t]].temp[day]}`
                     },
                     callback: async (args) => {
-                        if (args.dayType === 'sumGroup') {
-                            await this.copyValueRound(args);
-                        } else {
-                            await this.copyValue(args);
-                        }
+                        await this.copyValue(args.temp, args.save);
                     }
                 });
             }
         }
 
-        // avg values sind nur Tageswerte, also nur bei 'day' auszuwerten
-        // Setzen auf den aktuellen Wert fehlt noch irgendwie ? jetz copyValueActMinMAx
         if (timePeriod === 'day' && this.typeObjects.avg) {
             for (let s = 0; s < this.typeObjects.avg.length; s++) {
-                const id = this.typeObjects.avg[s];
                 this.tasks.push({
                     name: 'promise',
-                    args: { id },
+                    args: {
+                        id: this.typeObjects.avg[s]
+                    },
                     callback: async (args) => {
-                        await this.copyValue0(`temp.avg.${args.id}.dayAvg`, `save.avg.${args.id}.dayAvg`);
+                        await this.copyValue(`temp.avg.${args.id}.dayAvg`, `save.avg.${args.id}.dayAvg`);
 
-                        await this.setValueStatAsync(`temp.avg.${args.id}.dayCount`, 0);
-                        await this.setValueStatAsync(`temp.avg.${args.id}.daySum`, 0);
+                        const prevValue = await this.getValueAsync(`temp.avg.${args.id}.last`);
+
+                        await this.setValueStatAsync(`temp.avg.${args.id}.dayAvg`, prevValue);
+                        await this.setValueStatAsync(`temp.avg.${args.id}.dayCount`, 1);
+                        await this.setValueStatAsync(`temp.avg.${args.id}.daySum`, prevValue);
+                        await this.setValueStatAsync(`temp.avg.${args.id}.last`, prevValue);
                     }
                 });
             }
@@ -895,7 +870,9 @@ class Statistics extends utils.Adapter {
                         temp: `temp.fiveMin.${id}.dayMin5Min`,
                         save: `save.fiveMin.${id}.dayMin5Min`
                     },
-                    callback: this.copyValue.bind(this)
+                    callback: async (args) => {
+                        await  this.copyValue(args.temp, args.save);
+                    }
                 });
 
                 this.tasks.push({
@@ -904,7 +881,9 @@ class Statistics extends utils.Adapter {
                         temp: `temp.fiveMin.${id}.dayMax5Min`,
                         save: `save.fiveMin.${id}.dayMax5Min`
                     },
-                    callback: this.copyValue.bind(this)
+                    callback: async (args) => {
+                        await this.copyValue(args.temp, args.save);
+                    }
                 });
             }
         }
@@ -922,7 +901,9 @@ class Statistics extends utils.Adapter {
                             temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2], // 0 is onDay
                             save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2],
                         },
-                        callback: this.copyValue.bind(this)
+                        callback: async (args) => {
+                            await this.copyValue(args.temp, args.save);
+                        }
                     });
 
                     this.tasks.push({
@@ -931,7 +912,9 @@ class Statistics extends utils.Adapter {
                             temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3], // +5 is offDay
                             save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3],
                         },
-                        callback: this.copyValue.bind(this)
+                        callback: async (args) => {
+                            await this.copyValue(args.temp, args.save);
+                        }
                     });
                 }
             }
