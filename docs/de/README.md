@@ -37,6 +37,23 @@ Dies kann auch auf Verbräuche angewendet werden, die aus Impulszählung entsteh
 
 ## Optionen
 
+| Attribute         | Type    | State-Type |
+|-------------------|---------|------------|
+| enabled           | boolean | -          |
+| count             | boolean | boolean    |
+| fiveMin           | boolean | boolean    |
+| sumCount          | boolean | boolean    |
+| impUnitPerImpulse | number  | boolean    |
+| impUnit           | string  | boolean    |
+| timeCount         | boolean | boolean    |
+| avg               | boolean | number     |
+| minmax            | boolean | number     |
+| sumDelta          | boolean | number     |
+| sumIgnoreMinus    | boolean | number     |
+| groupFactor       | number  | boolean    |
+| logName           | string  | -          |
+| sumGroup          | string  | -          |
+
 ```json
 "custom": {
     "statistics.0": {

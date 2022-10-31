@@ -723,7 +723,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await assertStateEquals(harness, `${saveId}.last`, 1016.5);
                 await assertStateEquals(harness, `${saveId}.delta`, 3.3);
-                await assertStateEquals(harness, `${tempId}.day`, 13.2);
+                await assertStateEquals(harness, `${tempId}.day`, 16.5);
             });
         });
     }
