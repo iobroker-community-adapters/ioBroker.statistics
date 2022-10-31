@@ -787,7 +787,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             it('calculation', async function () {
                 this.timeout(60000);
-                const tempId = `${harness.adapterName}.temp.sumCount.${customBooleanObjId}`;
+                const tempId = `${harness.adapterName}.0.temp.sumCount.${customBooleanObjId}`;
 
                 for (let i = 0; i < 10; i++) {
                     await harness.states.setStateAsync(customBooleanObjId, { val: true, ack: true });
