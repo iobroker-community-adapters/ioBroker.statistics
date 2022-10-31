@@ -135,122 +135,122 @@ class Statistics extends utils.Adapter {
             await this.subscribeForeignObjectsAsync('*');
 
             this.log.info(`[SETUP] observing ${objCount} values after startup`);
+        }
 
-            // create cron-jobs
-            const timezone = this.config.timezone || 'Europe/Berlin';
+        // create cron-jobs
+        const timezone = this.config.timezone || 'Europe/Berlin';
 
-            // every 5min
-            try {
-                this.crons.avg5min = new CronJob('*/5 * * * *',
-                    () => this.fiveMin(),
-                    () => this.log.debug('stopped avg5min'), // This function is executed when the job stops
-                    true,
-                    timezone
-                );
-            } catch (e) {
-                this.log.error(`creating cron avg5min errored with: ${e}`);
-            }
+        // every 5min
+        try {
+            this.crons.avg5min = new CronJob('*/5 * * * *',
+                () => this.fiveMin(),
+                () => this.log.debug('stopped avg5min'), // This function is executed when the job stops
+                true,
+                timezone
+            );
+        } catch (e) {
+            this.log.error(`creating cron avg5min errored with: ${e}`);
+        }
 
-            // Every 15 minutes
-            try {
-                this.crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
-                    () => this.saveValues('15Min'),
-                    () => this.log.debug('stopped fifteenMinSave'), // This function is executed when the job stops
-                    true,
-                    timezone
-                );
-            } catch (e) {
-                this.log.error(`creating cron fifteenMinSave errored with: ${e}`);
-            }
+        // Every 15 minutes
+        try {
+            this.crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
+                () => this.saveValues('15Min'),
+                () => this.log.debug('stopped fifteenMinSave'), // This function is executed when the job stops
+                true,
+                timezone
+            );
+        } catch (e) {
+            this.log.error(`creating cron fifteenMinSave errored with: ${e}`);
+        }
 
-            // Hourly at 00 min
-            try {
-                this.crons.hourSave = new CronJob('0 * * * *',
-                    () => this.saveValues('hour'),
-                    () => this.log.debug('stopped hourSave'), // This function is executed when the job stops
-                    true,
-                    timezone
-                );
-            } catch (e) {
-                this.log.error(`creating cron hourSave errored with: ${e}`);
-            }
+        // Hourly at 00 min
+        try {
+            this.crons.hourSave = new CronJob('0 * * * *',
+                () => this.saveValues('hour'),
+                () => this.log.debug('stopped hourSave'), // This function is executed when the job stops
+                true,
+                timezone
+            );
+        } catch (e) {
+            this.log.error(`creating cron hourSave errored with: ${e}`);
+        }
 
-            // daily um 23:59:58
-            try {
-                this.crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
-                    () => this.setTimeCountMidnight(),
-                    () => this.log.debug('stopped dayTriggerTimeCount'), // This function is executed when the job stops
-                    true,
-                    timezone
-                );
-            } catch (e) {
-                this.log.error(`creating cron dayTriggerTimeCount errored with: ${e}`);
-            }
+        // daily um 23:59:58
+        try {
+            this.crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
+                () => this.setTimeCountMidnight(),
+                () => this.log.debug('stopped dayTriggerTimeCount'), // This function is executed when the job stops
+                true,
+                timezone
+            );
+        } catch (e) {
+            this.log.error(`creating cron dayTriggerTimeCount errored with: ${e}`);
+        }
 
-            // daily um 00:00
-            try {
-                this.crons.daySave = new CronJob('0 0 * * *',
-                    () => this.saveValues('day'),
-                    () => this.log.debug('stopped daySave'), // This function is executed when the job stops
-                    true,
-                    timezone
-                );
-            } catch (e) {
-                this.log.error(`creating cron daySave errored with: ${e}`);
-            }
+        // daily um 00:00
+        try {
+            this.crons.daySave = new CronJob('0 0 * * *',
+                () => this.saveValues('day'),
+                () => this.log.debug('stopped daySave'), // This function is executed when the job stops
+                true,
+                timezone
+            );
+        } catch (e) {
+            this.log.error(`creating cron daySave errored with: ${e}`);
+        }
 
-            // Monday 00:00
-            try {
-                this.crons.weekSave = new CronJob('0 0 * * 1',
-                    () => this.saveValues('week'),
-                    () => this.log.debug('stopped weekSave'), // This function is executed when the job stops
-                    true,
-                    timezone
-                );
-            } catch (e) {
-                this.log.error(`creating cron weekSave errored with: ${e}`);
-            }
+        // Monday 00:00
+        try {
+            this.crons.weekSave = new CronJob('0 0 * * 1',
+                () => this.saveValues('week'),
+                () => this.log.debug('stopped weekSave'), // This function is executed when the job stops
+                true,
+                timezone
+            );
+        } catch (e) {
+            this.log.error(`creating cron weekSave errored with: ${e}`);
+        }
 
-            // Monthly at 1 of every month at 00:00
-            try {
-                this.crons.monthSave = new CronJob('0 0 1 * *',
-                    () => this.saveValues('month'),
-                    () => this.log.debug('stopped monthSave'), // This function is executed when the job stops
-                    true,
-                    timezone
-                );
-            } catch (e) {
-                this.log.error(`creating cron monthSave errored with: ${e}`);
-            }
+        // Monthly at 1 of every month at 00:00
+        try {
+            this.crons.monthSave = new CronJob('0 0 1 * *',
+                () => this.saveValues('month'),
+                () => this.log.debug('stopped monthSave'), // This function is executed when the job stops
+                true,
+                timezone
+            );
+        } catch (e) {
+            this.log.error(`creating cron monthSave errored with: ${e}`);
+        }
 
-            // Quarter
-            try {
-                this.crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
-                    () => this.saveValues('quarter'),
-                    () => this.log.debug('stopped quarterSave'), // This function is executed when the job stops
-                    true,
-                    timezone
-                );
-            } catch (e) {
-                this.log.error(`creating cron quarterSave errored with: ${e}`);
-            }
+        // Quarter
+        try {
+            this.crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
+                () => this.saveValues('quarter'),
+                () => this.log.debug('stopped quarterSave'), // This function is executed when the job stops
+                true,
+                timezone
+            );
+        } catch (e) {
+            this.log.error(`creating cron quarterSave errored with: ${e}`);
+        }
 
-            // New year
-            try {
-                this.crons.yearSave = new CronJob('0 0 1 0 *',
-                    () => this.saveValues('year'), // Months is value range 0-11
-                    () => this.log.debug('stopped yearSave'),
-                    true,
-                    timezone
-                );
-            } catch (e) {
-                this.log.error(`creating cron yearSave errored with: ${e}`);
-            }
+        // New year
+        try {
+            this.crons.yearSave = new CronJob('0 0 1 0 *',
+                () => this.saveValues('year'), // Months is value range 0-11
+                () => this.log.debug('stopped yearSave'),
+                true,
+                timezone
+            );
+        } catch (e) {
+            this.log.error(`creating cron yearSave errored with: ${e}`);
+        }
 
-            for (const type in this.crons) {
-                if (Object.prototype.hasOwnProperty.call(this.crons, type) && this.crons[type]) {
-                    this.log.debug(`[SETUP] ${type} status = ${this.crons[type].running} next event: ${timeConverter(this.crons[type].nextDates())}`);
-                }
+        for (const type in this.crons) {
+            if (Object.prototype.hasOwnProperty.call(this.crons, type) && this.crons[type]) {
+                this.log.debug(`[SETUP] ${type} status = ${this.crons[type].running} next event: ${timeConverter(this.crons[type].nextDates())}`);
             }
         }
     }

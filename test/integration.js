@@ -77,6 +77,11 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.objects.delObjectAsync(customNumberObjId);
             });
 
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                return sleep(1000);
+            });
+
             it('enableStatistics - existing ID', function (done) {
                 this.timeout(60000);
 
@@ -180,6 +185,11 @@ tests.integration(path.join(__dirname, '..'), {
 
             after(async function() {
                 await harness.objects.delObjectAsync(customNumberObjId);
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -713,7 +723,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await assertStateEquals(harness, `${saveId}.last`, 1016.5);
                 await assertStateEquals(harness, `${saveId}.delta`, 3.3);
-                await assertStateEquals(harness, `${tempId}.day`, 16.5);
+                await assertStateEquals(harness, `${tempId}.day`, 13.2);
             });
         });
     }
