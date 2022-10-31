@@ -30,8 +30,8 @@ const nameObjects = {
     },
     avg: {
         // Mean values etc.
-        save: ['dayMin', 'dayMax', 'dayAvg'],
-        temp: ['dayMin', 'dayMax', 'dayAvg', 'dayCount', 'daySum', 'last']
+        save: ['dayAvg'],
+        temp: ['dayAvg', 'dayCount', 'daySum', 'last']
     },
     timeCount: {
         // Operating time counting from status change
@@ -653,24 +653,13 @@ class Statistics extends utils.Adapter {
         }
     }
 
-    // avg Werte umspeichern und auf 0 setzen
-    async copyValue0(args) {
-        let value = await this.getValueAsync(args.temp);
+    async copyValue0(sourceId, targetId) {
+        let value = await this.getValueAsync(sourceId);
         value = value || 0;
 
-        this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
-        await this.setValueStatAsync(args.save, value);
-        await this.setValueAsync(args.temp, 0);
-    }
-
-    // Betriebszeitzählung umspeichern und temp Werte auf 0 setzen
-    async copyValue1000(args) {
-        const value = await this.getValueAsync(args.temp);
-
-        // value = Math.floor((value || 0) / 1000);
-        this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
-        await this.setValueStatAsync(args.save, value);
-        await this.setValueAsync(args.temp, 0);
+        this.log.debug(`[SAVE VALUES] Process ${sourceId} = ${value} to ${targetId}`);
+        await this.setValueStatAsync(targetId, value);
+        await this.setValueAsync(sourceId, 0);
     }
 
     setTimeCountMidnight() {
@@ -854,9 +843,9 @@ class Statistics extends utils.Adapter {
             }
         }
 
-        const day = column.indexOf(timePeriod);  // nameObjects[day] contains the time-related object value
-        // all values
         this.log.debug(`[SAVE VALUES] saving ${timePeriod} values`);
+
+        const day = column.indexOf(timePeriod); // nameObjects[day] contains the time-related object value
 
         // Schleife für alle Werte die durch day-variable bestimmt sind, gilt durch copyToSave für 'count', 'sumCount', 'sumGroup', 'sumDelta'
         // avg, timeCount /fivemin braucht extra Behandlung
@@ -892,51 +881,18 @@ class Statistics extends utils.Adapter {
                 const id = this.typeObjects.avg[s];
                 this.tasks.push({
                     name: 'promise',
-                    args: {
-                        temp: `temp.avg.${id}.dayMin`,
-                        save: `save.avg.${id}.dayMin`,
-                        actual: `temp.avg.${id}.last`,
-                    },
-                    callback: this.copyValueActMinMax.bind(this)
-                });
-                this.tasks.push({
-                    name: 'promise',
-                    args: {
-                        temp: `temp.avg.${id}.dayMax`,
-                        save: `save.avg.${id}.dayMax`,
-                        actual: `temp.avg.${id}.last`,
-                    },
-                    callback: this.copyValueActMinMax.bind(this)
-                });
-                this.tasks.push({
-                    name: 'promise',
-                    args: {
-                        temp: `temp.avg.${id}.dayAvg`,
-                        save: `save.avg.${id}.dayAvg`,
-                    },
-                    callback: this.copyValue0.bind(this)
-                });
-                // just reset the counter
-                this.tasks.push({
-                    name: 'promise',
-                    args: {
-                        temp: `temp.avg.${id}.dayCount`
-                    },
-                    callback: async (args) => await this.setValueStatAsync(args.temp, 0)
-                });
-                // just reset the counter
-                this.tasks.push({
-                    name: 'promise',
-                    args: {
-                        temp: `temp.avg.${id}.daySum`
-                    },
-                    callback: async (args) => await this.setValueStatAsync(args.temp, 0)
+                    args: { id },
+                    callback: async (args) => {
+                        await this.copyValue0(`temp.avg.${args.id}.dayAvg`, `save.avg.${args.id}.dayAvg`);
+
+                        await this.setValueStatAsync(`temp.avg.${args.id}.dayCount`, 0);
+                        await this.setValueStatAsync(`temp.avg.${args.id}.daySum`, 0);
+                    }
                 });
             }
         }
 
         // saving the daily fiveMin max/min
-        // Setzen auf den aktuellen Wert fehlt noch irgendwie ?
         if (timePeriod === 'day' && this.typeObjects.fiveMin) {
             for (let s = 0; s < this.typeObjects.fiveMin.length; s++) {
                 const id = this.typeObjects.fiveMin[s];
@@ -971,19 +927,19 @@ class Statistics extends utils.Adapter {
                     this.tasks.push({
                         name: 'promise',
                         args: {
-                            temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2], // 0 ist onDay
+                            temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2], // 0 is onDay
                             save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2],
                         },
-                        callback: this.copyValue1000.bind(this)
+                        callback: this.copyValue.bind(this)
                     });
 
                     this.tasks.push({
                         name: 'promise',
                         args: {
-                            temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3], // +5 ist offDay
+                            temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3], // +5 is offDay
                             save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3],
                         },
-                        callback: this.copyValue1000.bind(this)
+                        callback: this.copyValue.bind(this)
                     });
                 }
             }
@@ -1443,18 +1399,6 @@ class Statistics extends utils.Adapter {
 
                     await this.setValueAsync(`temp.avg.${args.id}.daySum`, sum);
                     await this.setValueAsync(`temp.avg.${args.id}.dayAvg`, roundValue(sum / count, PRECISION));
-
-                    const tempMin = await this.getValueAsync(`temp.avg.${args.id}.dayMin`);
-                    if (tempMin === null || tempMin > args.value) {
-                        await this.setValueAsync(`temp.avg.${args.id}.dayMin`, args.value);
-                        this.log.debug(`[STATE CHANGE] new min for "temp.avg.${args.id}.dayMin: ${args.value}`);
-                    }
-
-                    const tempMax = await this.getValueAsync(`temp.avg.${args.id}.dayMax`);
-                    if (tempMax === null || tempMax < args.value) {
-                        await this.setValueAsync(`temp.avg.${args.id}.dayMax`, args.value);
-                        this.log.debug(`[STATE CHANGE] new max for "temp.avg.${args.id}.dayMax: ${args.value}`);
-                    }
                 }
             });
             isStart && this.processTasks();
