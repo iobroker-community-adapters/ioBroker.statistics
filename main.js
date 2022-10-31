@@ -1123,7 +1123,7 @@ class Statistics extends utils.Adapter {
 
             obj.native.addr = id;
 
-            if (unit && !['dayCount'].includes(objects[s])) {
+            if (unit && !['dayCount', 'lastPulse'].includes(objects[s])) {
                 obj.common.unit = unit;
             }
 
@@ -1152,16 +1152,16 @@ class Statistics extends utils.Adapter {
                 },
                 callback: async (args) => {
                     const targetId = `save.${args.type}.${args.trueId}.${args.name}`;
-
-                    this.log.debug(`[SET INITIAL] ${args.type} -> ${targetId}`);
                     const currentVal = await this.getValueAsync(targetId);
-
-                    this.log.debug(`[SET INITIAL] "${args.trueId}" value ${targetId} exists ? ${currentVal} in obj: ${targetId}`);
 
                     if (currentVal === null) {
                         this.log.debug(`[SET INITIAL] "${args.trueId}" -> ${targetId}`);
 
-                        if (args.type === 'sumDelta') {
+                        if (args.type === 'count') {
+                            await this.setValueAsync(targetId, 0);
+                        } else if (args.type === 'sumCount') {
+                            await this.setValueAsync(targetId, 0);
+                        } else if (args.type === 'sumDelta') {
                             if (args.name === 'last') {
                                 const sumDeltaInitVal = await this.getForeignStateAsync(args.trueId);
 
@@ -1171,7 +1171,18 @@ class Statistics extends utils.Adapter {
                                 }
                             } else if (args.name === 'delta') {
                                 await this.setValueAsync(targetId, 0);
+                            } else {
+                                await this.setValueAsync(targetId, 0);
                             }
+                        } else if (args.type === 'minmax') {
+                            const minmaxInitVal = await this.getForeignStateAsync(args.trueId);
+
+                            if (minmaxInitVal && minmaxInitVal.val !== null) {
+                                this.log.debug(`[SET INITIAL] ${args.trueId} minmax init value: ${minmaxInitVal.val}`);
+                                await this.setValueAsync(targetId, minmaxInitVal.val);
+                            }
+                        } else if (args.type === 'timeCount') {
+                            await this.setValueAsync(targetId, 0);
                         }
                     }
                 }
@@ -1189,11 +1200,7 @@ class Statistics extends utils.Adapter {
                 },
                 callback: async (args) => {
                     const targetId = `temp.${args.type}.${args.trueId}.${args.name}`;
-
-                    this.log.debug(`[SET INITIAL] ${args.type} -> ${targetId}`);
                     const currentVal = await this.getValueAsync(targetId);
-
-                    this.log.debug(`[SET INITIAL] "${args.trueId}" value ${targetId} exists ? ${currentVal} in obj: ${targetId}`);
 
                     if (currentVal === null) {
                         this.log.debug(`[SET INITIAL] "${args.trueId}" -> ${targetId}`);
@@ -1202,7 +1209,7 @@ class Statistics extends utils.Adapter {
                             const countInitVal = await this.getForeignStateAsync(args.trueId);
 
                             if (args.name === 'lastPulse') {
-                                if (countInitVal && countInitVal.val) {
+                                if (countInitVal && countInitVal.val !== null) {
                                     if (isTrue(countInitVal.val) || isFalse(countInitVal.val)) {
                                         this.log.debug(`[SET INITIAL] "${args.trueId}" count init value: ${countInitVal.val}`);
                                         await this.setValueAsync(targetId, countInitVal.val);
@@ -1217,7 +1224,7 @@ class Statistics extends utils.Adapter {
                             const sumCountInitVal = await this.getForeignStateAsync(args.trueId);
 
                             if (args.name === 'lastPulse') {
-                                if (sumCountInitVal && sumCountInitVal.val) {
+                                if (sumCountInitVal && sumCountInitVal.val !== null) {
                                     if (isTrue(sumCountInitVal.val) || isFalse(sumCountInitVal.val)) {
                                         this.log.debug(`[SET INITIAL] "${args.trueId}" sumCount init value: ${sumCountInitVal.val}`);
                                         await this.setValueAsync(targetId, sumCountInitVal.val);
@@ -1225,6 +1232,17 @@ class Statistics extends utils.Adapter {
                                         this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in sumCount`);
                                     }
                                 }
+                            } else {
+                                await this.setValueAsync(targetId, 0);
+                            }
+                        } else if (args.type === 'sumDelta') {
+                            await this.setValueAsync(targetId, 0);
+                        } else if (args.type === 'minmax') {
+                            const minmaxInitVal = await this.getForeignStateAsync(args.trueId);
+
+                            if (minmaxInitVal && minmaxInitVal.val !== null) {
+                                this.log.debug(`[SET INITIAL] ${args.trueId} minmax init value: ${minmaxInitVal.val}`);
+                                await this.setValueAsync(targetId, minmaxInitVal.val);
                             }
                         } else if (args.type === 'avg') {
                             const avgInitVal = await this.getForeignStateAsync(args.trueId);
@@ -1238,19 +1256,12 @@ class Statistics extends utils.Adapter {
                                     await this.setValueAsync(targetId, avgInitVal.val);
                                 }
                             }
-                        } else if (args.type === 'minmax') {
-                            const minmaxInitVal = await this.getForeignStateAsync(args.trueId);
-
-                            if (minmaxInitVal && minmaxInitVal.val !== null) {
-                                this.log.debug(`[SET INITIAL] ${args.trueId} minmax init value: ${minmaxInitVal.val}`);
-                                await this.setValueAsync(targetId, minmaxInitVal.val);
-                            }
                         } else if (args.type === 'timeCount') {
                             if (['last01', 'last10', 'last'].includes(args.name)) {
                                 const timeCountInitVal = await this.getForeignStateAsync(args.trueId);
 
                                 if (args.name === 'last01') {
-                                    if (timeCountInitVal && timeCountInitVal.val) {
+                                    if (timeCountInitVal && timeCountInitVal.val !== null) {
                                         if (isFalse(timeCountInitVal.val)) {
                                             this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: NOW`);
                                             await this.setValueAsync(targetId, Date.now());
@@ -1262,7 +1273,7 @@ class Statistics extends utils.Adapter {
                                         }
                                     }
                                 } else if (args.name === 'last10') {
-                                    if (timeCountInitVal && timeCountInitVal.val) {
+                                    if (timeCountInitVal && timeCountInitVal.val !== null) {
                                         if (isFalse(timeCountInitVal.val)) {
                                             this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: ${timeCountInitVal.lc}`);
                                             await this.setValueAsync(targetId, timeCountInitVal.lc);
@@ -1274,7 +1285,7 @@ class Statistics extends utils.Adapter {
                                         }
                                     }
                                 } else if (args.name === 'last') {
-                                    if (timeCountInitVal && timeCountInitVal.val) {
+                                    if (timeCountInitVal && timeCountInitVal.val !== null) {
                                         if (isTrue(timeCountInitVal.val) || isFalse(timeCountInitVal.val)) {
                                             this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: ${timeCountInitVal.val}`);
                                             await this.setValueAsync(targetId, timeCountInitVal.val);
@@ -1283,6 +1294,8 @@ class Statistics extends utils.Adapter {
                                         }
                                     }
                                 }
+                            } else {
+                                await this.setValueAsync(targetId, 0);
                             }
                         }
                     }

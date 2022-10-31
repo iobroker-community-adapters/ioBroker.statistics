@@ -56,6 +56,7 @@ iobroker add statistics
 NodeJS 14.5.0 is required
 
 * (klein0r) Added promises to avoid parallel execution of tasks (lead to incorrect calculations)
+* (klein0r) Fixed init values for save/temp
 * (klein0r) Added option to enable statistics for objects via sendTo
 * (klein0r) Allow sum delta to substract values (negative delta)
 
