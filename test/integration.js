@@ -554,6 +554,89 @@ tests.integration(path.join(__dirname, '..'), {
             });
         });
 
+        suite('Test Number sumDelta (fast changing)', (getHarness) => {
+            /**
+             * @type {IntegrationTestHarness}
+             */
+            let harness;
+
+            const customNumberObjId = '0_userdata.0.mySumDeltaFastNumber';
+
+            before(async function () {
+                this.timeout(60000);
+
+                harness = getHarness();
+                harness.changeAdapterConfig(harness.adapterName, {
+                    native: {
+                        impUnitPerImpulse: 1,
+                        impFactor: 1,
+                        timezone: 'Europe/Berlin',
+                        groups: []
+                    }
+                });
+
+                // Create test object
+                await harness.objects.setObjectAsync(customNumberObjId, {
+                    type: 'state',
+                    common: {
+                        name: 'Test sum delta number',
+                        type: 'number',
+                        role: 'value',
+                        read: true,
+                        write: true,
+                        custom: {
+                            'statistics.0': {
+                                enabled: true, // relevant for all tests
+                                count: false,
+                                fiveMin: false,
+                                sumCount: false,
+                                impUnitPerImpulse: 1,
+                                impUnit: '',
+                                timeCount: false,
+                                avg: false,
+                                minmax: false,
+                                sumDelta: true, // relevant for this test
+                                sumIgnoreMinus: false, // relevant for this test
+                                groupFactor: 1,
+                                logName: 'mySumDeltaFastNumber'
+                            }
+                        }
+                    },
+                    native: {},
+                });
+
+                await harness.states.setStateAsync(customNumberObjId, { val: 1000, ack: true });
+
+                return harness.startAdapterAndWait();
+            });
+
+            after(async function() {
+                await harness.objects.delObjectAsync(customNumberObjId);
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                return sleep(1000);
+            });
+
+            it('calculation', async function () {
+                this.timeout(60000);
+
+                for (let i = 1; i <= 5; i++) {
+                    await harness.states.setStateAsync(customNumberObjId, { val: 1000 + (i * 3.3), ack: true });
+                }
+
+                await sleep(3000);
+
+                const saveId = `${harness.adapterName}.0.save.sumDelta.${customNumberObjId}`;
+                const tempId = `${harness.adapterName}.0.temp.sumDelta.${customNumberObjId}`;
+
+                await assertStateEquals(harness, `${saveId}.last`, 1016.5);
+                await assertStateEquals(harness, `${saveId}.delta`, 3.3);
+                await assertStateEquals(harness, `${tempId}.day`, 16.5);
+            });
+        });
+
         suite('Test Boolean count', (getHarness) => {
             /**
              * @type {IntegrationTestHarness}
@@ -641,89 +724,6 @@ tests.integration(path.join(__dirname, '..'), {
                 }
 
                 await assertStateEquals(harness, `${tempId}.day`, 11);
-            });
-        });
-
-        suite('Test Number sumDelta (fast changing)', (getHarness) => {
-            /**
-             * @type {IntegrationTestHarness}
-             */
-            let harness;
-
-            const customNumberObjId = '0_userdata.0.mySumDeltaFastNumber';
-
-            before(async function () {
-                this.timeout(60000);
-
-                harness = getHarness();
-                harness.changeAdapterConfig(harness.adapterName, {
-                    native: {
-                        impUnitPerImpulse: 1,
-                        impFactor: 1,
-                        timezone: 'Europe/Berlin',
-                        groups: []
-                    }
-                });
-
-                // Create test object
-                await harness.objects.setObjectAsync(customNumberObjId, {
-                    type: 'state',
-                    common: {
-                        name: 'Test sum delta number',
-                        type: 'number',
-                        role: 'value',
-                        read: true,
-                        write: true,
-                        custom: {
-                            'statistics.0': {
-                                enabled: true, // relevant for all tests
-                                count: false,
-                                fiveMin: false,
-                                sumCount: false,
-                                impUnitPerImpulse: 1,
-                                impUnit: '',
-                                timeCount: false,
-                                avg: false,
-                                minmax: false,
-                                sumDelta: true, // relevant for this test
-                                sumIgnoreMinus: false, // relevant for this test
-                                groupFactor: 1,
-                                logName: 'mySumDeltaFastNumber'
-                            }
-                        }
-                    },
-                    native: {},
-                });
-
-                await harness.states.setStateAsync(customNumberObjId, { val: 1000, ack: true });
-
-                return harness.startAdapterAndWait();
-            });
-
-            after(async function() {
-                await harness.objects.delObjectAsync(customNumberObjId);
-            });
-
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                return sleep(1000);
-            });
-
-            it('calculation', async function () {
-                this.timeout(60000);
-
-                for (let i = 1; i <= 5; i++) {
-                    await harness.states.setStateAsync(customNumberObjId, { val: 1000 + (i * 3.3), ack: true });
-                }
-
-                await sleep(3000);
-
-                const saveId = `${harness.adapterName}.0.save.sumDelta.${customNumberObjId}`;
-                const tempId = `${harness.adapterName}.0.temp.sumDelta.${customNumberObjId}`;
-
-                await assertStateEquals(harness, `${saveId}.last`, 1016.5);
-                await assertStateEquals(harness, `${saveId}.delta`, 3.3);
-                await assertStateEquals(harness, `${tempId}.day`, 16.5);
             });
         });
     }
