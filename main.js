@@ -25,8 +25,17 @@ const nameObjects = {
         temp: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax', 'last']
     },
     avg: {
-        save: ['dayAvg'],
-        temp: ['dayAvg', 'dayCount', 'daySum', 'last']
+        save: ['15MinAvg', 'hourAvg', 'dayAvg', 'weekAvg', 'monthAvg', 'quarterAvg', 'yearAvg'],
+        temp: [
+            '15MinAvg', '15MinCount', '15MinSum',
+            'hourAvg', 'hourCount', 'hourSum',
+            'dayAvg', 'dayCount', 'daySum',
+            'weekAvg', 'weekCount', 'weekSum',
+            'monthAvg', 'monthCount', 'monthSum',
+            'quarterAvg', 'quarterCount', 'quarterSum',
+            'yearAvg', 'yearCount', 'yearSum',
+            'last'
+        ]
     },
     timeCount: {
         save: ['onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear', 'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear'],
@@ -838,22 +847,22 @@ class Statistics extends utils.Adapter {
             }
         }
 
-        if (timePeriod === 'day' && this.typeObjects.avg) {
+        if (this.typeObjects.avg) {
             for (let s = 0; s < this.typeObjects.avg.length; s++) {
                 this.tasks.push({
                     name: 'promise',
                     args: {
-                        id: this.typeObjects.avg[s]
+                        id: this.typeObjects.avg[s],
+                        timePeriod: timePeriod
                     },
                     callback: async (args) => {
-                        await this.copyValue(`temp.avg.${args.id}.dayAvg`, `save.avg.${args.id}.dayAvg`);
+                        await this.copyValue(`temp.avg.${args.id}.${timePeriod}Avg`, `save.avg.${args.id}.${timePeriod}Avg`);
 
                         const prevValue = await this.getValueAsync(`temp.avg.${args.id}.last`);
 
-                        await this.setValueStatAsync(`temp.avg.${args.id}.dayAvg`, prevValue);
-                        await this.setValueStatAsync(`temp.avg.${args.id}.dayCount`, 1);
-                        await this.setValueStatAsync(`temp.avg.${args.id}.daySum`, prevValue);
-                        await this.setValueStatAsync(`temp.avg.${args.id}.last`, prevValue);
+                        await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Avg`, prevValue);
+                        await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Count`, 1);
+                        await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Sum`, prevValue);
                     }
                 });
             }
@@ -1161,7 +1170,7 @@ class Statistics extends utils.Adapter {
                             const avgInitVal = await this.getForeignStateAsync(args.trueId);
 
                             if (avgInitVal && avgInitVal.val !== null) {
-                                if (args.name === 'dayCount') {
+                                if (args.name.indexOf('Count') > -1) {
                                     this.log.debug(`[SET INITIAL] ${args.trueId} avg init value: 1`);
                                     await this.setValueAsync(targetId, 1);
                                 } else {
@@ -1340,13 +1349,11 @@ class Statistics extends utils.Adapter {
     }
 
     onStateChangeAvgValue(id, value) {
-        const isStart = !this.tasks.length;
-        /**
-         * Comparison between last min / max and now transmitted value
-         */
-        value = parseFloat(value); // || 0; if NaN we should not put a zero inside, better to skip everything
+        value = parseFloat(value);
 
         if (!isNaN(value)) {
+            const isStart = !this.tasks.length;
+
             this.tasks.push({
                 name: 'promise',
                 args: {
@@ -1361,21 +1368,26 @@ class Statistics extends utils.Adapter {
                     }
 
                     this.log.debug(`[STATE CHANGE] new last for "temp.avg.${args.id}.last: ${args.value}`);
-                    // memorize current value to have it available when date change for actual=starting point of new time frame
+
                     await this.setValueAsync(`temp.avg.${args.id}.last`, args.value);
 
-                    let count = await this.getValueAsync(`temp.avg.${args.id}.dayCount`);
-                    count = count ? count + 1 : 1;
+                    for (let c = 0; c < column.length; c++) {
+                        const timeFrame = column[c];
 
-                    await this.setValueAsync(`temp.avg.${args.id}.dayCount`, count);
+                        let count = await this.getValueAsync(`temp.avg.${args.id}.${timeFrame}Count`);
+                        count = count ? count + 1 : 1;
 
-                    let sum = await this.getValueAsync(`temp.avg.${args.id}.daySum`);
-                    sum = sum ? sum + args.value : args.value;
+                        await this.setValueAsync(`temp.avg.${args.id}.${timeFrame}Count`, count);
 
-                    await this.setValueAsync(`temp.avg.${args.id}.daySum`, sum);
-                    await this.setValueAsync(`temp.avg.${args.id}.dayAvg`, roundValue(sum / count, PRECISION));
+                        let sum = await this.getValueAsync(`temp.avg.${args.id}.${timeFrame}Sum`);
+                        sum = sum ? sum + args.value : args.value;
+
+                        await this.setValueAsync(`temp.avg.${args.id}.${timeFrame}Sum`, sum);
+                        await this.setValueAsync(`temp.avg.${args.id}.${timeFrame}Avg`, roundValue(sum / count, PRECISION));
+                    }
                 }
             });
+
             isStart && this.processTasks();
         }
     }
