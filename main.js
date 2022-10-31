@@ -128,9 +128,11 @@ class Statistics extends utils.Adapter {
                         const id = doc.rows[i].id;
                         const custom = doc.rows[i].value;
                         if (!custom || !custom[this.namespace] || !custom[this.namespace].enabled) continue;
-                        this.statDP[id] = custom[this.namespace]; // all-inclusive assumption of all answers
-                        objCount++;
+
                         this.log.info(`[SETUP] enabled statistics for ${id}`);
+
+                        this.statDP[id] = custom[this.namespace];
+                        objCount++;
                     }
                 }
 
@@ -494,19 +496,13 @@ class Statistics extends utils.Adapter {
 
     async getValueAsync(id) {
         return new Promise((resolve, reject) => {
-            if (Object.prototype.hasOwnProperty.call(this.states, id)) {
-                resolve(this.states[id]);
-            } else {
-                this.getState(id, (err, state) => {
-                    if (err) {
-                        reject(err);
-                    }
+            this.getValue(id, (err, value) => {
+                if (err) {
+                    reject(err);
+                }
 
-                    this.states[id] = state ? state.val : null;
-
-                    resolve(this.states[id]);
-                });
-            }
+                resolve(value);
+            });
         });
     }
 
@@ -516,8 +512,15 @@ class Statistics extends utils.Adapter {
     }
 
     async setValueAsync(id, value) {
-        this.states[id] = value;
-        return this.setStateAsync(id, { val: value, ack: true });
+        return new Promise((resolve, reject) => {
+            this.setValue(id, value, (err) => {
+                if (err) {
+                    reject(err);
+                }
+
+                resolve(value);
+            });
+        });
     }
 
     setValueStat(id, value, callback) {
@@ -528,6 +531,18 @@ class Statistics extends utils.Adapter {
 
         this.states[id] = value;
         this.setState(id, { val: value, ts: ts.getTime(), ack: true }, callback);
+    }
+
+    async setValueStatAsync(id, value) {
+        return new Promise((resolve, reject) => {
+            this.setValueStat(id, value, (err) => {
+                if (err) {
+                    reject(err);
+                }
+
+                resolve(value);
+            });
+        });
     }
 
     checkValue(value, ts, id, type) {
@@ -581,67 +596,72 @@ class Statistics extends utils.Adapter {
     }
 
     // normales Umspeichern, temp wird auf 0 gesetzt!!
-    copyValue(args, callback) {
-        this.getValue(args.temp, (err, value) => {
-            if (value !== null && value !== undefined) {
-                this.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
-                value = value || 0; // protect against NaN
-                this.setValueStat(args.save, value, () => this.setValue(args.temp, 0, callback));
-            } else {
-                this.log.debug('[SAVE VALUES] Process ' + args.temp + ' => no value found');
-                callback && callback();
-            }
-        });
+    async copyValue(args) {
+        let value = await this.getValueAsync(args.temp);
+
+        if (value !== null && value !== undefined) {
+            this.log.debug('[SAVE VALUES] Process ' + args.temp + ' = ' + value);
+            value = value || 0; // protect against NaN
+
+            await this.setValueStatAsync(args.save, value);
+            await this.setValueAsync(args.temp, 0);
+        } else {
+            this.log.debug('[SAVE VALUES] Process ' + args.temp + ' => no value found');
+        }
     }
 
     // Setzen der Ausgangspunkte für Min/Max mit aktuelle Wert, anstatt mit 0
-    copyValueActMinMax(args, callback) {
-        this.getValue(args.temp, (err, value) => {
-            if (value !== null && value !== undefined) {
-                this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
-                value = value || 0; // protect against NaN
-                this.setValueStat(args.save, value, () =>
-                    this.getValue(args.actual, (err, actual) => {
-                        this.log.debug(`[SET DAILY START MINMAX] Process ${args.temp} = ${actual} from ${args.actual}`);
-                        this.setValue(args.temp, actual, callback);
-                    })
-                );
-            } else {
-                this.log.debug(`[SAVE VALUES & SET DAILY START MINMAX] Process ${args.temp} => no value found`);
-                callback && callback();
-            }
-        });
+    async copyValueActMinMax(args) {
+        let value = await this.getValueAsync(args.temp);
+
+        if (value !== null && value !== undefined) {
+            this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
+            value = value || 0; // protect against NaN
+
+            await this.setValueStatAsync(args.save, value);
+            const actual = await this.getValueAsync(args.actual);
+
+            this.log.debug(`[SET DAILY START MINMAX] Process ${args.temp} = ${actual} from ${args.actual}`);
+            await this.setValueAsync(args.temp, actual);
+
+            return true;
+        } else {
+            this.log.debug(`[SAVE VALUES & SET DAILY START MINMAX] Process ${args.temp} => no value found`);
+            return false;
+        }
     }
 
     // für gruppenwerte
-    copyValueRound(args, callback) {
-        this.getValue(args.temp, (err, value) => {
-            if (value !== null && value !== undefined) {
-                this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
-                this.setValueStat(args.save, roundValue(value, PRECISION), () => this.setValue(args.temp, 0, callback));
-            } else {
-                this.log.debug(`[SAVE VALUES] Process ${args.temp} => no value found`);
-                callback && callback();
-            }
-        });
+    async copyValueRound(args) {
+        const value = await this.getValueAsync(args.temp);
+
+        if (value !== null && value !== undefined) {
+            this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
+            await this.setValueStatAsync(args.save, roundValue(value, PRECISION));
+            await this.setValueAsync(args.temp, 0);
+        } else {
+            this.log.debug(`[SAVE VALUES] Process ${args.temp} => no value found`);
+        }
     }
 
     // avg Werte umspeichern und auf 0 setzen
-    copyValue0(args, callback) {
-        this.getValue(args.temp, (err, value) => {
-            value = value || 0;
-            this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
-            this.setValueStat(args.save, value, () => this.setValue(args.temp, 0, callback));
-        });
+    async copyValue0(args) {
+        let value = await this.getValueAsync(args.temp);
+        value = value || 0;
+
+        this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
+        await this.setValueStatAsync(args.save, value);
+        await this.setValueAsync(args.temp, 0);
     }
 
     // Betriebszeitzählung umspeichern und temp Werte auf 0 setzen
-    copyValue1000(args, callback) {
-        this.getValue(args.temp, (err, value) => {
-            //value = Math.floor((value || 0) / 1000);
-            this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
-            this.setValueStat(args.save, value, () => this.setValue(args.temp, 0, callback));
-        });
+    async copyValue1000(args) {
+        const value = await this.getValueAsync(args.temp);
+
+        // value = Math.floor((value || 0) / 1000);
+        this.log.debug(`[SAVE VALUES] Process ${args.temp} = ${value} to ${args.save}`);
+        await this.setValueStatAsync(args.save, value);
+        await this.setValueAsync(args.temp, 0);
     }
 
     setTimeCountMidnight() {
@@ -679,6 +699,7 @@ class Statistics extends utils.Adapter {
 
         const id = ids.shift();
         const obj = this.statDP[id];
+
         if (!obj) {
             return setImmediate(this.setupObjects.bind(this), ids, callback);
         }
@@ -686,17 +707,16 @@ class Statistics extends utils.Adapter {
         if (obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
             obj.groupFactor = parseFloat(obj.groupFactor) || this.config.impFactor;
         } else {
-            obj.groupFactor = this.config.impFactor;
+            obj.groupFactor = this.config.impFactor; // Default from config if 0
         }
 
         if (obj.impUnitPerImpulse && obj.impUnitPerImpulse !== '0' && obj.impUnitPerImpulse !== 0) {
             obj.impUnitPerImpulse = parseFloat(obj.impUnitPerImpulse) || this.config.impUnitPerImpulse;
         } else {
-            this.log.debug(`[CREATION] avg: ${id}`);
-            obj.impUnitPerImpulse = this.config.impUnitPerImpulse;
+            obj.impUnitPerImpulse = this.config.impUnitPerImpulse; // Default from config if 0
         }
 
-        // merge der Kosten in den Datensatz
+        // merge of groups
         if (obj.sumGroup && (obj.count || obj.sumCount || obj.sumDelta)) {
             this.groups[obj.sumGroup] = this.groups[obj.sumGroup] || { config: this.config.groups.find(g => g.id === obj.sumGroup), items: [] };
             if (!this.groups[obj.sumGroup].items.includes(id)) {
@@ -826,11 +846,13 @@ class Statistics extends utils.Adapter {
     saveValues(timePeriod) {
         const isStart = !this.tasks.length;
         const dayTypes = [];
+
         for (const key in this.typeObjects) {
             if (this.typeObjects[key].length && copyToSave.includes(key)) {
                 dayTypes.push(key);
             }
         }
+
         const day = column.indexOf(timePeriod);  // nameObjects[day] contains the time-related object value
         // all values
         this.log.debug(`[SAVE VALUES] saving ${timePeriod} values`);
@@ -845,12 +867,19 @@ class Statistics extends utils.Adapter {
                 }
                 const id = this.typeObjects[dayTypes[t]][s];
                 this.tasks.push({
-                    name: 'async',
+                    name: 'promise',
                     args: {
+                        dayType: dayTypes[t],
                         temp: `temp.${dayTypes[t]}.${id}.${nameObjects[dayTypes[t]].temp[day]}`,
                         save: `save.${dayTypes[t]}.${id}.${nameObjects[dayTypes[t]].temp[day]}`
                     },
-                    callback: dayTypes[t] === 'sumGroup' ? this.copyValueRound.bind(this) : this.copyValue.bind(this)
+                    callback: async (args) => {
+                        if (args.dayType === 'sumGroup') {
+                            await this.copyValueRound(args);
+                        } else {
+                            await this.copyValue(args);
+                        }
+                    }
                 });
             }
         }
@@ -861,7 +890,7 @@ class Statistics extends utils.Adapter {
             for (let s = 0; s < this.typeObjects.avg.length; s++) {
                 const id = this.typeObjects.avg[s];
                 this.tasks.push({
-                    name: 'async',
+                    name: 'promise',
                     args: {
                         temp: `temp.avg.${id}.dayMin`,
                         save: `save.avg.${id}.dayMin`,
@@ -870,7 +899,7 @@ class Statistics extends utils.Adapter {
                     callback: this.copyValueActMinMax.bind(this)
                 });
                 this.tasks.push({
-                    name: 'async',
+                    name: 'promise',
                     args: {
                         temp: `temp.avg.${id}.dayMax`,
                         save: `save.avg.${id}.dayMax`,
@@ -879,7 +908,7 @@ class Statistics extends utils.Adapter {
                     callback: this.copyValueActMinMax.bind(this)
                 });
                 this.tasks.push({
-                    name: 'async',
+                    name: 'promise',
                     args: {
                         temp: `temp.avg.${id}.dayAvg`,
                         save: `save.avg.${id}.dayAvg`,
@@ -888,19 +917,19 @@ class Statistics extends utils.Adapter {
                 });
                 // just reset the counter
                 this.tasks.push({
-                    name: 'async',
+                    name: 'promise',
                     args: {
                         temp: `temp.avg.${id}.dayCount`
                     },
-                    callback: (args, callback) => this.setValueStat(args.temp, 0, callback)
+                    callback: async (args) => await this.setValueStatAsync(args.temp, 0)
                 });
                 // just reset the counter
                 this.tasks.push({
-                    name: 'async',
+                    name: 'promise',
                     args: {
                         temp: `temp.avg.${id}.daySum`
                     },
-                    callback: (args, callback) => this.setValueStat(args.temp, 0, callback)
+                    callback: async (args) => await this.setValueStatAsync(args.temp, 0)
                 });
             }
         }
@@ -910,16 +939,18 @@ class Statistics extends utils.Adapter {
         if (timePeriod === 'day' && this.typeObjects.fiveMin) {
             for (let s = 0; s < this.typeObjects.fiveMin.length; s++) {
                 const id = this.typeObjects.fiveMin[s];
+
                 this.tasks.push({
-                    name: 'async',
+                    name: 'promise',
                     args: {
                         temp: `temp.fiveMin.${id}.dayMin5Min`,
                         save: `save.fiveMin.${id}.dayMin5Min`
                     },
                     callback: this.copyValue.bind(this)
                 });
+
                 this.tasks.push({
-                    name: 'async',
+                    name: 'promise',
                     args: {
                         temp: `temp.fiveMin.${id}.dayMax5Min`,
                         save: `save.fiveMin.${id}.dayMax5Min`
@@ -935,16 +966,18 @@ class Statistics extends utils.Adapter {
             if (this.typeObjects.timeCount) {
                 for (let s = 0; s < this.typeObjects.timeCount.length; s++) {
                     const id = this.typeObjects.timeCount[s];
+
                     this.tasks.push({
-                        name: 'async',
+                        name: 'promise',
                         args: {
                             temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2], // 0 ist onDay
                             save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day - 2],
                         },
                         callback: this.copyValue1000.bind(this)
                     });
+
                     this.tasks.push({
-                        name: 'async',
+                        name: 'promise',
                         args: {
                             temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3], // +5 ist offDay
                             save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[day + 3],
@@ -957,12 +990,12 @@ class Statistics extends utils.Adapter {
 
         // minmax hat andere Objektbezeichnungen und deswegen kann day aus timeperiod nicht benutzt werden
         // day erst ab 2ter Stelle im Array (ohne 15min und hour soll benutzt werden) -> also (day > 1) und [day-2]
-        if (day > 1) { //bezieht sich auf column array
+        if (day > 1) { // bezieht sich auf column array
             if (this.typeObjects.minmax) {
                 for (let s = 0; s < this.typeObjects.minmax.length; s++) {
                     const id = this.typeObjects.minmax[s];
                     this.tasks.push({
-                        name: 'async',
+                        name: 'promise',
                         args: {
                             temp: 'temp.minmax.' + id + '.' + nameObjects.minmax.temp[day - 2], // 0 ist minDay
                             save: 'save.minmax.' + id + '.' + nameObjects.minmax.temp[day - 2],
@@ -971,7 +1004,7 @@ class Statistics extends utils.Adapter {
                         callback: this.copyValueActMinMax.bind(this)
                     });
                     this.tasks.push({
-                        name: 'async',
+                        name: 'promise',
                         args: {
                             temp: 'temp.minmax.' + id + '.' + nameObjects.minmax.temp[day + 3], // +5 ist maxDay
                             save: 'save.minmax.' + id + '.' + nameObjects.minmax.temp[day + 3],
@@ -982,6 +1015,7 @@ class Statistics extends utils.Adapter {
                 }
             }
         }
+
         isStart && this.processTasks();
     }
 
@@ -995,7 +1029,7 @@ class Statistics extends utils.Adapter {
             };
         }
 
-        // Create channels
+        // Create save channel
         this.tasks.push({
             name: 'setObjectNotExists',
             id: `save.${type}.${id}`,
@@ -1021,6 +1055,7 @@ class Statistics extends utils.Adapter {
             }
         });
 
+        // Create temp channel
         this.tasks.push({
             name: 'setObjectNotExists',
             id: `temp.${type}.${id}`,
@@ -1061,7 +1096,7 @@ class Statistics extends utils.Adapter {
 
             obj.native.addr = id;
 
-            if (unit && objects[s] !== 'dayCount') {
+            if (unit && !['dayCount'].includes(objects[s])) {
                 obj.common.unit = unit;
             }
 
@@ -1087,12 +1122,9 @@ class Statistics extends utils.Adapter {
             }
 
             obj.native.addr = id;
-            // obj.common.expert = true;
 
-            if (unit && objects[s] !== 'dayCount') {
+            if (unit && !['dayCount'].includes(objects[s])) {
                 obj.common.unit = unit;
-            } else if (obj.common.unit !== undefined) {
-                delete obj.common.unit;
             }
 
             this.tasks.push({
@@ -1107,124 +1139,157 @@ class Statistics extends utils.Adapter {
     }
 
     setInitial(type, id) {
-        // if values have not already been logged from the last adapter start,
-        // then fill them with '0' so that the read does not hit the values undefined.
-        const nameObjectType = nameObjects[type];
-        const objects = nameObjectType.temp;
         const isStart = !this.tasks.length;
-        for (let s = 0; s < objects.length; s++) {
+
+        const saveObjects = nameObjects[type].save;
+        for (let s = 0; s < saveObjects.length; s++) {
             this.tasks.push({
-                name: 'async',
+                name: 'promise',
                 args: {
-                    name: objects[s],
-                    id: `temp.${type}.${id}.${objects[s]}`,
+                    type: type,
                     trueId: id,
-                    type: type
+                    name: saveObjects[s]
                 },
-                wait: true,
-                callback: (args, callback) => {
-                    this.log.debug(`[SET INITIAL] ${args.trueId} ${args.type} ${args.name}`);
-                    this.getValue(args.id, (err, value) => {
-                        this.log.debug(`[SET INITIAL] ${args.trueId} value ${args.id} exists ? ${value} in obj: ${args.id}`);
-                        if (value === null) {
-                            this.log.debug(`[SET INITIAL] ${args.trueId} replace with 0 -> ${args.id}`);
-                            if (args.type === 'avg') {
-                                if (args.name === 'dayCount') {
-                                    return this.getForeignState(args.trueId, (er, value) => {
-                                        if (value && value.val !== null) {
-                                            this.setValue(args.id, 1, callback);
-                                        } else {
-                                            callback();
-                                        }
-                                    });
-                                } else {
-                                    return this.getForeignState(args.trueId, (er, value) => { // get current value to set for initial min, max, last
-                                        if (value && value.val !== null) {
-                                            this.log.debug(`[SET INITIAL] ${args.trueId} object ${args.trueId} ${args.name}`);
-                                            this.log.debug(`[SET INITIAL] ${args.trueId} act value ${value.val}`);
-                                            this.setValue(args.id, value.val, callback);
-                                        } else {
-                                            callback();
-                                        }
-                                    });
+                callback: async (args) => {
+                    const targetId = `save.${args.type}.${args.trueId}.${args.name}`;
+
+                    this.log.debug(`[SET INITIAL] ${args.type} -> ${targetId}`);
+                    const currentVal = await this.getValueAsync(targetId);
+
+                    this.log.debug(`[SET INITIAL] "${args.trueId}" value ${targetId} exists ? ${currentVal} in obj: ${targetId}`);
+
+                    if (currentVal === null) {
+                        this.log.debug(`[SET INITIAL] "${args.trueId}" -> ${targetId}`);
+
+                        if (args.type === 'sumDelta') {
+                            if (args.name === 'last') {
+                                const sumDeltaInitVal = await this.getForeignStateAsync(args.trueId);
+
+                                if (sumDeltaInitVal && sumDeltaInitVal.val) {
+                                    this.log.debug(`[SET INITIAL] "${args.trueId}" sumDelta init value: ${sumDeltaInitVal.val}`);
+                                    await this.setValueAsync(targetId, sumDeltaInitVal.val);
                                 }
-                            } else if (args.type === 'minmax') {
-                                return this.getForeignState(args.trueId, (er, value) => { // get current value to set for initial min, max, last
-                                    if (value && value.val !== null) {
-                                        this.log.debug(`[SET INITIAL] ${args.trueId} object ${args.trueId} ${args.name}`);
-                                        this.log.debug(`[SET INITIAL] ${args.trueId} act value ${value.val}`);
-                                        this.setValue(args.id, value.val, callback);
-                                    } else {
-                                        callback();
-                                    }
-                                });
-                            } else {
-                                if (args.name === 'last01') {
-                                    return this.getForeignState(args.trueId, (err, state) => { // get current value
-                                        this.log.debug(`[SET INITIAL] ${args.trueId} object ${args.trueId} ${args.name}`);
-                                        this.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
-                                        if (isFalse(state && state.val)) {
-                                            this.log.debug(`[SET INITIAL] ${args.trueId} state is false und last 01 now as lastChange`);
-                                            this.setValue(args.id, Date.now(), callback);
-                                        } else
-                                        if (isTrue(state && state.val)) {
-                                            this.log.debug(`[SET INITIAL] ${args.trueId} state is false und last 01  get old time`);
-                                            this.setValue(args.id, state.lc, callback);
-                                        } else {
-                                            this.log.error(`[SET INITIAL] ${args.trueId} unknown state to be evaluated in timeCount`);
-                                            callback();
-                                        }
-                                    });
-                                } else if (args.name === 'last10') {
-                                    return this.getForeignState(args.trueId, (err, state) => { // get actual values
-                                        this.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
-                                        this.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
-                                        if (isFalse(state && state.val)) {
-                                            this.setValue(args.id, state.lc, callback);
-                                            this.log.debug(`[SET INITIAL] ${args.trueId} state is false and last 10 get old time`);
-                                        } else
-                                        if (isTrue(state && state.val)) {
-                                            this.setValue(args.id, Date.now(), callback);
-                                            this.log.debug(`[SET INITIAL] ${args.trueId} state is true and last 10 get now as lastChange`);
-                                        } else {
-                                            this.log.error(`[SET INITIAL] ${args.trueId} unknown state to be evaluated in timeCount`);
-                                            callback();
-                                        }
-                                    });
-                                } else if (args.name === 'lastPulse') {
-                                    return this.getForeignState(args.trueId, (err, state) => { // get actual values
-                                        this.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
-                                        this.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
-                                        if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
-                                            this.setValue(args.id, state.val, callback);
-                                            this.log.debug(`[SET INITIAL] ${args.trueId} state was ${state.val} and lastPulse get old time`);
-                                        } else {
-                                            this.log.error(`[SET INITIAL] ${args.trueId} unknown state to be evaluated in count`);
-                                            callback();
-                                        }
-                                    });
-                                } else if (args.name === 'last') { // speichern des aktuellen Zustandes für timecount, sofern mit poll gleiche Zustände geholt werden und keinen Signalwechsel darstellen
-                                    return this.getForeignState(args.trueId, (err, state) => { // get actual value for the state in timecount
-                                        this.log.debug(`[SET INITIAL] ${args.trueId} objects ${args.trueId} ${args.name}`);
-                                        this.log.debug(`[SET INITIAL] ${args.trueId} act value ${state && state.val} time ${state && state.lc}`);
-                                        if (isTrue(state && state.val) || isFalse(state && state.val)) { //egal was drin ist, es muß zum Wertebereich passen und es wird auf den Wert von lastPulse gesetzt
-                                            this.setValue(args.id, state.val, callback);
-                                            this.log.debug(`[SET INITIAL] ${args.trueId} state is ${state.val} and set to last `);
-                                        } else {
-                                            this.log.error(`[SET INITIAL] ${args.trueId} unknown state to be evaluated in count`);
-                                            callback();
-                                        }
-                                    });
-                                }
+                            } else if (args.name === 'delta') {
+                                await this.setValueAsync(targetId, 0);
                             }
-                            return void callback();
-                        } else {
-                            return void callback();
                         }
-                    });
+                    }
                 }
             });
         }
+
+        const tempObjects = nameObjects[type].temp;
+        for (let s = 0; s < tempObjects.length; s++) {
+            this.tasks.push({
+                name: 'promise',
+                args: {
+                    type: type,
+                    trueId: id,
+                    name: tempObjects[s]
+                },
+                callback: async (args) => {
+                    const targetId = `temp.${args.type}.${args.trueId}.${args.name}`;
+
+                    this.log.debug(`[SET INITIAL] ${args.type} -> ${targetId}`);
+                    const currentVal = await this.getValueAsync(targetId);
+
+                    this.log.debug(`[SET INITIAL] "${args.trueId}" value ${targetId} exists ? ${currentVal} in obj: ${targetId}`);
+
+                    if (currentVal === null) {
+                        this.log.debug(`[SET INITIAL] "${args.trueId}" -> ${targetId}`);
+
+                        if (args.type === 'count') {
+                            const countInitVal = await this.getForeignStateAsync(args.trueId);
+
+                            if (args.name === 'lastPulse') {
+                                if (countInitVal && countInitVal.val) {
+                                    if (isTrue(countInitVal.val) || isFalse(countInitVal.val)) {
+                                        this.log.debug(`[SET INITIAL] "${args.trueId}" count init value: ${countInitVal.val}`);
+                                        await this.setValueAsync(targetId, countInitVal.val);
+                                    } else {
+                                        this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in count`);
+                                    }
+                                }
+                            } else {
+                                await this.setValueAsync(targetId, 0);
+                            }
+                        } else if (args.type === 'sumCount') {
+                            const sumCountInitVal = await this.getForeignStateAsync(args.trueId);
+
+                            if (args.name === 'lastPulse') {
+                                if (sumCountInitVal && sumCountInitVal.val) {
+                                    if (isTrue(sumCountInitVal.val) || isFalse(sumCountInitVal.val)) {
+                                        this.log.debug(`[SET INITIAL] "${args.trueId}" sumCount init value: ${sumCountInitVal.val}`);
+                                        await this.setValueAsync(targetId, sumCountInitVal.val);
+                                    } else {
+                                        this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in sumCount`);
+                                    }
+                                }
+                            }
+                        } else if (args.type === 'avg') {
+                            const avgInitVal = await this.getForeignStateAsync(args.trueId);
+
+                            if (avgInitVal && avgInitVal.val !== null) {
+                                if (args.name === 'dayCount') {
+                                    this.log.debug(`[SET INITIAL] ${args.trueId} avg init value: 1`);
+                                    await this.setValueAsync(targetId, 1);
+                                } else {
+                                    this.log.debug(`[SET INITIAL] ${args.trueId} avg init value: ${avgInitVal.val}`);
+                                    await this.setValueAsync(targetId, avgInitVal.val);
+                                }
+                            }
+                        } else if (args.type === 'minmax') {
+                            const minmaxInitVal = await this.getForeignStateAsync(args.trueId);
+
+                            if (minmaxInitVal && minmaxInitVal.val !== null) {
+                                this.log.debug(`[SET INITIAL] ${args.trueId} minmax init value: ${minmaxInitVal.val}`);
+                                await this.setValueAsync(targetId, minmaxInitVal.val);
+                            }
+                        } else if (args.type === 'timeCount') {
+                            if (['last01', 'last10', 'last'].includes(args.name)) {
+                                const timeCountInitVal = await this.getForeignStateAsync(args.trueId);
+
+                                if (args.name === 'last01') {
+                                    if (timeCountInitVal && timeCountInitVal.val) {
+                                        if (isFalse(timeCountInitVal.val)) {
+                                            this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: NOW`);
+                                            await this.setValueAsync(targetId, Date.now());
+                                        } else if (isTrue(timeCountInitVal.val)) {
+                                            this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: ${timeCountInitVal.lc}`);
+                                            await this.setValueAsync(targetId, timeCountInitVal.lc);
+                                        } else {
+                                            this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in timeCount`);
+                                        }
+                                    }
+                                } else if (args.name === 'last10') {
+                                    if (timeCountInitVal && timeCountInitVal.val) {
+                                        if (isFalse(timeCountInitVal.val)) {
+                                            this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: ${timeCountInitVal.lc}`);
+                                            await this.setValueAsync(targetId, timeCountInitVal.lc);
+                                        } else if (isTrue(timeCountInitVal.val)) {
+                                            this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: NOW`);
+                                            await this.setValueAsync(targetId, Date.now());
+                                        } else {
+                                            this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in timeCount`);
+                                        }
+                                    }
+                                } else if (args.name === 'last') {
+                                    if (timeCountInitVal && timeCountInitVal.val) {
+                                        if (isTrue(timeCountInitVal.val) || isFalse(timeCountInitVal.val)) {
+                                            this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: ${timeCountInitVal.val}`);
+                                            await this.setValueAsync(targetId, timeCountInitVal.val);
+                                        } else {
+                                            this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in timeCount`);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         isStart && this.processTasks();
     }
 
@@ -1254,7 +1319,9 @@ class Statistics extends utils.Adapter {
 
         const task = this.tasks[0];
         if (task.name === 'setObjectNotExists') {
+
             const attr = task.id.split('.').pop();
+
             // detect unit
             if (task.obj.native.addr &&
                 task.obj.type === 'state' &&
@@ -1262,16 +1329,17 @@ class Statistics extends utils.Adapter {
                 !nameObjects.timeCount.temp.includes(attr) &&
                 !task.id.match(/\.dayCount$/) && // !! Problem mit .?
                 !task.id.startsWith('save.sumGroup.') && !task.id.startsWith('temp.sumGroup.')) {
+
                 this.getForeignObject(task.obj.native.addr, (err, obj) => {
 
-                    if (obj && obj.common && obj.common.unit) {
+                    if (obj?.common?.unit) {
                         task.obj.common.unit = obj.common.unit;
                         this.units[task.obj.native.addr] = obj.common.unit;
                     } else {
                         this.units[task.obj.native.addr] = '';
                     }
 
-                    this.setObjectNotExists(task.id, task.obj, (err, isCreated) => {
+                    this.extendObject(task.id, task.obj, (err, isCreated) => {
                         if (isCreated) {
                             this.log.debug(`[CREATION] ${task.id}`);
                         }
@@ -1279,6 +1347,7 @@ class Statistics extends utils.Adapter {
                         this.processNext();
                     });
                 });
+
             } else {
                 if (task.obj.native.addr && !task.id.match(/\.dayCount$/)) { // !! Problem mit .?
                     if (this.units[task.obj.native.addr] !== undefined) {
@@ -1290,7 +1359,7 @@ class Statistics extends utils.Adapter {
                     }
                 }
 
-                this.setObjectNotExists(task.id, task.obj, (err, isCreated) => {
+                this.extendObject(task.id, task.obj, (err, isCreated) => {
                     if (isCreated) {
                         this.log.debug(`[CREATION] ${task.id}`);
                     }
