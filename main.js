@@ -23,11 +23,6 @@ const nameObjects = {
         save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year', 'delta', 'last'],
         temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
     },
-    sumGroup: {
-        // Total consumption from consecutive quantities
-        save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
-        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
-    },
     minmax: {
         // Min/Max timeframe
         save: ['dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin', 'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax', 'absMin', 'absMax'],
@@ -47,6 +42,11 @@ const nameObjects = {
         // 5 minutes, etc. only useful with impulses
         save: ['mean5Min', 'dayMax5Min', 'dayMin5Min'],
         temp: ['mean5Min', 'dayMax5Min', 'dayMin5Min']
+    },
+    sumGroup: {
+        // Total consumption from consecutive quantities
+        save: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year'],
+        temp: ['15Min', 'hour', 'day', 'week', 'month', 'quarter', 'year']
     }
 };
 
@@ -278,7 +278,17 @@ class Statistics extends utils.Adapter {
 
             // old but changed
             if (this.statDP[id]) {
-                this.statDP[id] = obj.common.custom[this.namespace];
+                const newObj = obj.common.custom[this.namespace];
+                this.statDP[id] = newObj;
+
+                // Delete objects of unspecified types
+                Object.keys(this.typeObjects).forEach(type => {
+                    if (!newObj[type]) {
+                        this.delObject(`save.${type}.${id}`, { recursive: true });
+                        this.delObject(`temp.${type}.${id}`, { recursive: true });
+                    }
+                });
+
                 this.removeObject(id);
                 this.setupObjects([id]);
                 this.log.debug(`[OBJECT CHANGE] saved (updated) typeObject: ${JSON.stringify(this.statDP[id])}`);
@@ -729,50 +739,6 @@ class Statistics extends utils.Adapter {
         this.log.debug(`[CREATION] setup of object ${id}: ${JSON.stringify(obj)}`);
         const logName = obj.logName;
 
-        // avg
-        if (obj.avg) {
-            this.log.debug(`[CREATION] avg: ${id}`);
-
-            if (!this.typeObjects.avg.includes(id)) {
-                this.typeObjects.avg.push(id);
-            }
-
-            this.defineObject('avg', id, logName); // type, id, name
-        }
-
-        // minMax
-        if (obj.minmax) {
-            this.log.debug(`[CREATION] minmax: ${id}`);
-
-            if (!this.typeObjects.minmax.includes(id)) {
-                this.typeObjects.minmax.push(id);
-            }
-
-            this.defineObject('minmax', id, logName); // type, id, name
-        }
-
-        // 5minutes Values can only be determined when counting
-        if (obj.fiveMin && obj.count) {
-            this.log.debug(`[CREATION] fiveMin: ${id}`);
-
-            if (!this.typeObjects.fiveMin.includes(id)) {
-                this.typeObjects.fiveMin.push(id);
-            }
-
-            this.defineObject('fiveMin', id, logName); // type, id, name
-        }
-
-        // timeCount
-        if (obj.timeCount) {
-            this.log.debug(`[CREATION] timeCount: ${id}`);
-
-            if (!this.typeObjects.timeCount.includes(id)) {
-                this.typeObjects.timeCount.push(id);
-            }
-
-            this.defineObject('timeCount', id, logName); // type, id, name
-        }
-
         // count
         if (obj.count) {
             this.log.debug(`[CREATION] count: ${id}`);
@@ -806,6 +772,50 @@ class Statistics extends utils.Adapter {
             this.defineObject('sumDelta', id, logName); // type, id, name
         }
 
+        // minMax
+        if (obj.minmax) {
+            this.log.debug(`[CREATION] minmax: ${id}`);
+
+            if (!this.typeObjects.minmax.includes(id)) {
+                this.typeObjects.minmax.push(id);
+            }
+
+            this.defineObject('minmax', id, logName); // type, id, name
+        }
+
+        // avg
+        if (obj.avg) {
+            this.log.debug(`[CREATION] avg: ${id}`);
+
+            if (!this.typeObjects.avg.includes(id)) {
+                this.typeObjects.avg.push(id);
+            }
+
+            this.defineObject('avg', id, logName); // type, id, name
+        }
+
+        // timeCount
+        if (obj.timeCount) {
+            this.log.debug(`[CREATION] timeCount: ${id}`);
+
+            if (!this.typeObjects.timeCount.includes(id)) {
+                this.typeObjects.timeCount.push(id);
+            }
+
+            this.defineObject('timeCount', id, logName); // type, id, name
+        }
+
+        // 5minutes Values can only be determined when counting
+        if (obj.fiveMin && obj.count) {
+            this.log.debug(`[CREATION] fiveMin: ${id}`);
+
+            if (!this.typeObjects.fiveMin.includes(id)) {
+                this.typeObjects.fiveMin.push(id);
+            }
+
+            this.defineObject('fiveMin', id, logName); // type, id, name
+        }
+
         // sumGroup
         if (obj.sumGroup && (obj.sumDelta || (obj.sumCount))) {
             this.log.debug(`[CREATION] sumGroup: ${id}`);
@@ -828,6 +838,13 @@ class Statistics extends utils.Adapter {
     }
 
     removeObject(id) {
+        Object.keys(this.states).forEach(key => {
+            if (key.indexOf(id) > -1) {
+                this.log.debug(`[DELETE] Removing "${key}" from value cache`);
+                delete this.states[key];
+            }
+        });
+
         Object.keys(this.typeObjects).forEach(type => {
             if (Array.isArray(this.typeObjects[type])) {
                 this.typeObjects[type] = this.typeObjects[type].filter(typeId => typeId !== id);
