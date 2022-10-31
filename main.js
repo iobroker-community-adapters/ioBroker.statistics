@@ -94,7 +94,6 @@ class Statistics extends utils.Adapter {
 
         this.groups = {};
         this.states = {}; // hold all states locally
-        this.units = {};
 
         // to remember the used objects within the types (calculations)
         this.typeObjects = {
@@ -120,148 +119,148 @@ class Statistics extends utils.Adapter {
         // typeObjects is rebuilt after starting the adapter
         // deleting data points during runtime must be cleaned up in both arrays
         // reading the setting (here come with other setting!)
-        this.getObjectView('system', 'custom', {}, (err, doc) => {
-            let objCount = 0;
-            if (doc && doc.rows) {
-                for (let i = 0, l = doc.rows.length; i < l; i++) {
-                    if (doc.rows[i].value) {
-                        const id = doc.rows[i].id;
-                        const custom = doc.rows[i].value;
-                        if (!custom || !custom[this.namespace] || !custom[this.namespace].enabled) continue;
+        const doc = await this.getObjectViewAsync('system', 'custom', {});
 
-                        this.log.info(`[SETUP] enabled statistics for ${id}`);
+        let objCount = 0;
+        if (doc && doc.rows) {
+            for (let i = 0, l = doc.rows.length; i < l; i++) {
+                if (doc.rows[i].value) {
+                    const id = doc.rows[i].id;
+                    const custom = doc.rows[i].value;
+                    if (!custom || !custom[this.namespace] || !custom[this.namespace].enabled) continue;
 
-                        this.statDP[id] = custom[this.namespace];
-                        objCount++;
-                    }
+                    this.log.info(`[SETUP] enabled statistics for ${id}`);
+
+                    this.statDP[id] = custom[this.namespace];
+                    objCount++;
                 }
-
-                const keys = Object.keys(this.statDP);
-                this.setupObjects(keys, () => {
-                    this.log.info(`[SETUP] statistics observes ${objCount} values after startup`);
-
-                    // create cron-jobs
-                    const timezone = this.config.timezone || 'Europe/Berlin';
-
-                    // every 5min
-                    try {
-                        this.crons.avg5min = new CronJob('*/5 * * * *',
-                            () => this.fiveMin(),
-                            () => this.log.debug('stopped avg5min'), // This function is executed when the job stops
-                            true,
-                            timezone
-                        );
-                    } catch (e) {
-                        this.log.error(`creating cron avg5min errored with: ${e}`);
-                    }
-
-                    // Every 15 minutes
-                    try {
-                        this.crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
-                            () => this.saveValues('15Min'),
-                            () => this.log.debug('stopped fifteenMinSave'), // This function is executed when the job stops
-                            true,
-                            timezone
-                        );
-                    } catch (e) {
-                        this.log.error(`creating cron fifteenMinSave errored with: ${e}`);
-                    }
-
-                    // Hourly at 00 min
-                    try {
-                        this.crons.hourSave = new CronJob('0 * * * *',
-                            () => this.saveValues('hour'),
-                            () => this.log.debug('stopped hourSave'), // This function is executed when the job stops
-                            true,
-                            timezone
-                        );
-                    } catch (e) {
-                        this.log.error(`creating cron hourSave errored with: ${e}`);
-                    }
-
-                    // daily um 23:59:58
-                    try {
-                        this.crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
-                            () => this.setTimeCountMidnight(),
-                            () => this.log.debug('stopped dayTriggerTimeCount'), // This function is executed when the job stops
-                            true,
-                            timezone
-                        );
-                    } catch (e) {
-                        this.log.error(`creating cron dayTriggerTimeCount errored with: ${e}`);
-                    }
-
-                    // daily um 00:00
-                    try {
-                        this.crons.daySave = new CronJob('0 0 * * *',
-                            () => this.saveValues('day'),
-                            () => this.log.debug('stopped daySave'), // This function is executed when the job stops
-                            true,
-                            timezone
-                        );
-                    } catch (e) {
-                        this.log.error(`creating cron daySave errored with: ${e}`);
-                    }
-
-                    // Monday 00:00
-                    try {
-                        this.crons.weekSave = new CronJob('0 0 * * 1',
-                            () => this.saveValues('week'),
-                            () => this.log.debug('stopped weekSave'), // This function is executed when the job stops
-                            true,
-                            timezone
-                        );
-                    } catch (e) {
-                        this.log.error(`creating cron weekSave errored with: ${e}`);
-                    }
-
-                    // Monthly at 1 of every month at 00:00
-                    try {
-                        this.crons.monthSave = new CronJob('0 0 1 * *',
-                            () => this.saveValues('month'),
-                            () => this.log.debug('stopped monthSave'), // This function is executed when the job stops
-                            true,
-                            timezone
-                        );
-                    } catch (e) {
-                        this.log.error(`creating cron monthSave errored with: ${e}`);
-                    }
-
-                    // Quarter
-                    try {
-                        this.crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
-                            () => this.saveValues('quarter'),
-                            () => this.log.debug('stopped quarterSave'), // This function is executed when the job stops
-                            true,
-                            timezone
-                        );
-                    } catch (e) {
-                        this.log.error(`creating cron quarterSave errored with: ${e}`);
-                    }
-
-                    // New year
-                    try {
-                        this.crons.yearSave = new CronJob('0 0 1 0 *',
-                            () => this.saveValues('year'), // Months is value range 0-11
-                            () => this.log.debug('stopped yearSave'),
-                            true,
-                            timezone
-                        );
-                    } catch (e) {
-                        this.log.error(`creating cron yearSave errored with: ${e}`);
-                    }
-
-                    // subscribe to objects, so the settings in the object are arriving to the adapter
-                    this.subscribeForeignObjects('*');
-
-                    for (const type in this.crons) {
-                        if (Object.prototype.hasOwnProperty.call(this.crons, type) && this.crons[type]) {
-                            this.log.debug(`[SETUP] ${type} status = ${this.crons[type].running} next event: ${timeConverter(this.crons[type].nextDates())}`);
-                        }
-                    }
-                });
             }
-        });
+
+            const keys = Object.keys(this.statDP);
+            await this.setupObjects(keys);
+
+            // subscribe to objects, so the settings in the object are arriving to the adapter
+            await this.subscribeForeignObjectsAsync('*');
+
+            this.log.info(`[SETUP] observing ${objCount} values after startup`);
+
+            // create cron-jobs
+            const timezone = this.config.timezone || 'Europe/Berlin';
+
+            // every 5min
+            try {
+                this.crons.avg5min = new CronJob('*/5 * * * *',
+                    () => this.fiveMin(),
+                    () => this.log.debug('stopped avg5min'), // This function is executed when the job stops
+                    true,
+                    timezone
+                );
+            } catch (e) {
+                this.log.error(`creating cron avg5min errored with: ${e}`);
+            }
+
+            // Every 15 minutes
+            try {
+                this.crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
+                    () => this.saveValues('15Min'),
+                    () => this.log.debug('stopped fifteenMinSave'), // This function is executed when the job stops
+                    true,
+                    timezone
+                );
+            } catch (e) {
+                this.log.error(`creating cron fifteenMinSave errored with: ${e}`);
+            }
+
+            // Hourly at 00 min
+            try {
+                this.crons.hourSave = new CronJob('0 * * * *',
+                    () => this.saveValues('hour'),
+                    () => this.log.debug('stopped hourSave'), // This function is executed when the job stops
+                    true,
+                    timezone
+                );
+            } catch (e) {
+                this.log.error(`creating cron hourSave errored with: ${e}`);
+            }
+
+            // daily um 23:59:58
+            try {
+                this.crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
+                    () => this.setTimeCountMidnight(),
+                    () => this.log.debug('stopped dayTriggerTimeCount'), // This function is executed when the job stops
+                    true,
+                    timezone
+                );
+            } catch (e) {
+                this.log.error(`creating cron dayTriggerTimeCount errored with: ${e}`);
+            }
+
+            // daily um 00:00
+            try {
+                this.crons.daySave = new CronJob('0 0 * * *',
+                    () => this.saveValues('day'),
+                    () => this.log.debug('stopped daySave'), // This function is executed when the job stops
+                    true,
+                    timezone
+                );
+            } catch (e) {
+                this.log.error(`creating cron daySave errored with: ${e}`);
+            }
+
+            // Monday 00:00
+            try {
+                this.crons.weekSave = new CronJob('0 0 * * 1',
+                    () => this.saveValues('week'),
+                    () => this.log.debug('stopped weekSave'), // This function is executed when the job stops
+                    true,
+                    timezone
+                );
+            } catch (e) {
+                this.log.error(`creating cron weekSave errored with: ${e}`);
+            }
+
+            // Monthly at 1 of every month at 00:00
+            try {
+                this.crons.monthSave = new CronJob('0 0 1 * *',
+                    () => this.saveValues('month'),
+                    () => this.log.debug('stopped monthSave'), // This function is executed when the job stops
+                    true,
+                    timezone
+                );
+            } catch (e) {
+                this.log.error(`creating cron monthSave errored with: ${e}`);
+            }
+
+            // Quarter
+            try {
+                this.crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
+                    () => this.saveValues('quarter'),
+                    () => this.log.debug('stopped quarterSave'), // This function is executed when the job stops
+                    true,
+                    timezone
+                );
+            } catch (e) {
+                this.log.error(`creating cron quarterSave errored with: ${e}`);
+            }
+
+            // New year
+            try {
+                this.crons.yearSave = new CronJob('0 0 1 0 *',
+                    () => this.saveValues('year'), // Months is value range 0-11
+                    () => this.log.debug('stopped yearSave'),
+                    true,
+                    timezone
+                );
+            } catch (e) {
+                this.log.error(`creating cron yearSave errored with: ${e}`);
+            }
+
+            for (const type in this.crons) {
+                if (Object.prototype.hasOwnProperty.call(this.crons, type) && this.crons[type]) {
+                    this.log.debug(`[SETUP] ${type} status = ${this.crons[type].running} next event: ${timeConverter(this.crons[type].nextDates())}`);
+                }
+            }
+        }
     }
 
     /**
@@ -695,146 +694,131 @@ class Statistics extends utils.Adapter {
         }
     }
 
-    setupObjects(ids, callback) {
-        const isStart = !this.tasks.length;
+    async setupObjects(ids) {
+        for (let i = 0; i < ids.length; i++) {
+            const id = ids[i];
+            const obj = this.statDP[id];
 
-        if (!ids || !ids.length) {
-            if (isStart) {
-                this.taskCallback = callback;
-                return this.processTasks();
+            if (obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
+                obj.groupFactor = parseFloat(obj.groupFactor) || this.config.impFactor;
             } else {
-                return callback && callback();
-            }
-        }
-
-        const id = ids.shift();
-        const obj = this.statDP[id];
-
-        if (!obj) {
-            return setImmediate(this.setupObjects.bind(this), ids, callback);
-        }
-
-        if (obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {
-            obj.groupFactor = parseFloat(obj.groupFactor) || this.config.impFactor;
-        } else {
-            obj.groupFactor = this.config.impFactor; // Default from config if 0
-        }
-
-        if (obj.impUnitPerImpulse && obj.impUnitPerImpulse !== '0' && obj.impUnitPerImpulse !== 0) {
-            obj.impUnitPerImpulse = parseFloat(obj.impUnitPerImpulse) || this.config.impUnitPerImpulse;
-        } else {
-            obj.impUnitPerImpulse = this.config.impUnitPerImpulse; // Default from config if 0
-        }
-
-        // merge of groups
-        if (obj.sumGroup && (obj.count || obj.sumCount || obj.sumDelta)) {
-            this.groups[obj.sumGroup] = this.groups[obj.sumGroup] || { config: this.config.groups.find(g => g.id === obj.sumGroup), items: [] };
-            if (!this.groups[obj.sumGroup].items.includes(id)) {
-                this.groups[obj.sumGroup].items.push(id);
-            }
-        }
-
-        // function is called with the custom objects
-        this.log.debug(`[CREATION] ============================== ${id} =============================`);
-        this.log.debug(`[CREATION] setup of object ${id}: ${JSON.stringify(obj)}`);
-        const logName = obj.logName;
-
-        // count
-        if (obj.count) {
-            this.log.debug(`[CREATION] count: ${id}`);
-
-            if (!this.typeObjects.count.includes(id)) {
-                this.typeObjects.count.push(id);
+                obj.groupFactor = this.config.impFactor; // Default from config if 0
             }
 
-            this.defineObject('count', id, logName); // type, id, name
-        }
-
-        // sumCount
-        if (obj.sumCount) {
-            this.log.debug(`[CREATION] sumCount: ${id}`);
-
-            if (!this.typeObjects.sumCount.includes(id)) {
-                this.typeObjects.sumCount.push(id);
+            if (obj.impUnitPerImpulse && obj.impUnitPerImpulse !== '0' && obj.impUnitPerImpulse !== 0) {
+                obj.impUnitPerImpulse = parseFloat(obj.impUnitPerImpulse) || this.config.impUnitPerImpulse;
+            } else {
+                obj.impUnitPerImpulse = this.config.impUnitPerImpulse; // Default from config if 0
             }
 
-            this.defineObject('sumCount', id, logName, obj.impUnit); // type, id, name, Unit
-        }
-
-        // sumDelta
-        if (obj.sumDelta) {
-            this.log.debug(`[CREATION] sumDelta: ${id}`);
-
-            if (!this.typeObjects.sumDelta.includes(id)) {
-                this.typeObjects.sumDelta.push(id);
+            // merge of groups
+            if (obj.sumGroup && (obj.count || obj.sumCount || obj.sumDelta)) {
+                this.groups[obj.sumGroup] = this.groups[obj.sumGroup] || { config: this.config.groups.find(g => g.id === obj.sumGroup), items: [] };
+                if (!this.groups[obj.sumGroup].items.includes(id)) {
+                    this.groups[obj.sumGroup].items.push(id);
+                }
             }
 
-            this.defineObject('sumDelta', id, logName); // type, id, name
-        }
+            // function is called with the custom objects
+            this.log.debug(`[CREATION] ============================== ${id} =============================`);
+            this.log.debug(`[CREATION] setup of object ${id}: ${JSON.stringify(obj)}`);
+            const logName = obj.logName;
 
-        // minMax
-        if (obj.minmax) {
-            this.log.debug(`[CREATION] minmax: ${id}`);
+            // count
+            if (obj.count) {
+                this.log.debug(`[CREATION] count: ${id}`);
 
-            if (!this.typeObjects.minmax.includes(id)) {
-                this.typeObjects.minmax.push(id);
-            }
-
-            this.defineObject('minmax', id, logName); // type, id, name
-        }
-
-        // avg
-        if (obj.avg) {
-            this.log.debug(`[CREATION] avg: ${id}`);
-
-            if (!this.typeObjects.avg.includes(id)) {
-                this.typeObjects.avg.push(id);
-            }
-
-            this.defineObject('avg', id, logName); // type, id, name
-        }
-
-        // timeCount
-        if (obj.timeCount) {
-            this.log.debug(`[CREATION] timeCount: ${id}`);
-
-            if (!this.typeObjects.timeCount.includes(id)) {
-                this.typeObjects.timeCount.push(id);
-            }
-
-            this.defineObject('timeCount', id, logName); // type, id, name
-        }
-
-        // 5minutes Values can only be determined when counting
-        if (obj.fiveMin && obj.count) {
-            this.log.debug(`[CREATION] fiveMin: ${id}`);
-
-            if (!this.typeObjects.fiveMin.includes(id)) {
-                this.typeObjects.fiveMin.push(id);
-            }
-
-            this.defineObject('fiveMin', id, logName); // type, id, name
-        }
-
-        // sumGroup
-        if (obj.sumGroup && (obj.sumDelta || (obj.sumCount))) {
-            this.log.debug(`[CREATION] sumGroup: ${id}`);
-
-            // submit sumgroupname for object creation
-            if (this.groups[obj.sumGroup] && this.groups[obj.sumGroup].config) {
-                if (!this.typeObjects.sumGroup.includes(obj.sumGroup)) {
-                    this.typeObjects.sumGroup.push(obj.sumGroup);
+                if (!this.typeObjects.count.includes(id)) {
+                    this.typeObjects.count.push(id);
                 }
 
-                this.defineObject('sumGroup', obj.sumGroup, `Sum for ${obj.sumGroup}`); // type, id ist der gruppenname, name
-            } else {
-                this.log.error(`[CREATION] No group config found for ${obj.sumGroup}`);
+                await this.defineObject('count', id, logName); // type, id, name
             }
+
+            // sumCount
+            if (obj.sumCount) {
+                this.log.debug(`[CREATION] sumCount: ${id}`);
+
+                if (!this.typeObjects.sumCount.includes(id)) {
+                    this.typeObjects.sumCount.push(id);
+                }
+
+                await this.defineObject('sumCount', id, logName, obj.impUnit); // type, id, name, Unit
+            }
+
+            // sumDelta
+            if (obj.sumDelta) {
+                this.log.debug(`[CREATION] sumDelta: ${id}`);
+
+                if (!this.typeObjects.sumDelta.includes(id)) {
+                    this.typeObjects.sumDelta.push(id);
+                }
+
+                await this.defineObject('sumDelta', id, logName); // type, id, name
+            }
+
+            // minMax
+            if (obj.minmax) {
+                this.log.debug(`[CREATION] minmax: ${id}`);
+
+                if (!this.typeObjects.minmax.includes(id)) {
+                    this.typeObjects.minmax.push(id);
+                }
+
+                await this.defineObject('minmax', id, logName); // type, id, name
+            }
+
+            // avg
+            if (obj.avg) {
+                this.log.debug(`[CREATION] avg: ${id}`);
+
+                if (!this.typeObjects.avg.includes(id)) {
+                    this.typeObjects.avg.push(id);
+                }
+
+                await this.defineObject('avg', id, logName); // type, id, name
+            }
+
+            // timeCount
+            if (obj.timeCount) {
+                this.log.debug(`[CREATION] timeCount: ${id}`);
+
+                if (!this.typeObjects.timeCount.includes(id)) {
+                    this.typeObjects.timeCount.push(id);
+                }
+
+                await this.defineObject('timeCount', id, logName); // type, id, name
+            }
+
+            // 5minutes Values can only be determined when counting
+            if (obj.fiveMin && obj.count) {
+                this.log.debug(`[CREATION] fiveMin: ${id}`);
+
+                if (!this.typeObjects.fiveMin.includes(id)) {
+                    this.typeObjects.fiveMin.push(id);
+                }
+
+                await this.defineObject('fiveMin', id, logName); // type, id, name
+            }
+
+            // sumGroup
+            if (obj.sumGroup && (obj.sumDelta || (obj.sumCount))) {
+                this.log.debug(`[CREATION] sumGroup: ${id}`);
+
+                // submit sumgroupname for object creation
+                if (this.groups[obj.sumGroup] && this.groups[obj.sumGroup].config) {
+                    if (!this.typeObjects.sumGroup.includes(obj.sumGroup)) {
+                        this.typeObjects.sumGroup.push(obj.sumGroup);
+                    }
+
+                    await this.defineObject('sumGroup', obj.sumGroup, `Sum for ${obj.sumGroup}`); // type, id ist der gruppenname, name
+                } else {
+                    this.log.error(`[CREATION] No group config found for ${obj.sumGroup}`);
+                }
+            }
+
+            await this.subscribeForeignStatesAsync(id);
         }
-
-        this.subscribeForeignStates(id);
-
-        setImmediate(this.setupObjects.bind(this), ids, callback);
     }
 
     removeObject(id) {
@@ -1036,9 +1020,7 @@ class Statistics extends utils.Adapter {
         isStart && this.processTasks();
     }
 
-    defineObject(type, id, name, unit) {
-        const isStart = !this.tasks.length;
-
+    async defineObject(type, id, name, unit) {
         // Workaround for untranslated objects
         if (typeof name !== 'object') {
             name = {
@@ -1047,54 +1029,46 @@ class Statistics extends utils.Adapter {
         }
 
         // Create save channel
-        this.tasks.push({
-            name: 'setObjectNotExists',
-            id: `save.${type}.${id}`,
-            obj: {
-                type: 'channel',
-                common: {
-                    name: {
-                        en: `Saved values for ${name.en}`,
-                        de: `Gespeicherte Werte für ${name.de || name.en}`,
-                        ru: `Сохраненные значения для ${name.ru || name.en}`,
-                        pt: `Valores salvos para ${name.pt || name.en}`,
-                        nl: `Bespaarde waarden voor ${name.nl || name.en}`,
-                        fr: `Valeurs sauvegardées pour ${name.fr || name.en}`,
-                        it: `Valori salvati per ${name.it || name.en}`,
-                        es: `Valores guardados para ${name.es || name.en}`,
-                        pl: `Oszczędne wartości dla ${name.pl || name.en}`,
-                        'zh-cn': `保存的价值 ${name['zh-cn'] || name.en}`
-                    }
-                },
-                native: {
-                    addr: id
+        await this.setObjectNotExistsAsync(`save.${type}.${id}`, {
+            type: 'channel',
+            common: {
+                name: {
+                    en: `Saved values for ${name.en}`,
+                    de: `Gespeicherte Werte für ${name.de || name.en}`,
+                    ru: `Сохраненные значения для ${name.ru || name.en}`,
+                    pt: `Valores salvos para ${name.pt || name.en}`,
+                    nl: `Bespaarde waarden voor ${name.nl || name.en}`,
+                    fr: `Valeurs sauvegardées pour ${name.fr || name.en}`,
+                    it: `Valori salvati per ${name.it || name.en}`,
+                    es: `Valores guardados para ${name.es || name.en}`,
+                    pl: `Oszczędne wartości dla ${name.pl || name.en}`,
+                    'zh-cn': `保存的价值 ${name['zh-cn'] || name.en}`
                 }
+            },
+            native: {
+                addr: id
             }
         });
 
         // Create temp channel
-        this.tasks.push({
-            name: 'setObjectNotExists',
-            id: `temp.${type}.${id}`,
-            obj: {
-                type: 'channel',
-                common: {
-                    name: {
-                        en: `Temporary values for ${name.en}`,
-                        de: `Vorläufige Werte für ${name.de || name.en}`,
-                        ru: `Временные значения для ${name.ru || name.en}`,
-                        pt: `Valores temporários para ${name.pt || name.en}`,
-                        nl: `Tijdelijke waarden voor ${name.nl || name.en}`,
-                        fr: `Valeurs temporaires pour ${name.fr || name.en}`,
-                        it: `Valori temporanei per ${name.it || name.en}`,
-                        es: `Valores temporales para ${name.es || name.en}`,
-                        pl: `Temporary wartości dla ${name.pl || name.en}`,
-                        'zh-cn': `${name['zh-cn'] || name.en} 的临时值`,
-                    }
-                },
-                native: {
-                    addr: id
+        await this.setObjectNotExistsAsync(`temp.${type}.${id}`, {
+            type: 'channel',
+            common: {
+                name: {
+                    en: `Temporary values for ${name.en}`,
+                    de: `Vorläufige Werte für ${name.de || name.en}`,
+                    ru: `Временные значения для ${name.ru || name.en}`,
+                    pt: `Valores temporários para ${name.pt || name.en}`,
+                    nl: `Tijdelijke waarden voor ${name.nl || name.en}`,
+                    fr: `Valeurs temporaires pour ${name.fr || name.en}`,
+                    it: `Valori temporanei per ${name.it || name.en}`,
+                    es: `Valores temporales para ${name.es || name.en}`,
+                    pl: `Temporary wartości dla ${name.pl || name.en}`,
+                    'zh-cn': `${name['zh-cn'] || name.en} 的临时值`,
                 }
+            },
+            native: {
+                addr: id
             }
         });
 
@@ -1117,11 +1091,7 @@ class Statistics extends utils.Adapter {
                 obj.common.unit = unit;
             }
 
-            this.tasks.push({
-                name: 'setObjectNotExists',
-                id: `save.${type}.${id}.${objects[s]}`,
-                obj
-            });
+            await this.extendObjectAsync(`save.${type}.${id}.${objects[s]}`, obj);
         }
 
         // states for the temporary values
@@ -1144,14 +1114,9 @@ class Statistics extends utils.Adapter {
                 obj.common.unit = unit;
             }
 
-            this.tasks.push({
-                name: 'setObjectNotExists',
-                id: `temp.${type}.${id}.${objects[s]}`,
-                obj
-            });
+            await this.extendObjectAsync(`temp.${type}.${id}.${objects[s]}`, obj);
         }
 
-        isStart && this.processTasks();
         this.setInitial(type, id);
     }
 
@@ -1340,7 +1305,6 @@ class Statistics extends utils.Adapter {
                 cb();
             }
 
-            this.units = {};
             const processCallbacks = this.tasksFinishedCallbacks;
             this.tasksFinishedCallbacks = [];
             processCallbacks.forEach(cb => setImmediate(cb));
@@ -1348,56 +1312,7 @@ class Statistics extends utils.Adapter {
         }
 
         const task = this.tasks[0];
-        if (task.name === 'setObjectNotExists') {
-
-            const attr = task.id.split('.').pop();
-
-            // detect unit
-            if (task.obj.native.addr &&
-                task.obj.type === 'state' &&
-                this.units[task.obj.native.addr] === undefined &&
-                !nameObjects.timeCount.temp.includes(attr) &&
-                !task.id.match(/\.dayCount$/) && // !! Problem mit .?
-                !task.id.startsWith('save.sumGroup.') && !task.id.startsWith('temp.sumGroup.')) {
-
-                this.getForeignObject(task.obj.native.addr, (err, obj) => {
-
-                    if (obj?.common?.unit) {
-                        task.obj.common.unit = obj.common.unit;
-                        this.units[task.obj.native.addr] = obj.common.unit;
-                    } else {
-                        this.units[task.obj.native.addr] = '';
-                    }
-
-                    this.extendObject(task.id, task.obj, (err, isCreated) => {
-                        if (isCreated) {
-                            this.log.debug(`[CREATION] ${task.id}`);
-                        }
-
-                        this.processNext();
-                    });
-                });
-
-            } else {
-                if (task.obj.native.addr && !task.id.match(/\.dayCount$/)) { // !! Problem mit .?
-                    if (this.units[task.obj.native.addr] !== undefined) {
-                        if (this.units[task.obj.native.addr]) {
-                            task.obj.common.unit = this.units[task.obj.native.addr];
-                        }
-                    } else if (task.id.startsWith('save.sumGroup.') || task.id.startsWith('temp.sumGroup.')) {
-                        task.obj.common.unit = this.groups[task.obj.native.addr] && this.groups[task.obj.native.addr].config && this.groups[task.obj.native.addr].config.priceUnit ? this.groups[task.obj.native.addr].config.priceUnit.split('/')[0] : '€';
-                    }
-                }
-
-                this.extendObject(task.id, task.obj, (err, isCreated) => {
-                    if (isCreated) {
-                        this.log.debug(`[CREATION] ${task.id}`);
-                    }
-
-                    this.processNext();
-                });
-            }
-        } else if (task.name === 'async') {
+        if (task.name === 'async') {
             if (typeof task.callback === 'function') {
                 task.callback(task.args, this.processNext.bind(this));
             } else {
@@ -1526,7 +1441,7 @@ class Statistics extends utils.Adapter {
                     let sum = await this.getValueAsync(`temp.avg.${args.id}.daySum`);
                     sum = sum ? sum + args.value : args.value;
 
-                    await this.setValueAsync(`temp.avg.${args.id}.daySum`);
+                    await this.setValueAsync(`temp.avg.${args.id}.daySum`, sum);
                     await this.setValueAsync(`temp.avg.${args.id}.dayAvg`, roundValue(sum / count, PRECISION));
 
                     const tempMin = await this.getValueAsync(`temp.avg.${args.id}.dayMin`);
