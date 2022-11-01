@@ -475,6 +475,14 @@ class Statistics extends utils.Adapter {
                     err: `Configuration missing - please set at least { id: 'your.object.id' }`
                 }, msg.callback);
             }
+        } else if (msg.command === 'saveValues') {
+            // Used for integration tests
+            if (msg.message?.period && column.includes(msg.message.period)) {
+                this.saveValues(msg.message?.period);
+                this.sendTo(msg.from, msg.command, { success: true, period: msg.message.period }, msg.callback);
+            } else {
+                this.sendTo(msg.from, msg.command, { success: false, err: 'invalid time period' }, msg.callback);
+            }
         }
     }
 
@@ -869,6 +877,7 @@ class Statistics extends utils.Adapter {
             }
         }
 
+        // avg
         if (this.typeObjects.avg) {
             for (let s = 0; s < this.typeObjects.avg.length; s++) {
                 this.tasks.push({
@@ -890,7 +899,7 @@ class Statistics extends utils.Adapter {
             }
         }
 
-        // saving the daily fiveMin max/min
+        // fiveMin
         if (timePeriod === DAY && this.typeObjects.fiveMin) {
             for (let s = 0; s < this.typeObjects.fiveMin.length; s++) {
                 const id = this.typeObjects.fiveMin[s];
@@ -919,9 +928,9 @@ class Statistics extends utils.Adapter {
             }
         }
 
-        // timeCount hat andere Objektbezeichnungen und deswegen kann day aus timeperiod nicht benutzt werden
-        // day erst ab 2ter Stelle im Array (ohne 15min und hour soll benutzt werden) -> also (day > 1) und [day-2]
-        if (tp > 1) {
+        // timeCount
+        // DAY, WEEK, MONTH, QUARTER, YEAR
+        if (tp >= 2) {
             if (this.typeObjects.timeCount) {
                 for (let s = 0; s < this.typeObjects.timeCount.length; s++) {
                     const id = this.typeObjects.timeCount[s];
@@ -951,9 +960,9 @@ class Statistics extends utils.Adapter {
             }
         }
 
-        // minmax hat andere Objektbezeichnungen und deswegen kann day aus timeperiod nicht benutzt werden
-        // day erst ab 2ter Stelle im Array (ohne 15min und hour soll benutzt werden) -> also (day > 1) und [day-2]
-        if (tp >= 2) { // DAY, WEEK, MONTH, QUARTER, YEAR
+        // minmax
+        // DAY, WEEK, MONTH, QUARTER, YEAR
+        if (tp >= 2) {
             if (this.typeObjects.minmax) {
                 for (let s = 0; s < this.typeObjects.minmax.length; s++) {
                     const id = this.typeObjects.minmax[s];
