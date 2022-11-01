@@ -189,14 +189,14 @@ class Statistics extends utils.Adapter {
 
         // every 5min
         try {
-            this.crons.avg5min = new CronJob('*/5 * * * *',
+            this.crons.fiveMin = new CronJob('*/5 * * * *',
                 () => this.fiveMin(),
-                () => this.log.debug('stopped avg5min'), // This function is executed when the job stops
+                () => this.log.debug('stopped fiveMin'), // This function is executed when the job stops
                 true,
                 timezone
             );
         } catch (e) {
-            this.log.error(`creating cron avg5min errored with: ${e}`);
+            this.log.error(`creating cron fiveMin errored with: ${e}`);
         }
 
         // Every 15 minutes
@@ -1298,8 +1298,6 @@ class Statistics extends utils.Adapter {
     }
 
     fiveMin() {
-        this.log.debug('[5 MINUTES] evaluation');
-        const isStart = !this.tasks.length;
         /**
          * Determine 5min values
          *
@@ -1317,6 +1315,10 @@ class Statistics extends utils.Adapter {
 
         // go through all subscribed objects and write
         if (this.typeObjects.fiveMin) {
+            this.log.debug('[5 MINUTES] evaluation');
+
+            const isStart = !this.tasks.length;
+
             for (let t = 0; t < this.typeObjects.fiveMin.length; t++) {
                 this.tasks.push({
                     name: 'promise',
@@ -1349,7 +1351,7 @@ class Statistics extends utils.Adapter {
                         }
 
                         const delta = actual - prevValue;
-                        this.log.debug(`[STATE CHANGE] fiveMin; of : ${args.id} with  min: ${min} max: ${max} actual: ${actual} old: ${prevValue} delta: ${delta}`);
+                        this.log.debug(`[STATE CHANGE] fiveMin; of : ${args.id} with min: ${min} max: ${max} actual: ${actual} prevValue: ${prevValue} delta: ${delta}`);
                         await this.setValueStatAsync(`temp.fiveMin.${args.id}.mean5Min`, delta);
 
                         if (min === null || delta < min) {
@@ -1364,8 +1366,9 @@ class Statistics extends utils.Adapter {
                     }
                 });
             }
+
+            isStart && this.processTasks();
         }
-        isStart && this.processTasks();
     }
 
     onStateChangeAvgValue(id, value) {
@@ -1581,7 +1584,6 @@ class Statistics extends utils.Adapter {
     }
 
     onStateChangeCountValue(id, value) {
-        const isStart = !this.tasks.length;
         /*
             value with limit or state
             Change to 1 -> increase by 1
@@ -1590,6 +1592,8 @@ class Statistics extends utils.Adapter {
         // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
         // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
         if (this.isTrueNew(id, value, 'count')) {
+            const isStart = !this.tasks.length;
+
             this.tasks.push({
                 name: 'promise',
                 args: { id },
@@ -1614,13 +1618,12 @@ class Statistics extends utils.Adapter {
                     }
                 }
             });
-        }
 
-        isStart && this.processTasks();
+            isStart && this.processTasks();
+        }
     }
 
     onStateChangeSumCountValue(id, value) {
-        const isStart = !this.tasks.length;
         /*
             value with limit or state
             Change to 1 -> increase by 1
@@ -1629,6 +1632,8 @@ class Statistics extends utils.Adapter {
         // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
         // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
         if (this.isTrueNew(id, value, 'sumCount')) {
+            const isStart = !this.tasks.length;
+
             this.tasks.push({
                 name: 'promise',
                 args: { id },
@@ -1684,19 +1689,20 @@ class Statistics extends utils.Adapter {
                     }
                 }
             });
-        }
 
-        isStart && this.processTasks();
+            isStart && this.processTasks();
+        }
     }
 
     onStateChangeMinMaxValue(id, value) {
-        const isStart = !this.tasks.length;
         /**
          * Comparison between last min / max and now transmitted value
          */
         value = parseFloat(value) || 0;
 
         if (!isNaN(value)) {
+            const isStart = !this.tasks.length;
+
             this.tasks.push({
                 name: 'promise',
                 args: {
