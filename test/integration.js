@@ -915,7 +915,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await assertStateEquals(harness, `${tempId1}.day`, 0);
                 await assertStateEquals(harness, `${tempId2}.day`, 0);
-                //await assertStateEquals(harness, `${sumGroupTempId}.day`, 0);
+                await assertStateEquals(harness, `${sumGroupTempId}.day`, 0);
 
                 // Round 1
                 await harness.states.setStateAsync(customNumberObjId1, { val: 20, ack: true }); // + 10

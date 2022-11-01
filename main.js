@@ -160,6 +160,21 @@ class Statistics extends utils.Adapter {
                 }
             }
 
+            if (this.config.groups) {
+                for (let g = 0; g < this.config.groups.length; g++) {
+                    const groupConfig = this.config.groups[g];
+                    const groupId = groupConfig.id;
+
+                    this.groups[groupId] = { config: groupConfig, items: [] };
+
+                    if (!this.typeObjects.sumGroup.includes(groupId)) {
+                        this.typeObjects.sumGroup.push(groupId);
+                    }
+
+                    await this.defineObject('sumGroup', groupId, `Sum for ${groupConfig.name}`, groupConfig.priceUnit);
+                }
+            }
+
             const keys = Object.keys(this.statDP);
             await this.setupObjects(keys);
 
@@ -708,14 +723,6 @@ class Statistics extends utils.Adapter {
                 obj.impUnitPerImpulse = this.config.impUnitPerImpulse; // Default from config if 0
             }
 
-            // merge of groups
-            if (obj.sumGroup && (obj.count || obj.sumCount || obj.sumDelta)) {
-                this.groups[obj.sumGroup] = this.groups[obj.sumGroup] || { config: this.config.groups.find(g => g.id === obj.sumGroup), items: [] };
-                if (!this.groups[obj.sumGroup].items.includes(id)) {
-                    this.groups[obj.sumGroup].items.push(id);
-                }
-            }
-
             // function is called with the custom objects
             this.log.debug(`[CREATION] ============================== ${id} =============================`);
             this.log.debug(`[CREATION] setup of object ${id}: ${JSON.stringify(obj)}`);
@@ -799,18 +806,9 @@ class Statistics extends utils.Adapter {
             }
 
             // sumGroup
-            if (obj.sumGroup && (obj.sumDelta || (obj.sumCount))) {
-                this.log.debug(`[CREATION] sumGroup: ${id}`);
-
-                // submit sumgroupname for object creation
-                if (this.groups[obj.sumGroup] && this.groups[obj.sumGroup].config) {
-                    if (!this.typeObjects.sumGroup.includes(obj.sumGroup)) {
-                        this.typeObjects.sumGroup.push(obj.sumGroup);
-                    }
-
-                    await this.defineObject('sumGroup', obj.sumGroup, `Sum for ${obj.sumGroup}`); // type, id ist der gruppenname, name
-                } else {
-                    this.log.error(`[CREATION] No group config found for ${obj.sumGroup}`);
+            if (obj.sumGroup && (obj.sumCount || obj.sumDelta) && this.groups[obj.sumGroup]) {
+                if (!this.groups[obj.sumGroup].items.includes(id)) {
+                    this.groups[obj.sumGroup].items.push(id);
                 }
             }
 
@@ -1136,6 +1134,8 @@ class Statistics extends utils.Adapter {
                             }
                         } else if (args.type === 'timeCount') {
                             await this.setValueAsync(targetId, 0);
+                        } else if (args.type === 'sumGroup') {
+                            await this.setValueAsync(targetId, 0);
                         }
                     }
                 }
@@ -1250,6 +1250,8 @@ class Statistics extends utils.Adapter {
                             } else {
                                 await this.setValueAsync(targetId, 0);
                             }
+                        } else if (args.type === 'sumGroup') {
+                            await this.setValueAsync(targetId, 0);
                         }
                     }
                 }
