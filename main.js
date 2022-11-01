@@ -856,16 +856,17 @@ class Statistics extends utils.Adapter {
         // count, sumCount, sumDelta, sumGroup
         for (let t = 0; t < dayTypes.length; t++) {
             for (let s = 0; s < this.typeObjects[dayTypes[t]].length; s++) {
+                const nameObjId = nameObjects[dayTypes[t]].temp[tp];
                 // ignore last5min
-                if (nameObjects[dayTypes[t]].temp[tp] === 'last5Min') {
+                if (nameObjId === 'last5Min') {
                     continue;
                 }
                 const id = this.typeObjects[dayTypes[t]][s];
                 this.tasks.push({
                     name: 'promise',
                     args: {
-                        temp: `temp.${dayTypes[t]}.${id}.${nameObjects[dayTypes[t]].temp[tp]}`,
-                        save: `save.${dayTypes[t]}.${id}.${nameObjects[dayTypes[t]].temp[tp]}`
+                        temp: `temp.${dayTypes[t]}.${id}.${nameObjId}`,
+                        save: `save.${dayTypes[t]}.${id}.${nameObjId}`
                     },
                     callback: async (args) => {
                         await this.copyValue(args.temp, args.save);
@@ -1284,14 +1285,7 @@ class Statistics extends utils.Adapter {
         }
 
         const task = this.tasks[0];
-        if (task.name === 'async') {
-            if (typeof task.callback === 'function') {
-                task.callback(task.args, this.processNext.bind(this));
-            } else {
-                this.log.error('error async task');
-                this.processNext();
-            }
-        } else if (task.name === 'promise') {
+        if (task.name === 'promise') {
             if (typeof task.callback === 'function') {
                 task.callback(task.args).then(() => {
                     this.processNext();
@@ -1325,54 +1319,48 @@ class Statistics extends utils.Adapter {
         if (this.typeObjects.fiveMin) {
             for (let t = 0; t < this.typeObjects.fiveMin.length; t++) {
                 this.tasks.push({
-                    name: 'async',
+                    name: 'promise',
                     args: { id: this.typeObjects.fiveMin[t] },
-                    callback: (args, callback) => {
+                    callback: async (args) => {
+                        this.log.debug(`[EXECUTING] fiveMin call ${args.id}`);
+
                         if (!this.statDP[args.id]) {
-                            return callback && callback();
-                        }
-                        let temp5MinID;
-                        let actualID;
-                        if (this.statDP[args.id].sumDelta) {
-                            temp5MinID = `temp.sumDelta.${args.id}.last5Min`;
-                            actualID = `save.sumDelta.${args.id}.last`;
-                        } else {
-                            temp5MinID = `temp.count.${args.id}.last5Min`;
-                            actualID = `temp.count.${args.id}.day`;
+                            this.log.warn(`[ABORTING] fiveMin call ${args.id} - object no longer exists`);
+                            return false;
                         }
 
-                        this.getValue(actualID, (err, actual) => {
-                            if (actual === null) {
-                                return callback();
-                            }
-                            this.getValue(`temp.fiveMin.${args.id}.dayMin5Min`, (err, min) => {
-                                this.getValue(`temp.fiveMin.${args.id}.dayMax5Min`, (err, max) => {
-                                    this.getValue(temp5MinID, (err, old) => {
-                                        // Write actual state into counter object
-                                        this.setValueStat(temp5MinID, actual, () => {
-                                            if (old === null) {
-                                                return callback();
-                                            }
-                                            const delta = actual - old;
-                                            this.log.debug(`[STATE CHANGE] fiveMin; of : ${args.id} with  min: ${min} max: ${max} actual: ${actual} old: ${old} delta: ${delta}`);
-                                            this.setValueStat(`temp.fiveMin.${args.id}.mean5Min`, delta, () => {
-                                                if (max === null || delta > max) {
-                                                    this.log.debug(`[STATE CHANGE] new Max temp.fiveMin.${args.id}.dayMax5Min: ${delta}`);
-                                                    this.setValueStat(`temp.fiveMin.${args.id}.dayMax5Min`, delta, callback);
-                                                    callback = null;
-                                                }
-                                                if (min === null || delta < min) {
-                                                    this.log.debug(`[STATE CHANGE] new Min temp.fiveMin.${args.id}.dayMin5Min: ${delta}`);
-                                                    this.setValueStat(`temp.fiveMin.${args.id}.dayMin5Min`, delta, callback);
-                                                    callback = null;
-                                                }
-                                                callback && callback();
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                        });
+                        const temp5MinID = `temp.count.${args.id}.last5Min`;
+                        const actualID = `temp.count.${args.id}.day`;
+
+                        const actual = await this.getValueAsync(actualID);
+
+                        if (actual === null) {
+                            return false;
+                        }
+
+                        const min = await this.getValueAsync(`temp.fiveMin.${args.id}.dayMin5Min`);
+                        const max = await this.getValueAsync(`temp.fiveMin.${args.id}.dayMax5Min`);
+                        const prevValue = await this.getValueAsync(temp5MinID);
+
+                        // Write actual state into counter object
+                        await this.setValueStatAsync(temp5MinID, actual);
+                        if (prevValue === null) {
+                            return false;
+                        }
+
+                        const delta = actual - prevValue;
+                        this.log.debug(`[STATE CHANGE] fiveMin; of : ${args.id} with  min: ${min} max: ${max} actual: ${actual} old: ${prevValue} delta: ${delta}`);
+                        await this.setValueStatAsync(`temp.fiveMin.${args.id}.mean5Min`, delta);
+
+                        if (min === null || delta < min) {
+                            this.log.debug(`[STATE CHANGE] new Min temp.fiveMin.${args.id}.dayMin5Min: ${delta}`);
+                            await this.setValueStatAsync(`temp.fiveMin.${args.id}.dayMin5Min`, delta);
+                        }
+
+                        if (max === null || delta > max) {
+                            this.log.debug(`[STATE CHANGE] new Max temp.fiveMin.${args.id}.dayMax5Min: ${delta}`);
+                            await this.setValueStatAsync(`temp.fiveMin.${args.id}.dayMax5Min`, delta);
+                        }
                     }
                 });
             }
