@@ -75,7 +75,7 @@ const nameObjects = {
 };
 
 const column = [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR];
-const copyToSave = ['count', 'sumCount', 'sumGroup', 'sumDelta'];
+const copyToSave = ['count', 'sumCount', 'sumDelta', 'sumGroup'];
 
 function isTrue(val) {
     return val === 1 || val === '1' || val === true || val === 'true' || val === 'on' || val === 'ON';
@@ -849,12 +849,11 @@ class Statistics extends utils.Adapter {
             }
         }
 
-        this.log.debug(`[SAVE VALUES] saving ${timePeriod} values`);
+        this.log.debug(`[SAVE VALUES] saving ${timePeriod} values: ${dayTypes.join(', ')}`);
 
         const tp = column.indexOf(timePeriod); // nameObjects[day] contains the time-related object value
 
-        // Schleife für alle Werte die durch day-variable bestimmt sind, gilt durch copyToSave für 'count', 'sumCount', 'sumGroup', 'sumDelta'
-        // avg, timeCount /fivemin braucht extra Behandlung
+        // count, sumCount, sumDelta, sumGroup
         for (let t = 0; t < dayTypes.length; t++) {
             for (let s = 0; s < this.typeObjects[dayTypes[t]].length; s++) {
                 // ignore last5min
@@ -1658,40 +1657,39 @@ class Statistics extends utils.Adapter {
                         this.typeObjects.sumCount.includes(args.id) &&
                         this.statDP[args.id].impUnitPerImpulse) {
 
-                        for (let s = 0; s < nameObjects.sumGroup.temp.length; s++) {
+                        const impUnitPerImpulse = this.statDP[args.id].impUnitPerImpulse;
 
-                            const sumCountId = `temp.sumCount.${args.id}.${nameObjects.sumGroup.temp[s]}`;
-                            const sumGroupId = `temp.sumGroup.${this.statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[s]}`;
-
-                            const impUnitPerImpulse = this.statDP[args.id].impUnitPerImpulse;
+                        for (let s = 0; s < nameObjects.sumCount.temp.length; s++) {
+                            const sumCountId = `temp.sumCount.${args.id}.${nameObjects.sumCount.temp[s]}`;
 
                             const prevValue = await this.getValueAsync(sumCountId);
                             const newValue = prevValue ? prevValue + impUnitPerImpulse : impUnitPerImpulse;
 
                             this.log.debug(`[STATE CHANGE] Increase ${sumCountId} on ${impUnitPerImpulse} to ${newValue}`);
                             await this.setValueAsync(sumCountId, newValue);
+                        }
 
-                            // add consumption to group
-                            if (this.statDP[args.id].sumGroup &&
-                                this.groups[this.statDP[args.id].sumGroup] &&
-                                this.groups[this.statDP[args.id].sumGroup].config &&
-                                this.statDP[args.id].groupFactor
-                            ) {
-                                const factor = this.statDP[args.id].groupFactor;
-                                const price = this.groups[this.statDP[args.id].sumGroup].config.price;
+                        // add consumption to group
+                        const sumGroup = this.statDP[args.id]?.sumGroup;
+                        if (this.groups?.[sumGroup]?.items.includes(args.id) && this.statDP[args.id].groupFactor) {
+                            const factor = this.statDP[args.id].groupFactor;
+                            const price = this.groups[sumGroup].config.price;
+                            const sumGroupDelta = impUnitPerImpulse * factor * price;
 
-                                const sumGroupDelta = impUnitPerImpulse * factor * price;
-
+                            for (let g = 0; g < nameObjects.sumGroup.temp.length; g++) {
+                                const sumGroupId = `temp.sumGroup.${sumGroup}.${nameObjects.sumGroup.temp[g]}`;
                                 const prevValue = await this.getValueAsync(sumGroupId);
+
+                                // Check if the value not older than interval
                                 // TODO
                                 /*
                                 if (ts) {
-                                    prevValue = this.checkValue(prevValue || 0, ts, sumGroupId, nameObjects.sumGroup.temp[s]);
+                                    prevValue = this.checkValue(prevValue || 0, ts, sumGroupId, nameObjects.sumGroup.temp[i]);
                                 }
                                 */
 
-                                const newValue = roundValue(((prevValue || 0) + sumGroupDelta), PRECISION);
-                                this.log.debug(`[STATE CHANGE] Increase group ${sumGroupId} by ${sumGroupDelta} to ${newValue}`);
+                                const newValue = roundValue((prevValue || 0) + sumGroupDelta, PRECISION);
+                                this.log.debug(`[STATE CHANGE] Increase ${sumGroupId} on ${sumGroupDelta} to ${newValue}`);
                                 await this.setValueAsync(sumGroupId, newValue);
                             }
                         }
@@ -1822,18 +1820,15 @@ class Statistics extends utils.Adapter {
                     await this.setValueAsync(sumDeltaId, newValue);
                 }
 
-                if (this.statDP[args.id].sumGroup &&
-                    this.groups[this.statDP[args.id].sumGroup] &&
-                    this.groups[this.statDP[args.id].sumGroup].config &&
-                    this.statDP[args.id].groupFactor
-                ) {
+                // add consumption to group
+                const sumGroup = this.statDP[args.id]?.sumGroup;
+                if (this.groups?.[sumGroup]?.items.includes(args.id) && this.statDP[args.id].groupFactor) {
                     const factor = this.statDP[args.id].groupFactor;
-                    const price = this.groups[this.statDP[args.id].sumGroup].config.price;
+                    const price = this.groups[sumGroup].config.price;
+                    const sumGroupDelta = delta * factor * price;
 
-                    for (let i = 0; i < nameObjects.sumGroup.temp.length; i++) {
-                        const sumGroupId = `temp.sumGroup.${this.statDP[args.id].sumGroup}.${nameObjects.sumGroup.temp[i]}`;
-                        const sumGroupDelta = delta * factor * price;
-
+                    for (let g = 0; g < nameObjects.sumGroup.temp.length; g++) {
+                        const sumGroupId = `temp.sumGroup.${sumGroup}.${nameObjects.sumGroup.temp[g]}`;
                         const prevValue = await this.getValueAsync(sumGroupId);
 
                         // Check if the value not older than interval
