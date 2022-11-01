@@ -498,7 +498,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                return sleep(1000);
+                return sleep(2000);
             });
 
             it('calculation', async function () {
