@@ -522,54 +522,45 @@ class Statistics extends utils.Adapter {
         }
     }
 
-    isTrueNew(id, val, type) {
+    async isTrueNew(id, val, type) {
         // detection if a count value is real or only from polling with same state
         let newPulse = false;
-        this.getValue(`temp.${type}.${id}.lastPulse`, (err, value) => {
-            this.setValue(`temp.${type}.${id}.lastPulse`, val);
-            if (value === val) {
-                newPulse = false;
-                this.log.debug(`new pulse false ? ${newPulse}`);
-            } else {
-                newPulse = isTrue(val);
-                this.log.debug(`new pulse true ? ${newPulse}`);
-            }
-        });
-        return newPulse;
-    }
+        const value = await this.getValueAsync(`temp.${type}.${id}.lastPulse`);
+        await this.setValueAsync(`temp.${type}.${id}.lastPulse`, val);
 
-    getValue(id, callback) {
-        if (Object.prototype.hasOwnProperty.call(this.states, id)) {
-            callback(null, this.states[id]);
+        if (value === val) {
+            newPulse = false;
+            this.log.debug(`new pulse false ? ${newPulse}`);
         } else {
-            this.getState(id, (err, state) => {
-                this.states[id] = state ? state.val : null;
-
-                callback(err, this.states[id], state && state.ts);
-            });
+            newPulse = isTrue(val);
+            this.log.debug(`new pulse true ? ${newPulse}`);
         }
+
+        return newPulse;
     }
 
     async getValueAsync(id) {
         return new Promise((resolve, reject) => {
-            this.getValue(id, (err, value) => {
-                if (err) {
-                    reject(err);
-                }
+            if (Object.prototype.hasOwnProperty.call(this.states, id)) {
+                resolve(this.states[id]);
+            } else {
+                this.getState(id, (err, state) => {
+                    if (err) {
+                        reject(err);
+                    }
 
-                resolve(value);
-            });
+                    this.states[id] = state ? state.val : null;
+
+                    resolve(this.states[id]);
+                });
+            }
         });
-    }
-
-    setValue(id, value, callback) {
-        this.states[id] = value;
-        this.setState(id, { val: value, ack: true }, callback);
     }
 
     async setValueAsync(id, value) {
         return new Promise((resolve, reject) => {
-            this.setValue(id, value, (err) => {
+            this.states[id] = value;
+            this.setState(id, { val: value, ack: true }, (err) => {
                 if (err) {
                     reject(err);
                 }
@@ -579,19 +570,15 @@ class Statistics extends utils.Adapter {
         });
     }
 
-    setValueStat(id, value, callback) {
-        const ts = new Date();
-        ts.setMinutes(ts.getMinutes() - 1);
-        ts.setSeconds(59);
-        ts.setMilliseconds(0);
-
-        this.states[id] = value;
-        this.setState(id, { val: value, ts: ts.getTime(), ack: true }, callback);
-    }
-
     async setValueStatAsync(id, value) {
         return new Promise((resolve, reject) => {
-            this.setValueStat(id, value, (err) => {
+            const ts = new Date();
+            ts.setMinutes(ts.getMinutes() - 1);
+            ts.setSeconds(59);
+            ts.setMilliseconds(0);
+
+            this.states[id] = value;
+            this.setState(id, { val: value, ts: ts.getTime(), ack: true }, (err) => {
                 if (err) {
                     reject(err);
                 }
@@ -1533,7 +1520,7 @@ class Statistics extends utils.Adapter {
                         await this.setValueAsync(`temp.timeCount.${args.id}.last`, args.state.val);
 
                         this.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${args.state.ts} ${timeConverter(args.state.ts)}`);
-                        this.setValue(`temp.timeCount.${args.id}.last10`, args.state.ts);
+                        await this.setValueAsync(`temp.timeCount.${args.id}.last10`, args.state.ts);
 
                         this.log.debug(`[STATE CHANGE] 1->0 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`);
 
@@ -1591,23 +1578,23 @@ class Statistics extends utils.Adapter {
         */
         // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
         // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
-        if (this.isTrueNew(id, value, 'count')) {
-            const isStart = !this.tasks.length;
+        const isStart = !this.tasks.length;
 
-            this.tasks.push({
-                name: 'promise',
-                args: { id },
-                callback: async (args) => {
-                    this.log.debug(`[EXECUTING] count call ${args.id}`);
+        this.tasks.push({
+            name: 'promise',
+            args: { id, value },
+            callback: async (args) => {
+                this.log.debug(`[EXECUTING] count call ${args.id}`);
 
-                    if (!this.statDP[args.id]) {
-                        this.log.warn(`[ABORTING] count call ${args.id} - object no longer exists`);
-                        return false;
-                    }
+                if (!this.statDP[args.id]) {
+                    this.log.warn(`[ABORTING] count call ${args.id} - object no longer exists`);
+                    return false;
+                }
 
+                if (await this.isTrueNew(args.id, args.value, 'count')) {
                     for (let s = 0; s < nameObjects.count.temp.length; s++) {
                         if (nameObjects.count.temp[s] !== 'lastPulse') {
-                            const countId = `temp.count.${id}.${nameObjects.count.temp[s]}`;
+                            const countId = `temp.count.${args.id}.${nameObjects.count.temp[s]}`;
 
                             let prevValue = await this.getValueAsync(countId);
                             prevValue = prevValue ? prevValue + 1 : 1;
@@ -1617,10 +1604,10 @@ class Statistics extends utils.Adapter {
                         }
                     }
                 }
-            });
+            }
+        });
 
-            isStart && this.processTasks();
-        }
+        isStart && this.processTasks();
     }
 
     onStateChangeSumCountValue(id, value) {
@@ -1631,20 +1618,20 @@ class Statistics extends utils.Adapter {
         */
         // nicht nur auf true/false prüfen, es muß sich um eine echte Flanke handeln
         // derzeitigen Zustand mit prüfen, sonst werden subscribed status updates mitgezählt
-        if (this.isTrueNew(id, value, 'sumCount')) {
-            const isStart = !this.tasks.length;
+        const isStart = !this.tasks.length;
 
-            this.tasks.push({
-                name: 'promise',
-                args: { id },
-                callback: async (args) => {
-                    this.log.debug(`[EXECUTING] sum count ${args.id}`);
+        this.tasks.push({
+            name: 'promise',
+            args: { id, value },
+            callback: async (args) => {
+                this.log.debug(`[EXECUTING] sum count ${args.id}`);
 
-                    if (!this.statDP[args.id]) {
-                        this.log.warn(`[ABORTING] sum count ${args.id} - object no longer exists`);
-                        return false;
-                    }
+                if (!this.statDP[args.id]) {
+                    this.log.warn(`[ABORTING] sum count ${args.id} - object no longer exists`);
+                    return false;
+                }
 
+                if (await this.isTrueNew(args.id, args.value, 'sumCount')) {
                     // Calculation of consumption (what is a physical-sized pulse)
                     if (this.typeObjects.sumCount &&
                         this.typeObjects.sumCount.includes(args.id) &&
@@ -1688,10 +1675,10 @@ class Statistics extends utils.Adapter {
                         }
                     }
                 }
-            });
+            }
+        });
 
-            isStart && this.processTasks();
-        }
+        isStart && this.processTasks();
     }
 
     onStateChangeMinMaxValue(id, value) {
