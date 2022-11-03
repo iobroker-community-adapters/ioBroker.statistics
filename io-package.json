@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "statistics",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "news": {
+      "2.3.0": {
+        "en": "NodeJS 14.5.0 is required\n\n* Added hourly, weekly, monthly, ... averages\n* Added promises to avoid parallel execution of tasks (lead to incorrect calculations)\n* Fixed init values for save/temp\n* Added option to enable statistics for objects via sendTo\n* Allow sum delta to substract values (negative delta)\n* Delete states when option in unchecked\n* Removed dayMin and dayMax from avg (use minmax for that case!)\n* Fix: Calculation of avg when no change of value",
+        "de": "NodeJS 14.5.0 ist erforderlich\n\n* Hinzugefügt stündlich, wöchentlich, monatlich, ... Durchschnitte\n* Zugesagte Versprechen zur Vermeidung paralleler Ausführung von Aufgaben (zu falschen Berechnungen führen)\n* Feste Initwerte für Speicher/Zeit\n* Zusätzliche Möglichkeit, Statistiken über Objekte per sendTo zu aktivieren\n* Lassen Sie die Summe delta zu subtrahierenden Werten (negative delta)\n* Status löschen, wenn Option unkontrolliert\n*Entfernt TagMin und TagMax von avg (verwenden minmax für diesen Fall!)\n* Fix: Berechnung von avg, wenn keine Wertänderung",
+        "ru": "NodeJS 14.5.0 требуется\n\n* Добавлены почасовые, еженедельные, ежемесячные, ... средние\n* Добавлены обещания, чтобы избежать параллельного выполнения задач (выводятся к некорректным расчетам)\n* Фиксированные значения init для сохранения/temp\n* Добавлена возможность включения статистики объектов через sendTo\n* Позволяют суммой дельта до субстрактных значений (негативная дельта)\n* Удалить состояния при выборе в непроверке\n* Удаленный деньМин и деньМакс из avg (используйте minmax для этого случая)\n* Исправление: Расчет avg, когда нет изменения стоимости",
+        "pt": "NodeJS 14.5.0 é necessário\n\n* Adicionado por hora, semanal, mensal, ... médias\n* Adicionado promessas para evitar a execução paralela de tarefas (lead para cálculos incorretos)\n* Valores init fixos para salvar/temp\n* opção adicionada para ativar estatísticas para objetos via sendTo\n* Permitir soma delta para subtrair valores (deta negativa)\n* Excluir estados quando opção em desmarcado\n* Dia removidoMin e diaMax de avg (use minmax para esse caso)\n* Fix: Cálculo de avg quando nenhuma mudança de valor",
+        "nl": "NodeJS 14.5.0 is vereist\n\nVertaling:\n♪ Added beloftes to vermijden parallel executie van taken (lead to oncorrecte berekeningen)\nQuality over Quantity (QoQ) Releases Vertaling:\n♪ Added optie to Enable statistieken voor objecten via verzenden\n♪ Vertaling:\n♪ Delete states when option in unchecked\nQuality over Quantity (QoQ) Removed DayMin and DayMax from avg (use minmax for that zaak)\n♪ Fix ♪ Berekening van Avg als er geen waarde verandert",
+        "fr": "NodeJS 14.5.0 est nécessaire\n\n* Ajout horaire, hebdomadaire, mensuel, ... moyens\n* Ajout de promesses pour éviter l'exécution parallèle des tâches (en tenant compte des calculs incorrects)\n* Valeurs d ' entrée fixes pour les sauvegardes/temp\n* Ajout d'option pour activer les statistiques des objets via sendTo\n* Permettre la somme delta aux valeurs substractes (delta négatif)\n* Supprimer les états lorsque l'option n'est pas cochée\n* Jour suppriméMin et jourMax de avg (utilisez minmax pour ce cas)\n* Correction : Calcul de avg lorsqu ' il n ' y a pas de changement de valeur",
+        "it": "NodeJS 14.5.0 è richiesto\n\n* Aggiunto orario, settimanale, mensile, ... medie\n* Aggiunta promesse per evitare l'esecuzione parallela di compiti (ad a calcoli errati)\n* Valori di init fissi per salvare/tempi\n* Aggiunta opzione per attivare statistiche per oggetti tramite sendTo\n# Consentire la somma delta ai valori substrati (delta negativo)\n* Elimina gli stati quando l'opzione in deselezionato\n* Giorno rimossoMin e dayMax da avg (usare minmax per quel caso)\n* Fisso: Calcolo di avg quando nessun cambiamento di valore",
+        "es": "NodeJS 14.5.0 es necesario\n\n* Añadido horaria, semanal, mensual,... promedios\n* Promesas adicionales para evitar la ejecución paralela de tareas (cargadas para cálculos incorrectos)\n* Valores de entrada fijos para ahorro/temporal\n* opción adicional para habilitar estadísticas para objetos mediante sendTo\n* Permitir la suma delta para substraer valores (delta negativo)\n* Eliminar los estados cuando la opción no está comprobada\n* Día extraídoMin y dayMax de avg (utiliza minmax para ese caso)\n* Fijación: Cálculo de avg cuando no hay cambio de valor",
+        "pl": "NodeJS 14,5.0 (ang.)\n\n* Added Hourly, monthly, ...średnio\n* Added obiecuje unikać równoległej egzekucji zadań (przywództwo do niepoprawnych obliczeń)\n* Fixed init value for save/temp\n* Wstępna opcja umożliwiająca dane dla obiektów poprzez wysyłanie ToTo\n* Allow sum delta to substract values (ang.)\nDelete state (ang.)\nRemoved dayMin and dayMax from avg (use minmax for this case) (ang.)\n* Fix: Kalkulacja avg w przypadku braku zmian wartości",
+        "uk": "NodeJS 14.5.0 необхідний\n\n* Додано час, щотижня, місяць, ... середні\n* Додано обіцянки, щоб уникнути паралельного виконання завдань (до невірних обчислень)\n* Виправлені значення init для збереження/temp\n* Додано варіант, щоб увімкнути статистику для об'єктів через sendTo\nІм'я * Allow Сума дельта до субструктивних значень (негативна дельта)\n* Видалити стани при опції в очище\n* Видалити деньMin і dayMax з avg (використайте minmax для цього випадку)\n* Фіксація: Розрахунок вартості",
+        "zh-cn": "不需要JS14.50。\n\n* 每周、每月、......平均增加一小时。\n* 增加承诺,以避免任务的平行执行(导致不正确的计算)。\n* 固定的储蓄/经验价值\n* 增加通过发送来提供物体统计数据的选择\n* A/64/50。 允许总的评 注\n* 删除在无管制情况下的选择。\n* 从万国宫移出每日Min和每日Max(在此情况下用小额!)\n* ix: 在不改变价值时计算"
+      },
       "2.2.0": {
         "en": "Added absolute min and max values",
         "de": "Absolute min und max Werte hinzugefügt",
@@ -74,18 +87,6 @@
         "es": "IMPORTANTE: ¡se necesita al menos js-controller 3.2!\nPrepárese para la futura compatibilidad con js-controller",
         "pl": "WAŻNE: potrzebny jest przynajmniej js-controller 3.2!\nPrzygotuj się na przyszłą kompatybilność kontrolerów js",
         "zh-cn": "重要提示：至少需要 js-controller 3.2！\n为将来的 js-controller 兼容性做准备"
-      },
-      "1.0.10": {
-        "en": "prevent some crash cases",
-        "de": "einige Crash-Fälle verhindern",
-        "ru": "предотвратить некоторые аварийные ситуации",
-        "pt": "prevenir alguns casos de acidente",
-        "nl": "sommige crashgevallen voorkomen",
-        "fr": "éviter certains cas de crash",
-        "it": "prevenire alcuni casi di incidente",
-        "es": "prevenir algunos casos de accidentes",
-        "pl": "zapobiec niektórym przypadkom awarii",
-        "zh-cn": "防止一些崩溃案例"
       }
     },
     "titleLang": {
