@@ -121,9 +121,12 @@
     "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.statistics/master/admin/statistics.png",
     "keywords": [
       "statistics",
+      "count",
       "average",
       "sum",
-      "daily value"
+      "min max",
+      "consumption",
+      "energy"
     ],
     "readme": "https://github.com/iobroker-community-adapters/ioBroker.statistics/blob/master/README.md",
     "loglevel": "info",
