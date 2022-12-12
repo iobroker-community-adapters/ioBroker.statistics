@@ -1,533 +1,541 @@
 {
-  "common": {
-    "name": "statistics",
-    "version": "2.3.0",
-    "news": {
-      "2.3.0": {
-        "en": "NodeJS 14.5.0 is required\n\n* Added hourly, weekly, monthly, ... averages\n* Added promises to avoid parallel execution of tasks (lead to incorrect calculations)\n* Fixed init values for save/temp\n* Added option to enable statistics for objects via sendTo\n* Allow sum delta to substract values (negative delta)\n* Delete states when option in unchecked\n* Removed dayMin and dayMax from avg (use minmax for that case!)\n* Fix: Calculation of avg when no change of value",
-        "de": "NodeJS 14.5.0 ist erforderlich\n\n* Hinzugefügt stündlich, wöchentlich, monatlich, ... Durchschnitte\n* Zugesagte Versprechen zur Vermeidung paralleler Ausführung von Aufgaben (zu falschen Berechnungen führen)\n* Feste Initwerte für Speicher/Zeit\n* Zusätzliche Möglichkeit, Statistiken über Objekte per sendTo zu aktivieren\n* Lassen Sie die Summe delta zu subtrahierenden Werten (negative delta)\n* Status löschen, wenn Option unkontrolliert\n*Entfernt TagMin und TagMax von avg (verwenden minmax für diesen Fall!)\n* Fix: Berechnung von avg, wenn keine Wertänderung",
-        "ru": "NodeJS 14.5.0 требуется\n\n* Добавлены почасовые, еженедельные, ежемесячные, ... средние\n* Добавлены обещания, чтобы избежать параллельного выполнения задач (выводятся к некорректным расчетам)\n* Фиксированные значения init для сохранения/temp\n* Добавлена возможность включения статистики объектов через sendTo\n* Позволяют суммой дельта до субстрактных значений (негативная дельта)\n* Удалить состояния при выборе в непроверке\n* Удаленный деньМин и деньМакс из avg (используйте minmax для этого случая)\n* Исправление: Расчет avg, когда нет изменения стоимости",
-        "pt": "NodeJS 14.5.0 é necessário\n\n* Adicionado por hora, semanal, mensal, ... médias\n* Adicionado promessas para evitar a execução paralela de tarefas (lead para cálculos incorretos)\n* Valores init fixos para salvar/temp\n* opção adicionada para ativar estatísticas para objetos via sendTo\n* Permitir soma delta para subtrair valores (deta negativa)\n* Excluir estados quando opção em desmarcado\n* Dia removidoMin e diaMax de avg (use minmax para esse caso)\n* Fix: Cálculo de avg quando nenhuma mudança de valor",
-        "nl": "NodeJS 14.5.0 is vereist\n\nVertaling:\n♪ Added beloftes to vermijden parallel executie van taken (lead to oncorrecte berekeningen)\nQuality over Quantity (QoQ) Releases Vertaling:\n♪ Added optie to Enable statistieken voor objecten via verzenden\n♪ Vertaling:\n♪ Delete states when option in unchecked\nQuality over Quantity (QoQ) Removed DayMin and DayMax from avg (use minmax for that zaak)\n♪ Fix ♪ Berekening van Avg als er geen waarde verandert",
-        "fr": "NodeJS 14.5.0 est nécessaire\n\n* Ajout horaire, hebdomadaire, mensuel, ... moyens\n* Ajout de promesses pour éviter l'exécution parallèle des tâches (en tenant compte des calculs incorrects)\n* Valeurs d ' entrée fixes pour les sauvegardes/temp\n* Ajout d'option pour activer les statistiques des objets via sendTo\n* Permettre la somme delta aux valeurs substractes (delta négatif)\n* Supprimer les états lorsque l'option n'est pas cochée\n* Jour suppriméMin et jourMax de avg (utilisez minmax pour ce cas)\n* Correction : Calcul de avg lorsqu ' il n ' y a pas de changement de valeur",
-        "it": "NodeJS 14.5.0 è richiesto\n\n* Aggiunto orario, settimanale, mensile, ... medie\n* Aggiunta promesse per evitare l'esecuzione parallela di compiti (ad a calcoli errati)\n* Valori di init fissi per salvare/tempi\n* Aggiunta opzione per attivare statistiche per oggetti tramite sendTo\n# Consentire la somma delta ai valori substrati (delta negativo)\n* Elimina gli stati quando l'opzione in deselezionato\n* Giorno rimossoMin e dayMax da avg (usare minmax per quel caso)\n* Fisso: Calcolo di avg quando nessun cambiamento di valore",
-        "es": "NodeJS 14.5.0 es necesario\n\n* Añadido horaria, semanal, mensual,... promedios\n* Promesas adicionales para evitar la ejecución paralela de tareas (cargadas para cálculos incorrectos)\n* Valores de entrada fijos para ahorro/temporal\n* opción adicional para habilitar estadísticas para objetos mediante sendTo\n* Permitir la suma delta para substraer valores (delta negativo)\n* Eliminar los estados cuando la opción no está comprobada\n* Día extraídoMin y dayMax de avg (utiliza minmax para ese caso)\n* Fijación: Cálculo de avg cuando no hay cambio de valor",
-        "pl": "NodeJS 14,5.0 (ang.)\n\n* Added Hourly, monthly, ...średnio\n* Added obiecuje unikać równoległej egzekucji zadań (przywództwo do niepoprawnych obliczeń)\n* Fixed init value for save/temp\n* Wstępna opcja umożliwiająca dane dla obiektów poprzez wysyłanie ToTo\n* Allow sum delta to substract values (ang.)\nDelete state (ang.)\nRemoved dayMin and dayMax from avg (use minmax for this case) (ang.)\n* Fix: Kalkulacja avg w przypadku braku zmian wartości",
-        "uk": "NodeJS 14.5.0 необхідний\n\n* Додано час, щотижня, місяць, ... середні\n* Додано обіцянки, щоб уникнути паралельного виконання завдань (до невірних обчислень)\n* Виправлені значення init для збереження/temp\n* Додано варіант, щоб увімкнути статистику для об'єктів через sendTo\nІм'я * Allow Сума дельта до субструктивних значень (негативна дельта)\n* Видалити стани при опції в очище\n* Видалити деньMin і dayMax з avg (використайте minmax для цього випадку)\n* Фіксація: Розрахунок вартості",
-        "zh-cn": "不需要JS14.50。\n\n* 每周、每月、......平均增加一小时。\n* 增加承诺,以避免任务的平行执行(导致不正确的计算)。\n* 固定的储蓄/经验价值\n* 增加通过发送来提供物体统计数据的选择\n* A/64/50。 允许总的评 注\n* 删除在无管制情况下的选择。\n* 从万国宫移出每日Min和每日Max(在此情况下用小额!)\n* ix: 在不改变价值时计算"
-      },
-      "2.2.0": {
-        "en": "Added absolute min and max values",
-        "de": "Absolute min und max Werte hinzugefügt",
-        "ru": "Добавлены абсолютные значения мин и макс",
-        "pt": "Adicionado absoluto min e valores máximos",
-        "nl": "Absolute min en maximale waarden",
-        "fr": "Valeurs absolues min et max",
-        "it": "Aggiunti i valori assoluti min e max",
-        "es": "Valores absolutos min y max",
-        "pl": "Dodać wartości bezwzględnej i max",
-        "zh-cn": "增加绝对值和最大值"
-      },
-      "2.1.1": {
-        "en": "Fixed usage of default values for groups",
-        "de": "Feste Verwendung von Standardwerten für Gruppen",
-        "ru": "Фиксированное использование значений по умолчанию для групп",
-        "pt": "Uso fixo de valores padrão para grupos",
-        "nl": "Gebruik van defecte waarden voor groepen",
-        "fr": "Utilisation fixe des valeurs par défaut pour les groupes",
-        "it": "Utilizzo fisso dei valori predefiniti per i gruppi",
-        "es": "Uso fijo de valores predeterminados para grupos",
-        "pl": "Wykorzystanie domyślnych wartości dla grup",
-        "zh-cn": "对集团采用缺省值"
-      },
-      "2.1.0": {
-        "en": "Added support for translated object names\nFixed sum calculation\nIncreased precision to 5 digits\nTranslated all objects",
-        "de": "Unterstützung für übersetzte Objektnamen hinzugefügt\nBereinigte Summenberechnung\nErhöhte Präzision auf 5 Stellen\nÜbersetzt alle Objekte",
-        "ru": "Добавлена поддержка переведенных объектов\nФиксированный расчет суммы\nПовышенная точность до 5 цифр\nПереведено все объекты",
-        "pt": "Adicionado suporte para nomes de objetos traduzidos\nCálculo fixo da soma\nAumento da precisão para 5 dígitos\nTraduzido todos os objetos",
-        "nl": "Vertaling:\nVertaling:\nVerhoogde precisie naar 5 cijfers\nVertaald alle objecten",
-        "fr": "Ajout du support pour les noms d'objets traduits\nCalcul forfaitaire\nPrécision accrue à 5 chiffres\nTraduit tous les objets",
-        "it": "Aggiunto supporto per i nomi degli oggetti tradotti\nCalcolo della somma fissa\nAumento della precisione a 5 cifre\nTradotto tutti gli oggetti",
-        "es": "Apoyo adicional para los nombres de objetos traducidos\nCálculo de la suma fija\nMayor precisión a 5 dígitos\nTraducidos todos los objetos",
-        "pl": "Wsparcie dla tłumaczonych nazw obiektów\nObliczenia sumowania Fixa\nDokładność do 5 cyfr\nWszystkie obiekty translacyjne",
-        "zh-cn": "增加对翻译目标名称的支持\n固定的计算\n精 度增加5个数\n适用于所有物体"
-      },
-      "2.0.0": {
-        "en": "Added Admin 5 configuration\nUpdated translations",
-        "de": "Admin 5 Konfiguration hinzugefügt\nAktualisierte Übersetzungen",
-        "ru": "Добавлена настройка Admin 5\nОбновленные переводы",
-        "pt": "Adicionado configuração Admin 5\nTraduções atualizadas",
-        "nl": "Admin 5 configu\nVertaling:",
-        "fr": "Ajout de la configuration Admin 5\nTraductions actualisées",
-        "it": "Configurazione Admin 5\nTraduzioni aggiornate",
-        "es": "Configuración de Admin 5\nTraducciones actualizadas",
-        "pl": "Admin 5\nTłumaczenia poprawione",
-        "zh-cn": "增编5个组合\n最新翻译"
-      },
-      "1.1.1": {
-        "en": "Prevent warn logs when using non-number states as statistic source",
-        "de": "Verhindern Sie Warnprotokolle, wenn Sie Status als Statistikquelle verwenden, die keine Zahlen sind",
-        "ru": "Предотвращение журналов предупреждений при использовании нечисловых состояний в качестве источника статистики",
-        "pt": "Evitar logs de aviso ao usar estados não numéricos como fonte de estatística",
-        "nl": "Voorkom waarschuwingslogboeken bij het gebruik van niet-getalstaten als statistische bron",
-        "fr": "Empêcher les journaux d'avertissement lors de l'utilisation d'états non numériques comme source de statistiques",
-        "it": "Impedisci i registri di avviso quando si utilizzano stati non numerici come origine statistica",
-        "es": "Evite los registros de advertencia cuando utilice estados que no sean números como fuente de estadísticas",
-        "pl": "Zapobiegaj ostrzeżeniom podczas używania stanów nieliczbowych jako źródła statystyk",
-        "zh-cn": "使用非数字状态作为统计源时防止警告日志"
-      },
-      "1.1.0": {
-        "en": "IMPORTANT: js-controller 3.2 is needed at least!\nPrepare for future js-controller compatibility",
-        "de": "WICHTIG: js-controller 3.2 wird mindestens benötigt!\nBereiten Sie sich auf zukünftige js-Controller-Kompatibilität vor",
-        "ru": "ВАЖНО: необходим js-контроллер версии не ниже 3.2!\nПодготовьтесь к будущей совместимости с js-контроллером",
-        "pt": "IMPORTANTE: o js-controller 3.2 é necessário pelo menos!\nPrepare-se para a futura compatibilidade do controlador js",
-        "nl": "BELANGRIJK: js-controller 3.2 is minimaal nodig!\nBereid u voor op toekomstige compatibiliteit met js-controllers",
-        "fr": "IMPORTANT : il faut au moins js-controller 3.2 !\nPréparez-vous à la future compatibilité js-controller",
-        "it": "IMPORTANTE: è necessario almeno js-controller 3.2!\nPreparati per la futura compatibilità del controller js",
-        "es": "IMPORTANTE: ¡se necesita al menos js-controller 3.2!\nPrepárese para la futura compatibilidad con js-controller",
-        "pl": "WAŻNE: potrzebny jest przynajmniej js-controller 3.2!\nPrzygotuj się na przyszłą kompatybilność kontrolerów js",
-        "zh-cn": "重要提示：至少需要 js-controller 3.2！\n为将来的 js-controller 兼容性做准备"
-      }
+    "common": {
+        "name": "statistics",
+        "version": "2.3.0",
+        "news": {
+            "2.3.0": {
+                "en": "NodeJS 14.5.0 is required\n\n* Added hourly, weekly, monthly, ... averages\n* Added promises to avoid parallel execution of tasks (lead to incorrect calculations)\n* Fixed init values for save/temp\n* Added option to enable statistics for objects via sendTo\n* Allow sum delta to substract values (negative delta)\n* Delete states when option in unchecked\n* Removed dayMin and dayMax from avg (use minmax for that case!)\n* Fix: Calculation of avg when no change of value",
+                "de": "NodeJS 14.5.0 ist erforderlich\n\n* Hinzugefügt stündlich, wöchentlich, monatlich, ... Durchschnitte\n* Zugesagte Versprechen zur Vermeidung paralleler Ausführung von Aufgaben (zu falschen Berechnungen führen)\n* Feste Initwerte für Speicher/Zeit\n* Zusätzliche Möglichkeit, Statistiken über Objekte per sendTo zu aktivieren\n* Lassen Sie die Summe delta zu subtrahierenden Werten (negative delta)\n* Status löschen, wenn Option unkontrolliert\n*Entfernt TagMin und TagMax von avg (verwenden minmax für diesen Fall!)\n* Fix: Berechnung von avg, wenn keine Wertänderung",
+                "ru": "NodeJS 14.5.0 требуется\n\n* Добавлены почасовые, еженедельные, ежемесячные, ... средние\n* Добавлены обещания, чтобы избежать параллельного выполнения задач (выводятся к некорректным расчетам)\n* Фиксированные значения init для сохранения/temp\n* Добавлена возможность включения статистики объектов через sendTo\n* Позволяют суммой дельта до субстрактных значений (негативная дельта)\n* Удалить состояния при выборе в непроверке\n* Удаленный деньМин и деньМакс из avg (используйте minmax для этого случая)\n* Исправление: Расчет avg, когда нет изменения стоимости",
+                "pt": "NodeJS 14.5.0 é necessário\n\n* Adicionado por hora, semanal, mensal, ... médias\n* Adicionado promessas para evitar a execução paralela de tarefas (lead para cálculos incorretos)\n* Valores init fixos para salvar/temp\n* opção adicionada para ativar estatísticas para objetos via sendTo\n* Permitir soma delta para subtrair valores (deta negativa)\n* Excluir estados quando opção em desmarcado\n* Dia removidoMin e diaMax de avg (use minmax para esse caso)\n* Fix: Cálculo de avg quando nenhuma mudança de valor",
+                "nl": "NodeJS 14.5.0 is vereist\n\nVertaling:\n♪ Added beloftes to vermijden parallel executie van taken (lead to oncorrecte berekeningen)\nQuality over Quantity (QoQ) Releases Vertaling:\n♪ Added optie to Enable statistieken voor objecten via verzenden\n♪ Vertaling:\n♪ Delete states when option in unchecked\nQuality over Quantity (QoQ) Removed DayMin and DayMax from avg (use minmax for that zaak)\n♪ Fix ♪ Berekening van Avg als er geen waarde verandert",
+                "fr": "NodeJS 14.5.0 est nécessaire\n\n* Ajout horaire, hebdomadaire, mensuel, ... moyens\n* Ajout de promesses pour éviter l'exécution parallèle des tâches (en tenant compte des calculs incorrects)\n* Valeurs d ' entrée fixes pour les sauvegardes/temp\n* Ajout d'option pour activer les statistiques des objets via sendTo\n* Permettre la somme delta aux valeurs substractes (delta négatif)\n* Supprimer les états lorsque l'option n'est pas cochée\n* Jour suppriméMin et jourMax de avg (utilisez minmax pour ce cas)\n* Correction : Calcul de avg lorsqu ' il n ' y a pas de changement de valeur",
+                "it": "NodeJS 14.5.0 è richiesto\n\n* Aggiunto orario, settimanale, mensile, ... medie\n* Aggiunta promesse per evitare l'esecuzione parallela di compiti (ad a calcoli errati)\n* Valori di init fissi per salvare/tempi\n* Aggiunta opzione per attivare statistiche per oggetti tramite sendTo\n# Consentire la somma delta ai valori substrati (delta negativo)\n* Elimina gli stati quando l'opzione in deselezionato\n* Giorno rimossoMin e dayMax da avg (usare minmax per quel caso)\n* Fisso: Calcolo di avg quando nessun cambiamento di valore",
+                "es": "NodeJS 14.5.0 es necesario\n\n* Añadido horaria, semanal, mensual,... promedios\n* Promesas adicionales para evitar la ejecución paralela de tareas (cargadas para cálculos incorrectos)\n* Valores de entrada fijos para ahorro/temporal\n* opción adicional para habilitar estadísticas para objetos mediante sendTo\n* Permitir la suma delta para substraer valores (delta negativo)\n* Eliminar los estados cuando la opción no está comprobada\n* Día extraídoMin y dayMax de avg (utiliza minmax para ese caso)\n* Fijación: Cálculo de avg cuando no hay cambio de valor",
+                "pl": "NodeJS 14,5.0 (ang.)\n\n* Added Hourly, monthly, ...średnio\n* Added obiecuje unikać równoległej egzekucji zadań (przywództwo do niepoprawnych obliczeń)\n* Fixed init value for save/temp\n* Wstępna opcja umożliwiająca dane dla obiektów poprzez wysyłanie ToTo\n* Allow sum delta to substract values (ang.)\nDelete state (ang.)\nRemoved dayMin and dayMax from avg (use minmax for this case) (ang.)\n* Fix: Kalkulacja avg w przypadku braku zmian wartości",
+                "uk": "NodeJS 14.5.0 необхідний\n\n* Додано час, щотижня, місяць, ... середні\n* Додано обіцянки, щоб уникнути паралельного виконання завдань (до невірних обчислень)\n* Виправлені значення init для збереження/temp\n* Додано варіант, щоб увімкнути статистику для об'єктів через sendTo\nІм'я * Allow Сума дельта до субструктивних значень (негативна дельта)\n* Видалити стани при опції в очище\n* Видалити деньMin і dayMax з avg (використайте minmax для цього випадку)\n* Фіксація: Розрахунок вартості",
+                "zh-cn": "不需要JS14.50。\n\n* 每周、每月、......平均增加一小时。\n* 增加承诺,以避免任务的平行执行(导致不正确的计算)。\n* 固定的储蓄/经验价值\n* 增加通过发送来提供物体统计数据的选择\n* A/64/50。 允许总的评 注\n* 删除在无管制情况下的选择。\n* 从万国宫移出每日Min和每日Max(在此情况下用小额!)\n* ix: 在不改变价值时计算"
+            },
+            "2.2.0": {
+                "en": "Added absolute min and max values",
+                "de": "Absolute min und max Werte hinzugefügt",
+                "ru": "Добавлены абсолютные значения мин и макс",
+                "pt": "Adicionado absoluto min e valores máximos",
+                "nl": "Absolute min en maximale waarden",
+                "fr": "Valeurs absolues min et max",
+                "it": "Aggiunti i valori assoluti min e max",
+                "es": "Valores absolutos min y max",
+                "pl": "Dodać wartości bezwzględnej i max",
+                "zh-cn": "增加绝对值和最大值",
+                "uk": "Додано абсолютні мінімальні та максимальні значення"
+            },
+            "2.1.1": {
+                "en": "Fixed usage of default values for groups",
+                "de": "Feste Verwendung von Standardwerten für Gruppen",
+                "ru": "Фиксированное использование значений по умолчанию для групп",
+                "pt": "Uso fixo de valores padrão para grupos",
+                "nl": "Gebruik van defecte waarden voor groepen",
+                "fr": "Utilisation fixe des valeurs par défaut pour les groupes",
+                "it": "Utilizzo fisso dei valori predefiniti per i gruppi",
+                "es": "Uso fijo de valores predeterminados para grupos",
+                "pl": "Wykorzystanie domyślnych wartości dla grup",
+                "zh-cn": "对集团采用缺省值",
+                "uk": "Виправлено використання значень за замовчуванням для груп"
+            },
+            "2.1.0": {
+                "en": "Added support for translated object names\nFixed sum calculation\nIncreased precision to 5 digits\nTranslated all objects",
+                "de": "Unterstützung für übersetzte Objektnamen hinzugefügt\nBereinigte Summenberechnung\nErhöhte Präzision auf 5 Stellen\nÜbersetzt alle Objekte",
+                "ru": "Добавлена поддержка переведенных объектов\nФиксированный расчет суммы\nПовышенная точность до 5 цифр\nПереведено все объекты",
+                "pt": "Adicionado suporte para nomes de objetos traduzidos\nCálculo fixo da soma\nAumento da precisão para 5 dígitos\nTraduzido todos os objetos",
+                "nl": "Vertaling:\nVertaling:\nVerhoogde precisie naar 5 cijfers\nVertaald alle objecten",
+                "fr": "Ajout du support pour les noms d'objets traduits\nCalcul forfaitaire\nPrécision accrue à 5 chiffres\nTraduit tous les objets",
+                "it": "Aggiunto supporto per i nomi degli oggetti tradotti\nCalcolo della somma fissa\nAumento della precisione a 5 cifre\nTradotto tutti gli oggetti",
+                "es": "Apoyo adicional para los nombres de objetos traducidos\nCálculo de la suma fija\nMayor precisión a 5 dígitos\nTraducidos todos los objetos",
+                "pl": "Wsparcie dla tłumaczonych nazw obiektów\nObliczenia sumowania Fixa\nDokładność do 5 cyfr\nWszystkie obiekty translacyjne",
+                "zh-cn": "增加对翻译目标名称的支持\n固定的计算\n精 度增加5个数\n适用于所有物体",
+                "uk": "Додано підтримку перекладених імен об'єктів\nРозрахунок фіксованої суми\nПідвищено точність до 5 цифр\nПерекладено всі об'єкти"
+            },
+            "2.0.0": {
+                "en": "Added Admin 5 configuration\nUpdated translations",
+                "de": "Admin 5 Konfiguration hinzugefügt\nAktualisierte Übersetzungen",
+                "ru": "Добавлена настройка Admin 5\nОбновленные переводы",
+                "pt": "Adicionado configuração Admin 5\nTraduções atualizadas",
+                "nl": "Admin 5 configu\nVertaling:",
+                "fr": "Ajout de la configuration Admin 5\nTraductions actualisées",
+                "it": "Configurazione Admin 5\nTraduzioni aggiornate",
+                "es": "Configuración de Admin 5\nTraducciones actualizadas",
+                "pl": "Admin 5\nTłumaczenia poprawione",
+                "zh-cn": "增编5个组合\n最新翻译",
+                "uk": "Додана конфігурація Admin 5\nОновлені переклади"
+            },
+            "1.1.1": {
+                "en": "Prevent warn logs when using non-number states as statistic source",
+                "de": "Verhindern Sie Warnprotokolle, wenn Sie Status als Statistikquelle verwenden, die keine Zahlen sind",
+                "ru": "Предотвращение журналов предупреждений при использовании нечисловых состояний в качестве источника статистики",
+                "pt": "Evitar logs de aviso ao usar estados não numéricos como fonte de estatística",
+                "nl": "Voorkom waarschuwingslogboeken bij het gebruik van niet-getalstaten als statistische bron",
+                "fr": "Empêcher les journaux d'avertissement lors de l'utilisation d'états non numériques comme source de statistiques",
+                "it": "Impedisci i registri di avviso quando si utilizzano stati non numerici come origine statistica",
+                "es": "Evite los registros de advertencia cuando utilice estados que no sean números como fuente de estadísticas",
+                "pl": "Zapobiegaj ostrzeżeniom podczas używania stanów nieliczbowych jako źródła statystyk",
+                "zh-cn": "使用非数字状态作为统计源时防止警告日志",
+                "uk": "Запобігання журналу попереджень при використанні нечислових станів як джерела статистики"
+            },
+            "1.1.0": {
+                "en": "IMPORTANT: js-controller 3.2 is needed at least!\nPrepare for future js-controller compatibility",
+                "de": "WICHTIG: js-controller 3.2 wird mindestens benötigt!\nBereiten Sie sich auf zukünftige js-Controller-Kompatibilität vor",
+                "ru": "ВАЖНО: необходим js-контроллер версии не ниже 3.2!\nПодготовьтесь к будущей совместимости с js-контроллером",
+                "pt": "IMPORTANTE: o js-controller 3.2 é necessário pelo menos!\nPrepare-se para a futura compatibilidade do controlador js",
+                "nl": "BELANGRIJK: js-controller 3.2 is minimaal nodig!\nBereid u voor op toekomstige compatibiliteit met js-controllers",
+                "fr": "IMPORTANT : il faut au moins js-controller 3.2 !\nPréparez-vous à la future compatibilité js-controller",
+                "it": "IMPORTANTE: è necessario almeno js-controller 3.2!\nPreparati per la futura compatibilità del controller js",
+                "es": "IMPORTANTE: ¡se necesita al menos js-controller 3.2!\nPrepárese para la futura compatibilidad con js-controller",
+                "pl": "WAŻNE: potrzebny jest przynajmniej js-controller 3.2!\nPrzygotuj się na przyszłą kompatybilność kontrolerów js",
+                "zh-cn": "重要提示：至少需要 js-controller 3.2！\n为将来的 js-controller 兼容性做准备",
+                "uk": "ВАЖЛИВО: потрібен як мінімум js-контролер 3.2!\nПідготуйтеся до майбутньої сумісності js-контролера"
+            }
+        },
+        "titleLang": {
+            "en": "Statistics for states",
+            "de": "Statistiken für Zustände",
+            "ru": "Статистика для состояний",
+            "pt": "Estatísticas",
+            "nl": "Statistieken voor objecten",
+            "fr": "Statistiques pour les objets",
+            "it": "Statistiche per oggetti",
+            "es": "Estadísticas para objetos",
+            "pl": "Statystyki obiektów",
+            "zh-cn": "状态统计",
+            "uk": "Статистика по штатах"
+        },
+        "desc": {
+            "en": "Provides statistics like day minimum, day maximum, day average, delta and much more",
+            "de": "Bietet Statistiken wie Tagesminimum, Tagesmaximum, Tagesdurchschnitt, Delta und vieles mehr",
+            "ru": "Обеспечивает статистику как минимум дня, максимальный день, средний день, дельта и многое другое",
+            "pt": "Fornece estatísticas como dia mínimo, dia máximo, dia média, delta e muito mais",
+            "nl": "Provides statistieken zoals dagelijks, maximaal, dag gemiddeld, delta en veel meer",
+            "fr": "Fournit des statistiques comme le minimum de jour, le maximum de jour, la moyenne de jour, delta et beaucoup plus",
+            "it": "Fornisce statistiche come il minimo del giorno, il massimo del giorno, la media del giorno, delta e molto altro",
+            "es": "Proporciona estadísticas como mínimo de día, máximo de día, promedio de día, delta y mucho más",
+            "pl": "Obserwuje statystyki takie jak np. dzień minimalny, średnia dnia, delta i znacznie więcej",
+            "zh-cn": "提供每日最低、每天最高、每天平均、日报、审会和更多的统计数字",
+            "uk": "Надає такі статистичні дані, як мінімум, максимум за день, середнє значення за день, дельта та багато іншого"
+        },
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "license": "MIT",
+        "icon": "statistics.png",
+        "enabled": true,
+        "preserveSettings": "custom",
+        "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.statistics/master/admin/statistics.png",
+        "keywords": [
+            "statistics",
+            "count",
+            "average",
+            "sum",
+            "min max",
+            "consumption",
+            "energy"
+        ],
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.statistics/blob/master/README.md",
+        "loglevel": "info",
+        "type": "misc-data",
+        "messagebox": true,
+        "compact": true,
+        "supportCustoms": true,
+        "adminUI": {
+            "config": "json",
+            "custom": "json"
+        },
+        "docs": {
+            "en": "docs/en/README.md",
+            "de": "docs/de/README.md"
+        },
+        "globalDependencies": [
+            {
+                "admin": ">=5.3.2"
+            }
+        ],
+        "dependencies": [
+            {
+                "js-controller": ">=3.2.0"
+            }
+        ],
+        "authors": [
+            "foxthefox <foxthefox@wysiwis.net>",
+            "bluefox <dogafox@gmail.com>",
+            "Matthias Kleine <info@haus-automatisierung.com>"
+        ],
+        "plugins": {
+            "sentry": {
+                "dsn": "https://baf1b0da59cc43e092c500507d3a448d@sentry.iobroker.net/72"
+            }
+        },
+        "connectionType": "none",
+        "dataSource": "none",
+        "tier": 3
     },
-    "titleLang": {
-      "en": "Statistics for states",
-      "de": "Statistiken für Zustände",
-      "ru": "Статистика для состояний",
-      "pt": "Estatísticas",
-      "nl": "Statistieken voor objecten",
-      "fr": "Statistiques pour les objets",
-      "it": "Statistiche per oggetti",
-      "es": "Estadísticas para objetos",
-      "pl": "Statystyki obiektów",
-      "zh-cn": "状态统计"
+    "native": {
+        "impUnitPerImpulse": 1,
+        "impFactor": 1,
+        "timezone": "",
+        "groups": [
+            {
+                "id": "energy",
+                "name": "total energy",
+                "price": 0.28,
+                "priceUnit": "€/kWh"
+            },
+            {
+                "id": "gas",
+                "name": "total gas",
+                "price": 0.5,
+                "priceUnit": "€/m³"
+            }
+        ]
     },
-    "desc": {
-      "en": "Provides statistics like day minimum, day maximum, day average, delta and much more",
-      "de": "Bietet Statistiken wie Tagesminimum, Tagesmaximum, Tagesdurchschnitt, Delta und vieles mehr",
-      "ru": "Обеспечивает статистику как минимум дня, максимальный день, средний день, дельта и многое другое",
-      "pt": "Fornece estatísticas como dia mínimo, dia máximo, dia média, delta e muito mais",
-      "nl": "Provides statistieken zoals dagelijks, maximaal, dag gemiddeld, delta en veel meer",
-      "fr": "Fournit des statistiques comme le minimum de jour, le maximum de jour, la moyenne de jour, delta et beaucoup plus",
-      "it": "Fornisce statistiche come il minimo del giorno, il massimo del giorno, la media del giorno, delta e molto altro",
-      "es": "Proporciona estadísticas como mínimo de día, máximo de día, promedio de día, delta y mucho más",
-      "pl": "Obserwuje statystyki takie jak np. dzień minimalny, średnia dnia, delta i znacznie więcej",
-      "zh-cn": "提供每日最低、每天最高、每天平均、日报、审会和更多的统计数字"
-    },
-    "platform": "Javascript/Node.js",
-    "mode": "daemon",
-    "license": "MIT",
-    "icon": "statistics.png",
-    "enabled": true,
-    "preserveSettings": "custom",
-    "extIcon": "https://raw.githubusercontent.com/iobroker-community-adapters/ioBroker.statistics/master/admin/statistics.png",
-    "keywords": [
-      "statistics",
-      "count",
-      "average",
-      "sum",
-      "min max",
-      "consumption",
-      "energy"
-    ],
-    "readme": "https://github.com/iobroker-community-adapters/ioBroker.statistics/blob/master/README.md",
-    "loglevel": "info",
-    "type": "misc-data",
-    "messagebox": true,
-    "compact": true,
-    "supportCustoms": true,
-    "adminUI": {
-      "config": "json",
-      "custom": "json"
-    },
-    "docs": {
-      "en": "docs/en/README.md",
-      "de": "docs/de/README.md"
-    },
-    "globalDependencies": [
-      {
-        "admin": ">=5.3.2"
-      }
-    ],
-    "dependencies": [
-      {
-        "js-controller": ">=3.2.0"
-      }
-    ],
-    "authors": [
-      "foxthefox <foxthefox@wysiwis.net>",
-      "bluefox <dogafox@gmail.com>",
-      "Matthias Kleine <info@haus-automatisierung.com>"
-    ],
-    "plugins": {
-      "sentry": {
-        "dsn": "https://baf1b0da59cc43e092c500507d3a448d@sentry.iobroker.net/72"
-      }
-    },
-    "connectionType": "none",
-    "dataSource": "none",
-    "tier": 3
-  },
-  "native": {
-    "impUnitPerImpulse": 1,
-    "impFactor": 1,
-    "timezone": "",
-    "groups": [
-      {
-        "id": "energy",
-        "name": "total energy",
-        "price": 0.28,
-        "priceUnit": "€/kWh"
-      },
-      {
-        "id": "gas",
-        "name": "total gas",
-        "price": 0.5,
-        "priceUnit": "€/m³"
-      }
+    "instanceObjects": [
+        {
+            "_id": "save",
+            "type": "folder",
+            "common": {
+                "name": {
+                    "en": "Saved values",
+                    "de": "Gespeicherte Werte",
+                    "ru": "Сохраненные ценности",
+                    "pt": "Valores salvos",
+                    "nl": "Bespaart waarden",
+                    "fr": "Valeurs sauvegardées",
+                    "it": "Valori salvati",
+                    "es": "Valores guardados",
+                    "pl": "Oszczędzać wartości",
+                    "zh-cn": "丧失价值"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "save.avg",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Average values",
+                    "de": "Durchschnittswerte",
+                    "ru": "Среднее значение",
+                    "pt": "Valores médios",
+                    "nl": "Gemiddelde waarden",
+                    "fr": "Valeurs moyennes",
+                    "it": "Valori medi",
+                    "es": "Valores medios",
+                    "pl": "Average value",
+                    "zh-cn": "平均值"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "save.minmax",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Min/Max values",
+                    "de": "Min/Max Werte",
+                    "ru": "Мин/макс. значения",
+                    "pt": "Min/Max valores",
+                    "nl": "Min/Max waarden",
+                    "fr": "Valeurs Min/Max",
+                    "it": "Valori minimi/max",
+                    "es": "Valores Min/Max",
+                    "pl": "Wartości Min/Max",
+                    "zh-cn": "Min/Max"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "save.fiveMin",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Consumption (5 min.)",
+                    "de": "Verbrauch (5 min)",
+                    "ru": "Потребление (5 мин)",
+                    "pt": "Consumo (5 min)",
+                    "nl": "Consumptie (5 minuten)",
+                    "fr": "Consommation (5 min)",
+                    "it": "Consumo (5 min)",
+                    "es": "Consumo (5 min)",
+                    "pl": "5 minut)",
+                    "zh-cn": "消费(5分钟)。"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "save.timeCount",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Operating time counter",
+                    "de": "Betriebszeitzähler",
+                    "ru": "Рабочий счетчик времени",
+                    "pt": "Contador de tempo operacional",
+                    "nl": "Operatie tijd tegen",
+                    "fr": "Compteur de temps de fonctionnement",
+                    "it": "Contatore orario",
+                    "es": "Contrato de tiempo de funcionamiento",
+                    "pl": "Czas kontrastowy",
+                    "zh-cn": "业务时间反击"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "save.count",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Impulse counter",
+                    "de": "Impulszähler",
+                    "ru": "Импульсный счетчик",
+                    "pt": "Contador de impulso",
+                    "nl": "Impulse contra",
+                    "fr": "Compteur Impulse",
+                    "it": "Contatore di impulso",
+                    "es": "Contrato impulsivo",
+                    "pl": "Przeciwstawić się",
+                    "zh-cn": "有罪不罚"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "save.sumCount",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Impulse counter (consumption)",
+                    "de": "Impulszähler (Verbrauch)",
+                    "ru": "Импульсный счетчик (потребление)",
+                    "pt": "Contador de impulso (consumo)",
+                    "nl": "Impulse contra (consumptie)",
+                    "fr": "Compteur d ' impulsion (consommation)",
+                    "it": "Impulso (consumo)",
+                    "es": "Contrato impulso (consumo)",
+                    "pl": "Impulse counter (consumption) (ang.)",
+                    "zh-cn": "有罪不罚(消费)"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "save.sumDelta",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Delta sum",
+                    "de": "Deltasumme",
+                    "ru": "Дельта сумм",
+                    "pt": "Soma Delta",
+                    "nl": "Delta Sum",
+                    "fr": "Delta sum",
+                    "it": "Delta",
+                    "es": "Delta sum",
+                    "pl": "Suma delta",
+                    "zh-cn": "Deltaum"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "save.sumGroup",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Total consumption by Group",
+                    "de": "Gesamtverbrauch nach Gruppe",
+                    "ru": "Полное потребление по группам",
+                    "pt": "Consumo total por grupo",
+                    "nl": "Totale consumptie",
+                    "fr": "Consommation totale par groupe",
+                    "it": "Consumo totale di Gruppo",
+                    "es": "Consumo total por grupo",
+                    "pl": "Spożycie grupowe",
+                    "zh-cn": "集团消费总量"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "temp",
+            "type": "folder",
+            "common": {
+                "name": {
+                    "en": "Temporary values",
+                    "de": "Vorübergehende Werte",
+                    "ru": "Временные значения",
+                    "pt": "Valores temporários",
+                    "nl": "Tijdelijke waarden",
+                    "fr": "Valeurs temporaires",
+                    "it": "Valori temporanei",
+                    "es": "Valores temporales",
+                    "pl": "Wartości tymczasowe",
+                    "zh-cn": "临时价值观"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "temp.avg",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Average values",
+                    "de": "Durchschnittswerte",
+                    "ru": "Среднее значение",
+                    "pt": "Valores médios",
+                    "nl": "Gemiddelde waarden",
+                    "fr": "Valeurs moyennes",
+                    "it": "Valori medi",
+                    "es": "Valores medios",
+                    "pl": "Average value",
+                    "zh-cn": "平均值"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "temp.minmax",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Min/Max values",
+                    "de": "Min/Max Werte",
+                    "ru": "Мин/макс. значения",
+                    "pt": "Min/Max valores",
+                    "nl": "Min/Max waarden",
+                    "fr": "Valeurs Min/Max",
+                    "it": "Valori minimi/max",
+                    "es": "Valores Min/Max",
+                    "pl": "Wartości Min/Max",
+                    "zh-cn": "Min/Max"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "temp.fiveMin",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Consumption (5 min.)",
+                    "de": "Verbrauch (5 min)",
+                    "ru": "Потребление (5 мин)",
+                    "pt": "Consumo (5 min)",
+                    "nl": "Consumptie (5 minuten)",
+                    "fr": "Consommation (5 min)",
+                    "it": "Consumo (5 min)",
+                    "es": "Consumo (5 min)",
+                    "pl": "5 minut)",
+                    "zh-cn": "消费(5分钟)。"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "temp.timeCount",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Operating time counter",
+                    "de": "Betriebszeitzähler",
+                    "ru": "Рабочий счетчик времени",
+                    "pt": "Contador de tempo operacional",
+                    "nl": "Operatie tijd tegen",
+                    "fr": "Compteur de temps de fonctionnement",
+                    "it": "Contatore orario",
+                    "es": "Contrato de tiempo de funcionamiento",
+                    "pl": "Czas kontrastowy",
+                    "zh-cn": "业务时间反击"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "temp.count",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Impulse counter",
+                    "de": "Impulszähler",
+                    "ru": "Импульсный счетчик",
+                    "pt": "Contador de impulso",
+                    "nl": "Impulse contra",
+                    "fr": "Compteur Impulse",
+                    "it": "Contatore di impulso",
+                    "es": "Contrato impulsivo",
+                    "pl": "Przeciwstawić się",
+                    "zh-cn": "有罪不罚"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "temp.sumCount",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Impulse counter (consumption)",
+                    "de": "Impulszähler (Verbrauch)",
+                    "ru": "Импульсный счетчик (потребление)",
+                    "pt": "Contador de impulso (consumo)",
+                    "nl": "Impulse contra (consumptie)",
+                    "fr": "Compteur d ' impulsion (consommation)",
+                    "it": "Impulso (consumo)",
+                    "es": "Contrato impulso (consumo)",
+                    "pl": "Impulse counter (consumption) (ang.)",
+                    "zh-cn": "有罪不罚(消费)"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "temp.sumDelta",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Delta sum",
+                    "de": "Deltasumme",
+                    "ru": "Дельта сумм",
+                    "pt": "Soma Delta",
+                    "nl": "Delta Sum",
+                    "fr": "Delta sum",
+                    "it": "Delta",
+                    "es": "Delta sum",
+                    "pl": "Suma delta",
+                    "zh-cn": "Deltaum"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "temp.sumGroup",
+            "type": "channel",
+            "common": {
+                "name": {
+                    "en": "Total consumption by Group",
+                    "de": "Gesamtverbrauch nach Gruppe",
+                    "ru": "Полное потребление по группам",
+                    "pt": "Consumo total por grupo",
+                    "nl": "Totale consumptie",
+                    "fr": "Consommation totale par groupe",
+                    "it": "Consumo totale di Gruppo",
+                    "es": "Consumo total por grupo",
+                    "pl": "Spożycie grupowe",
+                    "zh-cn": "集团消费总量"
+                }
+            },
+            "native": {}
+        }
     ]
-  },
-  "instanceObjects": [
-    {
-      "_id": "save",
-      "type": "folder",
-      "common": {
-        "name": {
-          "en": "Saved values",
-          "de": "Gespeicherte Werte",
-          "ru": "Сохраненные ценности",
-          "pt": "Valores salvos",
-          "nl": "Bespaart waarden",
-          "fr": "Valeurs sauvegardées",
-          "it": "Valori salvati",
-          "es": "Valores guardados",
-          "pl": "Oszczędzać wartości",
-          "zh-cn": "丧失价值"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "save.avg",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Average values",
-          "de": "Durchschnittswerte",
-          "ru": "Среднее значение",
-          "pt": "Valores médios",
-          "nl": "Gemiddelde waarden",
-          "fr": "Valeurs moyennes",
-          "it": "Valori medi",
-          "es": "Valores medios",
-          "pl": "Average value",
-          "zh-cn": "平均值"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "save.minmax",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Min/Max values",
-          "de": "Min/Max Werte",
-          "ru": "Мин/макс. значения",
-          "pt": "Min/Max valores",
-          "nl": "Min/Max waarden",
-          "fr": "Valeurs Min/Max",
-          "it": "Valori minimi/max",
-          "es": "Valores Min/Max",
-          "pl": "Wartości Min/Max",
-          "zh-cn": "Min/Max"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "save.fiveMin",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Consumption (5 min.)",
-          "de": "Verbrauch (5 min)",
-          "ru": "Потребление (5 мин)",
-          "pt": "Consumo (5 min)",
-          "nl": "Consumptie (5 minuten)",
-          "fr": "Consommation (5 min)",
-          "it": "Consumo (5 min)",
-          "es": "Consumo (5 min)",
-          "pl": "5 minut)",
-          "zh-cn": "消费(5分钟)。"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "save.timeCount",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Operating time counter",
-          "de": "Betriebszeitzähler",
-          "ru": "Рабочий счетчик времени",
-          "pt": "Contador de tempo operacional",
-          "nl": "Operatie tijd tegen",
-          "fr": "Compteur de temps de fonctionnement",
-          "it": "Contatore orario",
-          "es": "Contrato de tiempo de funcionamiento",
-          "pl": "Czas kontrastowy",
-          "zh-cn": "业务时间反击"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "save.count",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Impulse counter",
-          "de": "Impulszähler",
-          "ru": "Импульсный счетчик",
-          "pt": "Contador de impulso",
-          "nl": "Impulse contra",
-          "fr": "Compteur Impulse",
-          "it": "Contatore di impulso",
-          "es": "Contrato impulsivo",
-          "pl": "Przeciwstawić się",
-          "zh-cn": "有罪不罚"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "save.sumCount",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Impulse counter (consumption)",
-          "de": "Impulszähler (Verbrauch)",
-          "ru": "Импульсный счетчик (потребление)",
-          "pt": "Contador de impulso (consumo)",
-          "nl": "Impulse contra (consumptie)",
-          "fr": "Compteur d ' impulsion (consommation)",
-          "it": "Impulso (consumo)",
-          "es": "Contrato impulso (consumo)",
-          "pl": "Impulse counter (consumption) (ang.)",
-          "zh-cn": "有罪不罚(消费)"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "save.sumDelta",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Delta sum",
-          "de": "Deltasumme",
-          "ru": "Дельта сумм",
-          "pt": "Soma Delta",
-          "nl": "Delta Sum",
-          "fr": "Delta sum",
-          "it": "Delta",
-          "es": "Delta sum",
-          "pl": "Suma delta",
-          "zh-cn": "Deltaum"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "save.sumGroup",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Total consumption by Group",
-          "de": "Gesamtverbrauch nach Gruppe",
-          "ru": "Полное потребление по группам",
-          "pt": "Consumo total por grupo",
-          "nl": "Totale consumptie",
-          "fr": "Consommation totale par groupe",
-          "it": "Consumo totale di Gruppo",
-          "es": "Consumo total por grupo",
-          "pl": "Spożycie grupowe",
-          "zh-cn": "集团消费总量"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "temp",
-      "type": "folder",
-      "common": {
-        "name": {
-          "en": "Temporary values",
-          "de": "Vorübergehende Werte",
-          "ru": "Временные значения",
-          "pt": "Valores temporários",
-          "nl": "Tijdelijke waarden",
-          "fr": "Valeurs temporaires",
-          "it": "Valori temporanei",
-          "es": "Valores temporales",
-          "pl": "Wartości tymczasowe",
-          "zh-cn": "临时价值观"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "temp.avg",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Average values",
-          "de": "Durchschnittswerte",
-          "ru": "Среднее значение",
-          "pt": "Valores médios",
-          "nl": "Gemiddelde waarden",
-          "fr": "Valeurs moyennes",
-          "it": "Valori medi",
-          "es": "Valores medios",
-          "pl": "Average value",
-          "zh-cn": "平均值"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "temp.minmax",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Min/Max values",
-          "de": "Min/Max Werte",
-          "ru": "Мин/макс. значения",
-          "pt": "Min/Max valores",
-          "nl": "Min/Max waarden",
-          "fr": "Valeurs Min/Max",
-          "it": "Valori minimi/max",
-          "es": "Valores Min/Max",
-          "pl": "Wartości Min/Max",
-          "zh-cn": "Min/Max"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "temp.fiveMin",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Consumption (5 min.)",
-          "de": "Verbrauch (5 min)",
-          "ru": "Потребление (5 мин)",
-          "pt": "Consumo (5 min)",
-          "nl": "Consumptie (5 minuten)",
-          "fr": "Consommation (5 min)",
-          "it": "Consumo (5 min)",
-          "es": "Consumo (5 min)",
-          "pl": "5 minut)",
-          "zh-cn": "消费(5分钟)。"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "temp.timeCount",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Operating time counter",
-          "de": "Betriebszeitzähler",
-          "ru": "Рабочий счетчик времени",
-          "pt": "Contador de tempo operacional",
-          "nl": "Operatie tijd tegen",
-          "fr": "Compteur de temps de fonctionnement",
-          "it": "Contatore orario",
-          "es": "Contrato de tiempo de funcionamiento",
-          "pl": "Czas kontrastowy",
-          "zh-cn": "业务时间反击"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "temp.count",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Impulse counter",
-          "de": "Impulszähler",
-          "ru": "Импульсный счетчик",
-          "pt": "Contador de impulso",
-          "nl": "Impulse contra",
-          "fr": "Compteur Impulse",
-          "it": "Contatore di impulso",
-          "es": "Contrato impulsivo",
-          "pl": "Przeciwstawić się",
-          "zh-cn": "有罪不罚"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "temp.sumCount",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Impulse counter (consumption)",
-          "de": "Impulszähler (Verbrauch)",
-          "ru": "Импульсный счетчик (потребление)",
-          "pt": "Contador de impulso (consumo)",
-          "nl": "Impulse contra (consumptie)",
-          "fr": "Compteur d ' impulsion (consommation)",
-          "it": "Impulso (consumo)",
-          "es": "Contrato impulso (consumo)",
-          "pl": "Impulse counter (consumption) (ang.)",
-          "zh-cn": "有罪不罚(消费)"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "temp.sumDelta",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Delta sum",
-          "de": "Deltasumme",
-          "ru": "Дельта сумм",
-          "pt": "Soma Delta",
-          "nl": "Delta Sum",
-          "fr": "Delta sum",
-          "it": "Delta",
-          "es": "Delta sum",
-          "pl": "Suma delta",
-          "zh-cn": "Deltaum"
-        }
-      },
-      "native": {}
-    },
-    {
-      "_id": "temp.sumGroup",
-      "type": "channel",
-      "common": {
-        "name": {
-          "en": "Total consumption by Group",
-          "de": "Gesamtverbrauch nach Gruppe",
-          "ru": "Полное потребление по группам",
-          "pt": "Consumo total por grupo",
-          "nl": "Totale consumptie",
-          "fr": "Consommation totale par groupe",
-          "it": "Consumo totale di Gruppo",
-          "es": "Consumo total por grupo",
-          "pl": "Spożycie grupowe",
-          "zh-cn": "集团消费总量"
-        }
-      },
-      "native": {}
-    }
-  ]
 }
