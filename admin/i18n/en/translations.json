@@ -7,7 +7,7 @@
     "Values will be added to groups with this factor": "Values will be added to groups with this factor",
     "Time zone": "Time zone",
     "e.g. Europe/Berlin (leave empty for default settings)": "e.g. Europe/Berlin (leave empty for default settings)",
-    "Name": "Name",
+    "Name": "name",
     "Name of statistics log": "Name of statistics log",
     "For impulses (boolean data points)": "For impulses (boolean data points)",
     "Count": "Count",
