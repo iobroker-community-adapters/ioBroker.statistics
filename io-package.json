@@ -26,8 +26,8 @@
                 "it": "Aggiunti i valori assoluti min e max",
                 "es": "Valores absolutos min y max",
                 "pl": "Dodać wartości bezwzględnej i max",
-                "zh-cn": "增加绝对值和最大值",
-                "uk": "Додано абсолютні мінімальні та максимальні значення"
+                "uk": "Додано абсолютні мінімальні та максимальні значення",
+                "zh-cn": "增加绝对值和最大值"
             },
             "2.1.1": {
                 "en": "Fixed usage of default values for groups",
@@ -39,8 +39,8 @@
                 "it": "Utilizzo fisso dei valori predefiniti per i gruppi",
                 "es": "Uso fijo de valores predeterminados para grupos",
                 "pl": "Wykorzystanie domyślnych wartości dla grup",
-                "zh-cn": "对集团采用缺省值",
-                "uk": "Виправлено використання значень за замовчуванням для груп"
+                "uk": "Виправлено використання значень за замовчуванням для груп",
+                "zh-cn": "对集团采用缺省值"
             },
             "2.1.0": {
                 "en": "Added support for translated object names\nFixed sum calculation\nIncreased precision to 5 digits\nTranslated all objects",
@@ -52,8 +52,8 @@
                 "it": "Aggiunto supporto per i nomi degli oggetti tradotti\nCalcolo della somma fissa\nAumento della precisione a 5 cifre\nTradotto tutti gli oggetti",
                 "es": "Apoyo adicional para los nombres de objetos traducidos\nCálculo de la suma fija\nMayor precisión a 5 dígitos\nTraducidos todos los objetos",
                 "pl": "Wsparcie dla tłumaczonych nazw obiektów\nObliczenia sumowania Fixa\nDokładność do 5 cyfr\nWszystkie obiekty translacyjne",
-                "zh-cn": "增加对翻译目标名称的支持\n固定的计算\n精 度增加5个数\n适用于所有物体",
-                "uk": "Додано підтримку перекладених імен об'єктів\nРозрахунок фіксованої суми\nПідвищено точність до 5 цифр\nПерекладено всі об'єкти"
+                "uk": "Додано підтримку перекладених імен об'єктів\nРозрахунок фіксованої суми\nПідвищено точність до 5 цифр\nПерекладено всі об'єкти",
+                "zh-cn": "增加对翻译目标名称的支持\n固定的计算\n精 度增加5个数\n适用于所有物体"
             },
             "2.0.0": {
                 "en": "Added Admin 5 configuration\nUpdated translations",
@@ -65,8 +65,8 @@
                 "it": "Configurazione Admin 5\nTraduzioni aggiornate",
                 "es": "Configuración de Admin 5\nTraducciones actualizadas",
                 "pl": "Admin 5\nTłumaczenia poprawione",
-                "zh-cn": "增编5个组合\n最新翻译",
-                "uk": "Додана конфігурація Admin 5\nОновлені переклади"
+                "uk": "Додана конфігурація Admin 5\nОновлені переклади",
+                "zh-cn": "增编5个组合\n最新翻译"
             },
             "1.1.1": {
                 "en": "Prevent warn logs when using non-number states as statistic source",
@@ -78,8 +78,8 @@
                 "it": "Impedisci i registri di avviso quando si utilizzano stati non numerici come origine statistica",
                 "es": "Evite los registros de advertencia cuando utilice estados que no sean números como fuente de estadísticas",
                 "pl": "Zapobiegaj ostrzeżeniom podczas używania stanów nieliczbowych jako źródła statystyk",
-                "zh-cn": "使用非数字状态作为统计源时防止警告日志",
-                "uk": "Запобігання журналу попереджень при використанні нечислових станів як джерела статистики"
+                "uk": "Запобігання журналу попереджень при використанні нечислових станів як джерела статистики",
+                "zh-cn": "使用非数字状态作为统计源时防止警告日志"
             },
             "1.1.0": {
                 "en": "IMPORTANT: js-controller 3.2 is needed at least!\nPrepare for future js-controller compatibility",
@@ -91,8 +91,8 @@
                 "it": "IMPORTANTE: è necessario almeno js-controller 3.2!\nPreparati per la futura compatibilità del controller js",
                 "es": "IMPORTANTE: ¡se necesita al menos js-controller 3.2!\nPrepárese para la futura compatibilidad con js-controller",
                 "pl": "WAŻNE: potrzebny jest przynajmniej js-controller 3.2!\nPrzygotuj się na przyszłą kompatybilność kontrolerów js",
-                "zh-cn": "重要提示：至少需要 js-controller 3.2！\n为将来的 js-controller 兼容性做准备",
-                "uk": "ВАЖЛИВО: потрібен як мінімум js-контролер 3.2!\nПідготуйтеся до майбутньої сумісності js-контролера"
+                "uk": "ВАЖЛИВО: потрібен як мінімум js-контролер 3.2!\nПідготуйтеся до майбутньої сумісності js-контролера",
+                "zh-cn": "重要提示：至少需要 js-controller 3.2！\n为将来的 js-controller 兼容性做准备"
             }
         },
         "titleLang": {
@@ -105,8 +105,8 @@
             "it": "Statistiche per oggetti",
             "es": "Estadísticas para objetos",
             "pl": "Statystyki obiektów",
-            "zh-cn": "状态统计",
-            "uk": "Статистика по штатах"
+            "uk": "Статистика по штатах",
+            "zh-cn": "状态统计"
         },
         "desc": {
             "en": "Provides statistics like day minimum, day maximum, day average, delta and much more",
@@ -118,8 +118,8 @@
             "it": "Fornisce statistiche come il minimo del giorno, il massimo del giorno, la media del giorno, delta e molto altro",
             "es": "Proporciona estadísticas como mínimo de día, máximo de día, promedio de día, delta y mucho más",
             "pl": "Obserwuje statystyki takie jak np. dzień minimalny, średnia dnia, delta i znacznie więcej",
-            "zh-cn": "提供每日最低、每天最高、每天平均、日报、审会和更多的统计数字",
-            "uk": "Надає такі статистичні дані, як мінімум, максимум за день, середнє значення за день, дельта та багато іншого"
+            "uk": "Надає такі статистичні дані, як мінімум, максимум за день, середнє значення за день, дельта та багато іншого",
+            "zh-cn": "提供每日最低、每天最高、每天平均、日报、审会和更多的统计数字"
         },
         "platform": "Javascript/Node.js",
         "mode": "daemon",
@@ -153,12 +153,12 @@
         },
         "globalDependencies": [
             {
-                "admin": ">=5.3.2"
+                "admin": ">=6.0.0"
             }
         ],
         "dependencies": [
             {
-                "js-controller": ">=3.2.0"
+                "js-controller": ">=3.3.0"
             }
         ],
         "authors": [
@@ -209,6 +209,7 @@
                     "it": "Valori salvati",
                     "es": "Valores guardados",
                     "pl": "Oszczędzać wartości",
+                    "uk": "Збережені значення",
                     "zh-cn": "丧失价值"
                 }
             },
@@ -228,6 +229,7 @@
                     "it": "Valori medi",
                     "es": "Valores medios",
                     "pl": "Average value",
+                    "uk": "Середні значення",
                     "zh-cn": "平均值"
                 }
             },
@@ -247,6 +249,7 @@
                     "it": "Valori minimi/max",
                     "es": "Valores Min/Max",
                     "pl": "Wartości Min/Max",
+                    "uk": "Значення Min/Max",
                     "zh-cn": "Min/Max"
                 }
             },
@@ -265,7 +268,8 @@
                     "fr": "Consommation (5 min)",
                     "it": "Consumo (5 min)",
                     "es": "Consumo (5 min)",
-                    "pl": "5 minut)",
+                    "pl": "Consumowanie 5 minut.",
+                    "uk": "Витрата (5 хв)",
                     "zh-cn": "消费(5分钟)。"
                 }
             },
@@ -285,6 +289,7 @@
                     "it": "Contatore orario",
                     "es": "Contrato de tiempo de funcionamiento",
                     "pl": "Czas kontrastowy",
+                    "uk": "Лічильник часу",
                     "zh-cn": "业务时间反击"
                 }
             },
@@ -304,6 +309,7 @@
                     "it": "Contatore di impulso",
                     "es": "Contrato impulsivo",
                     "pl": "Przeciwstawić się",
+                    "uk": "Імпульсний лічильник",
                     "zh-cn": "有罪不罚"
                 }
             },
@@ -323,6 +329,7 @@
                     "it": "Impulso (consumo)",
                     "es": "Contrato impulso (consumo)",
                     "pl": "Impulse counter (consumption) (ang.)",
+                    "uk": "Імпульсний лічильник",
                     "zh-cn": "有罪不罚(消费)"
                 }
             },
@@ -342,6 +349,7 @@
                     "it": "Delta",
                     "es": "Delta sum",
                     "pl": "Suma delta",
+                    "uk": "Сума Delta",
                     "zh-cn": "Deltaum"
                 }
             },
@@ -352,15 +360,16 @@
             "type": "channel",
             "common": {
                 "name": {
-                    "en": "Total consumption by Group",
+                    "en": "Total consumption by group",
                     "de": "Gesamtverbrauch nach Gruppe",
-                    "ru": "Полное потребление по группам",
+                    "ru": "Общее потребление по группам",
                     "pt": "Consumo total por grupo",
                     "nl": "Totale consumptie",
                     "fr": "Consommation totale par groupe",
-                    "it": "Consumo totale di Gruppo",
+                    "it": "Consumo totale per gruppo",
                     "es": "Consumo total por grupo",
                     "pl": "Spożycie grupowe",
+                    "uk": "Загальна спожива за групою",
                     "zh-cn": "集团消费总量"
                 }
             },
@@ -380,6 +389,7 @@
                     "it": "Valori temporanei",
                     "es": "Valores temporales",
                     "pl": "Wartości tymczasowe",
+                    "uk": "Тимчасові значення",
                     "zh-cn": "临时价值观"
                 }
             },
@@ -399,6 +409,7 @@
                     "it": "Valori medi",
                     "es": "Valores medios",
                     "pl": "Average value",
+                    "uk": "Середні значення",
                     "zh-cn": "平均值"
                 }
             },
@@ -418,6 +429,7 @@
                     "it": "Valori minimi/max",
                     "es": "Valores Min/Max",
                     "pl": "Wartości Min/Max",
+                    "uk": "Значення Min/Max",
                     "zh-cn": "Min/Max"
                 }
             },
@@ -436,7 +448,8 @@
                     "fr": "Consommation (5 min)",
                     "it": "Consumo (5 min)",
                     "es": "Consumo (5 min)",
-                    "pl": "5 minut)",
+                    "pl": "Consumowanie 5 minut.",
+                    "uk": "Витрата (5 хв)",
                     "zh-cn": "消费(5分钟)。"
                 }
             },
@@ -456,6 +469,7 @@
                     "it": "Contatore orario",
                     "es": "Contrato de tiempo de funcionamiento",
                     "pl": "Czas kontrastowy",
+                    "uk": "Лічильник часу",
                     "zh-cn": "业务时间反击"
                 }
             },
@@ -475,6 +489,7 @@
                     "it": "Contatore di impulso",
                     "es": "Contrato impulsivo",
                     "pl": "Przeciwstawić się",
+                    "uk": "Імпульсний лічильник",
                     "zh-cn": "有罪不罚"
                 }
             },
@@ -494,6 +509,7 @@
                     "it": "Impulso (consumo)",
                     "es": "Contrato impulso (consumo)",
                     "pl": "Impulse counter (consumption) (ang.)",
+                    "uk": "Імпульсний лічильник",
                     "zh-cn": "有罪不罚(消费)"
                 }
             },
@@ -513,6 +529,7 @@
                     "it": "Delta",
                     "es": "Delta sum",
                     "pl": "Suma delta",
+                    "uk": "Сума Delta",
                     "zh-cn": "Deltaum"
                 }
             },
@@ -523,15 +540,16 @@
             "type": "channel",
             "common": {
                 "name": {
-                    "en": "Total consumption by Group",
+                    "en": "Total consumption by group",
                     "de": "Gesamtverbrauch nach Gruppe",
-                    "ru": "Полное потребление по группам",
+                    "ru": "Общее потребление по группам",
                     "pt": "Consumo total por grupo",
                     "nl": "Totale consumptie",
                     "fr": "Consommation totale par groupe",
-                    "it": "Consumo totale di Gruppo",
+                    "it": "Consumo totale per gruppo",
                     "es": "Consumo total por grupo",
                     "pl": "Spożycie grupowe",
+                    "uk": "Загальна спожива за групою",
                     "zh-cn": "集团消费总量"
                 }
             },
