@@ -998,6 +998,7 @@ class Statistics extends utils.Adapter {
                     it: `Valori salvati per ${name.it || name.en}`,
                     es: `Valores guardados para ${name.es || name.en}`,
                     pl: `Oszczędne wartości dla ${name.pl || name.en}`,
+                    uk: `Збережені значення для ${name.uk || name.en}`,
                     'zh-cn': `保存的价值 ${name['zh-cn'] || name.en}`
                 }
             },
@@ -1020,6 +1021,7 @@ class Statistics extends utils.Adapter {
                     it: `Valori temporanei per ${name.it || name.en}`,
                     es: `Valores temporales para ${name.es || name.en}`,
                     pl: `Temporary wartości dla ${name.pl || name.en}`,
+                    uk: `Тимчасові значення для ${name.uk || name.en}`,
                     'zh-cn': `${name['zh-cn'] || name.en} 的临时值`,
                 }
             },
