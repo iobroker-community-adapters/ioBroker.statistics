@@ -52,7 +52,7 @@ iobroker add statistics
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
-### __WORK IN PROGRESS__
+### 2.3.1 (2023-01-11)
 * (klein0r) Added Ukrainian language
 
 ### 2.3.0 (2022-11-03)
@@ -78,10 +78,6 @@ NodeJS 14.5.0 is required
 * (klein0r) Fixed sum calculation
 * (klein0r) Increased precision to 5 digits
 * (klein0r) Translated all objects
-
-### 2.0.0 (2022-06-13)
-* (klein0r) Added Admin 5 configuration
-* (klein0r) Updated translations
 
 ## License
 

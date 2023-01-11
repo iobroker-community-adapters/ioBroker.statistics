@@ -1,4 +1,8 @@
 # Older changes
+## 2.0.0 (2022-06-13)
+* (klein0r) Added Admin 5 configuration
+* (klein0r) Updated translations
+
 ## 1.1.1 (2022-04-17)
 * Prevent warn logs when using non-number states as statistic source
 
