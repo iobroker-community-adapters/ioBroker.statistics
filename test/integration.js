@@ -11,19 +11,30 @@ async function sleep(duration) {
     });
 }
 
-async function assertStateChangesTo(harness, id, value) {
+async function assertStateChangesTo(harness, id, value, action) {
     return new Promise((resolve, reject) => {
+        const ac = new AbortController();
+
         const timeout = setTimeout(() => {
+            ac.abort();
             reject(`${id} not changed to value ${value} in expected time range`);
-        }, 10000);
+        }, 10 * 1000);
+
         harness.on('stateChange', async (changedId, state) => {
             if (id === changedId && state) {
-                clearTimeout(timeout);
-                expect(state.val, `${id} should change to value ${value}`).to.equal(value);
+                if (!ac.signal.aborted) {
+                    clearTimeout(timeout);
+                    ac.abort();
 
-                resolve(true);
+                    expect(state.val, `${id} should change to value ${value}`).to.equal(value);
+
+                    resolve(true);
+                }
             }
-        });
+        }, { signal: ac.signal });
+
+        // Run action
+        action && action();
     });
 }
 
@@ -152,37 +163,43 @@ tests.integration(path.join(__dirname, '..'), {
                 await assertStateEquals(harness, `${sumGroupTempId}.day`, 0);
 
                 // Round 1
-                const round1Promises = Promise.all([
-                    assertStateChangesTo(harness, `${tempId1}.day`, 10),
-                    assertStateChangesTo(harness, `${tempId2}.day`, 20),
-                    assertStateChangesTo(harness, `${sumGroupTempId}.day`, 0.0308), // (10 * 0.001 * 0.28) + (20 * 0.005 * 0.28)
+                await Promise.all([
+                    assertStateChangesTo(harness, `${tempId1}.day`, 10, () => {
+                        harness.states.setStateAsync(customNumberObjId1, { val: 20, ack: true }); // + 10
+                    }),
+                    assertStateChangesTo(harness, `${tempId2}.day`, 20, () => {
+                        harness.states.setStateAsync(customNumberObjId2, { val: 70, ack: true }); // + 20
+                    })
                 ]);
 
-                await harness.states.setStateAsync(customNumberObjId1, { val: 20, ack: true }); // + 10
-                await harness.states.setStateAsync(customNumberObjId2, { val: 70, ack: true }); // + 20
-                await round1Promises;
+                await sleep(1000);
+                await assertStateEquals(harness, `${sumGroupTempId}.day`, 0.0308); // (10 * 0.001 * 0.28) + (20 * 0.005 * 0.28)
 
                 // Round 2
-                const round2Promises =  Promise.all([
-                    assertStateChangesTo(harness, `${tempId1}.day`, 40.5),
-                    assertStateChangesTo(harness, `${tempId2}.day`, 22.25),
-                    assertStateChangesTo(harness, `${sumGroupTempId}.day`, 0.04249), // (30.5 * 0.001 * 0.28) + (2.25 * 0.005 * 0.28)
+                await Promise.all([
+                    assertStateChangesTo(harness, `${tempId1}.day`, 40.5, () => {
+                        harness.states.setStateAsync(customNumberObjId1, { val: 50.5, ack: true }); // + 30.5
+                    }),
+                    assertStateChangesTo(harness, `${tempId2}.day`, 22.25, () => {
+                        harness.states.setStateAsync(customNumberObjId2, { val: 72.25, ack: true }); // + 2.25
+                    })
                 ]);
 
-                await harness.states.setStateAsync(customNumberObjId1, { val: 50.5, ack: true }); // + 30.5
-                await harness.states.setStateAsync(customNumberObjId2, { val: 72.25, ack: true }); // + 2.25
-                await round2Promises;
+                await sleep(1000);
+                await assertStateEquals(harness, `${sumGroupTempId}.day`, 0.04249); // (30.5 * 0.001 * 0.28) + (2.25 * 0.005 * 0.28)
 
                 // Round 3
-                const round3Promises =  Promise.all([
-                    assertStateChangesTo(harness, `${tempId1}.day`, 40.5),
-                    assertStateChangesTo(harness, `${tempId2}.day`, 12.25),
-                    assertStateChangesTo(harness, `${sumGroupTempId}.day`, 0.02849), // (0 * 0.001 * 0.28) + (-10 * 0.005 * 0.28)
+                await Promise.all([
+                    assertStateChangesTo(harness, `${tempId1}.day`, 40.5, () => {
+                        harness.states.setStateAsync(customNumberObjId1, { val: 40, ack: true }); // 0 (sumIgnoreMinus: true)
+                    }),
+                    assertStateChangesTo(harness, `${tempId2}.day`, 12.25, () => {
+                        harness.states.setStateAsync(customNumberObjId2, { val: 62.25, ack: true }); // - 10
+                    })
                 ]);
 
-                await harness.states.setStateAsync(customNumberObjId1, { val: 40, ack: true }); // 0 (sumIgnoreMinus: true)
-                await harness.states.setStateAsync(customNumberObjId2, { val: 62.25, ack: true }); // - 10
-                await round3Promises;
+                await sleep(1000);
+                await assertStateEquals(harness, `${sumGroupTempId}.day`, 0.02849); // (0 * 0.001 * 0.28) + (-10 * 0.005 * 0.28)
             });
         });
     }
