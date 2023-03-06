@@ -33,5 +33,6 @@
     "Group": "Gruppo",
     "Can be configured in adapter configuration": "Può essere configurato nella configurazione dell'adattatore",
     "Counting factor": "Fattore di conteggio",
-    "Conversion factor for consumption counter": "Fattore di conversione per contatore dei consumi"
+    "Conversion factor for consumption counter": "Fattore di conversione per contatore dei consumi",
+    "The data type of this state is not supported (has to be boolean or number)": "Il tipo di dati di questo stato non è supportato (deve essere booleano o numerico)"
 }

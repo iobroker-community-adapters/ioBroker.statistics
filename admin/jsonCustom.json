@@ -9,7 +9,14 @@
             "defaultFunc": "(customObj && customObj._id && String(customObj._id).split('.').pop()) || ''",
             "sm": 6
         },
-
+        "_info": {
+            "hidden": "customObj.common.type === 'boolean' || customObj.common.type === 'number'",
+            "newLine": true,
+            "type": "header",
+            "text": "The data type of this state is not supported (has to be boolean or number)",
+            "size": 4,
+            "sm": 12
+        },
         "_binary": {
             "hidden": "customObj.common.type !== 'boolean'",
             "newLine": true,

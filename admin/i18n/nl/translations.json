@@ -33,5 +33,6 @@
     "Group": "Groep",
     "Can be configured in adapter configuration": "Kan worden geconfigureerd in adapterconfiguratie",
     "Counting factor": "telfactor",
-    "Conversion factor for consumption counter": "Conversiefactor voor verbruiksteller"
+    "Conversion factor for consumption counter": "Conversiefactor voor verbruiksteller",
+    "The data type of this state is not supported (has to be boolean or number)": "Het gegevenstype van deze status wordt niet ondersteund (moet boolean of getal zijn)"
 }

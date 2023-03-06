@@ -33,5 +33,6 @@
     "Group": "Grupa",
     "Can be configured in adapter configuration": "Możliwość konfiguracji w konfiguracji adaptera",
     "Counting factor": "Czynnik zliczający",
-    "Conversion factor for consumption counter": "Współczynnik przeliczeniowy licznika zużycia"
+    "Conversion factor for consumption counter": "Współczynnik przeliczeniowy licznika zużycia",
+    "The data type of this state is not supported (has to be boolean or number)": "Typ danych tego stanu nie jest obsługiwany (musi to być wartość logiczna lub liczba)"
 }

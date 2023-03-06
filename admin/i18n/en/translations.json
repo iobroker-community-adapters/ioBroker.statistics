@@ -33,5 +33,6 @@
     "Group": "Group",
     "Can be configured in adapter configuration": "Can be configured in adapter configuration",
     "Counting factor": "Counting factor",
-    "Conversion factor for consumption counter": "Conversion factor for consumption counter"
+    "Conversion factor for consumption counter": "Conversion factor for consumption counter",
+    "The data type of this state is not supported (has to be boolean or number)": "The data type of this state is not supported (has to be boolean or number)"
 }
