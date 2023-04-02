@@ -52,6 +52,10 @@ iobroker add statistics
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
+### __WORK IN PROGRESS__
+
+* (klein0r) Show error if groups are not configured correctly
+
 ### 2.3.1 (2023-01-11)
 * (klein0r) Added Ukrainian language
 

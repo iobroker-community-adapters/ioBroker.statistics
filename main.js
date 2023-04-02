@@ -165,13 +165,17 @@ class Statistics extends utils.Adapter {
                     const groupConfig = this.config.groups[g];
                     const groupId = groupConfig.id;
 
-                    this.groups[groupId] = { config: groupConfig, items: [] };
+                    if (groupId) {
+                        this.groups[groupId] = { config: groupConfig, items: [] };
 
-                    if (!this.typeObjects.sumGroup.includes(groupId)) {
-                        this.typeObjects.sumGroup.push(groupId);
+                        if (!this.typeObjects.sumGroup.includes(groupId)) {
+                            this.typeObjects.sumGroup.push(groupId);
+                        }
+
+                        await this.defineObject('sumGroup', groupId, `Sum for ${groupConfig.name}`, groupConfig.priceUnit);
+                    } else {
+                        this.log.error(`Found group without id in configuration - skipping! Check your instance configuration for groups`);
                     }
-
-                    await this.defineObject('sumGroup', groupId, `Sum for ${groupConfig.name}`, groupConfig.priceUnit);
                 }
             }
 
