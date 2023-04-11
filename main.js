@@ -195,7 +195,7 @@ class Statistics extends utils.Adapter {
         try {
             this.crons.fiveMin = new CronJob('*/5 * * * *',
                 () => this.fiveMin(),
-                () => this.log.debug('stopped fiveMin'), // This function is executed when the job stops
+                () => this.log.debug('stopped fiveMin'),
                 true,
                 timezone
             );
@@ -207,7 +207,7 @@ class Statistics extends utils.Adapter {
         try {
             this.crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
                 () => this.saveValues(MIN15),
-                () => this.log.debug('stopped fifteenMinSave'), // This function is executed when the job stops
+                () => this.log.debug('stopped fifteenMinSave'),
                 true,
                 timezone
             );
@@ -219,7 +219,7 @@ class Statistics extends utils.Adapter {
         try {
             this.crons.hourSave = new CronJob('0 * * * *',
                 () => this.saveValues(HOUR),
-                () => this.log.debug('stopped hourSave'), // This function is executed when the job stops
+                () => this.log.debug('stopped hourSave'),
                 true,
                 timezone
             );
@@ -227,11 +227,11 @@ class Statistics extends utils.Adapter {
             this.log.error(`creating cron hourSave errored with: ${e}`);
         }
 
-        // daily um 23:59:58
+        // daily at 23:59:58
         try {
             this.crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
                 () => this.setTimeCountMidnight(),
-                () => this.log.debug('stopped dayTriggerTimeCount'), // This function is executed when the job stops
+                () => this.log.debug('stopped dayTriggerTimeCount'),
                 true,
                 timezone
             );
@@ -239,11 +239,11 @@ class Statistics extends utils.Adapter {
             this.log.error(`creating cron dayTriggerTimeCount errored with: ${e}`);
         }
 
-        // daily um 00:00
+        // daily at 00:00
         try {
             this.crons.daySave = new CronJob('0 0 * * *',
                 () => this.saveValues(DAY),
-                () => this.log.debug('stopped daySave'), // This function is executed when the job stops
+                () => this.log.debug('stopped daySave'),
                 true,
                 timezone
             );
@@ -255,7 +255,7 @@ class Statistics extends utils.Adapter {
         try {
             this.crons.weekSave = new CronJob('0 0 * * 1',
                 () => this.saveValues(WEEK),
-                () => this.log.debug('stopped weekSave'), // This function is executed when the job stops
+                () => this.log.debug('stopped weekSave'),
                 true,
                 timezone
             );
@@ -267,7 +267,7 @@ class Statistics extends utils.Adapter {
         try {
             this.crons.monthSave = new CronJob('0 0 1 * *',
                 () => this.saveValues(MONTH),
-                () => this.log.debug('stopped monthSave'), // This function is executed when the job stops
+                () => this.log.debug('stopped monthSave'),
                 true,
                 timezone
             );
@@ -279,7 +279,7 @@ class Statistics extends utils.Adapter {
         try {
             this.crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
                 () => this.saveValues(QUARTER),
-                () => this.log.debug('stopped quarterSave'), // This function is executed when the job stops
+                () => this.log.debug('stopped quarterSave'),
                 true,
                 timezone
             );
@@ -497,7 +497,7 @@ class Statistics extends utils.Adapter {
         } else if (msg.command === 'saveValues') {
             // Used for integration tests
             if (msg.message?.period && column.includes(msg.message.period)) {
-                this.saveValues(msg.message?.period);
+                this.saveValues(msg.message.period);
                 this.sendTo(msg.from, msg.command, { success: true, period: msg.message.period }, msg.callback);
             } else {
                 this.sendTo(msg.from, msg.command, { success: false, err: 'invalid time period' }, msg.callback);

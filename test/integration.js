@@ -40,7 +40,10 @@ async function assertStateChangesTo(harness, id, value, action) {
 
 async function assertStateEquals(harness, id, value) {
     const state = await harness.states.getStateAsync(id);
-    expect(state.val, `${id} should have value ${value}`).to.equal(value);
+    expect(state, `${id} should be an object`).to.be.an('object');
+    if (state) {
+        expect(state.val, `${id} should have value ${value}`).to.equal(value);
+    }
 }
 
 // Run integration tests - See https://github.com/ioBroker/testing for a detailed explanation and further options
