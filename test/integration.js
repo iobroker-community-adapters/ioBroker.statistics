@@ -5,13 +5,13 @@ const { tests } = require('@iobroker/testing');
 const chai = require('chai');
 const expect = chai.expect;
 
-async function sleep(duration) {
+function sleep(duration) {
     return new Promise((resolve) => {
         setTimeout(resolve, duration);
     });
 }
 
-async function assertStateChangesTo(harness, id, value, action) {
+function assertStateChangesTo(harness, id, value, action) {
     return new Promise((resolve, reject) => {
         const ac = new AbortController();
 
@@ -95,7 +95,7 @@ tests.integration(path.join(__dirname, '..'), {
                     native: {},
                 });
 
-                return harness.startAdapterAndWait();
+                await harness.startAdapterAndWait();
             });
 
             after(async function() {
@@ -104,7 +104,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                return sleep(1000);
+                await sleep(1000);
             });
 
             it('enableStatistics - existing ID', function (done) {
@@ -205,7 +205,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
 
-                return harness.startAdapterAndWait();
+                await harness.startAdapterAndWait();
             });
 
             after(async function() {
@@ -214,7 +214,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                return sleep(1000);
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -309,7 +309,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
 
-                return harness.startAdapterAndWait();
+                await harness.startAdapterAndWait();
             });
 
             after(async function() {
@@ -318,7 +318,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                return sleep(1000);
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -410,7 +410,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
 
-                return harness.startAdapterAndWait();
+                await harness.startAdapterAndWait();
             });
 
             after(async function() {
@@ -419,7 +419,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                return sleep(1000);
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -519,7 +519,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
 
-                return harness.startAdapterAndWait();
+                await harness.startAdapterAndWait();
             });
 
             after(async function() {
@@ -528,7 +528,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                return sleep(1000);
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -632,7 +632,7 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await harness.states.setStateAsync(customNumberObjId, { val: 1000, ack: true });
 
-                return harness.startAdapterAndWait();
+                await harness.startAdapterAndWait();
             });
 
             after(async function() {
@@ -641,7 +641,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                return sleep(1000);
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -713,7 +713,7 @@ tests.integration(path.join(__dirname, '..'), {
                     native: {},
                 });
 
-                return harness.startAdapterAndWait();
+                await harness.startAdapterAndWait();
             });
 
             after(async function() {
@@ -722,7 +722,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                return sleep(1000);
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -803,7 +803,7 @@ tests.integration(path.join(__dirname, '..'), {
                     native: {},
                 });
 
-                return harness.startAdapterAndWait();
+                await harness.startAdapterAndWait();
             });
 
             after(async function() {
@@ -812,7 +812,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                return sleep(1000);
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -925,7 +925,11 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId2, { val: 50, ack: true });
 
                 await harness.startAdapterAndWait();
-                return sleep(1000);
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                await sleep(1000);
             });
 
             after(async function() {

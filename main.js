@@ -312,10 +312,7 @@ class Statistics extends utils.Adapter {
      */
     onObjectChange(id, obj) {
         // Warning, obj can be null if it was deleted
-        // this.log.debug('received objectChange '+ id + ' obj  '+JSON.stringify(obj));
-        // nur das verarbeiten was auch diesen Adapter interessiert
         if (obj && obj.common && obj.common.custom && obj.common.custom[this.namespace] && obj.common.custom[this.namespace].enabled) {
-            //hier sollte nur ein Datenpunkt angekommen sein
             this.log.debug(`[OBJECT CHANGE] stat "${id}" ${JSON.stringify(obj.common.custom)}`);
 
             // old but changed
