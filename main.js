@@ -311,45 +311,55 @@ class Statistics extends utils.Adapter {
      * @param {ioBroker.Object | null | undefined} obj
      */
     onObjectChange(id, obj) {
-        // Warning, obj can be null if it was deleted
-        if (obj && obj.common && obj.common.custom && obj.common.custom[this.namespace] && obj.common.custom[this.namespace].enabled) {
-            this.log.debug(`[OBJECT CHANGE] stat "${id}" ${JSON.stringify(obj.common.custom)}`);
+        const isStart = !this.tasks.length;
 
-            // old but changed
-            if (this.statDP[id]) {
-                const newObj = obj.common.custom[this.namespace];
-                this.statDP[id] = newObj;
+        this.tasks.push({
+            name: 'promise',
+            args: { id, obj },
+            callback: async (args) => {
+                // Warning, obj can be null if it was deleted
+                if (args?.obj?.common?.custom?.[this.namespace] && args.obj.common.custom[this.namespace]?.enabled) {
+                    this.log.debug(`[OBJECT CHANGE] stat "${args.id}": ${JSON.stringify(args.obj.common.custom)}`);
 
-                // Delete objects of unspecified types
-                Object.keys(this.typeObjects).forEach(type => {
-                    if (!newObj[type]) {
-                        this.delObject(`save.${type}.${id}`, { recursive: true });
-                        this.delObject(`temp.${type}.${id}`, { recursive: true });
+                    // old but changed
+                    if (this.statDP[args.id]) {
+                        const newObj = args.obj.common.custom[this.namespace];
+                        this.statDP[args.id] = newObj;
+
+                        // Delete objects of unspecified types
+                        Object.keys(this.typeObjects).forEach(type => {
+                            if (!newObj[type]) {
+                                this.delObject(`save.${type}.${args.id}`, { recursive: true });
+                                this.delObject(`temp.${type}.${args.id}`, { recursive: true });
+                            }
+                        });
+
+                        this.removeObject(args.id);
+                        this.setupObjects([args.id]);
+                        this.log.debug(`[OBJECT CHANGE] saved (updated) typeObject of stat "${args.id}": ${JSON.stringify(this.statDP[args.id])}`);
+                    } else {
+                        this.statDP[args.id] = args.obj.common.custom[this.namespace];
+                        this.setupObjects([args.id]);
+                        this.log.debug(`[OBJECT CHANGE] saved (new) typeObjects of stat "${args.id}": ${JSON.stringify(this.statDP[args.id])}`);
                     }
-                });
+                } else if (this.statDP[args.id]) {
+                    this.log.debug(`[OBJECT CHANGE] removing typeObjects of stat "${args.id}": ${JSON.stringify(this.statDP[args.id])}`);
 
-                this.removeObject(id);
-                this.setupObjects([id]);
-                this.log.debug(`[OBJECT CHANGE] saved (updated) typeObject of stat "${id}": ${JSON.stringify(this.statDP[id])}`);
-            } else {
-                this.statDP[id] = obj.common.custom[this.namespace];
-                this.setupObjects([id]);
-                this.log.debug(`[OBJECT CHANGE] saved (new) typeObjects of stat "${id}": ${JSON.stringify(this.statDP[id])}`);
+                    // Delete objects of all types
+                    Object.keys(this.typeObjects).forEach(type => {
+                        this.delObject(`save.${type}.${args.id}`, { recursive: true });
+                        this.delObject(`temp.${type}.${args.id}`, { recursive: true });
+                    });
+
+                    delete this.statDP[args.id];
+                    this.removeObject(args.id);
+                    this.unsubscribeForeignObjects(args.id);
+                    this.unsubscribeForeignStates(args.id);
+                }
             }
-        } else if (this.statDP[id]) {
-            this.log.debug(`[OBJECT CHANGE] removing typeObjects of stat "${id}": ${JSON.stringify(this.statDP[id])}`);
+        });
 
-            // Delete objects of all types
-            Object.keys(this.typeObjects).forEach(type => {
-                this.delObject(`save.${type}.${id}`, { recursive: true });
-                this.delObject(`temp.${type}.${id}`, { recursive: true });
-            });
-
-            delete this.statDP[id];
-            this.removeObject(id);
-            this.unsubscribeForeignObjects(id);
-            this.unsubscribeForeignStates(id);
-        }
+        isStart && this.processTasks();
     }
 
     /**
@@ -357,44 +367,54 @@ class Statistics extends utils.Adapter {
      * @param {ioBroker.State | null | undefined} state
      */
     onStateChange(id, state) {
+        const isStart = !this.tasks.length;
+
         if (id && state && state.ack) {
-            this.log.debug(`[STATE CHANGE] ======================= ${id} =======================`);
-            this.log.debug(`[STATE CHANGE] stateChange => ${state.val}`);
+            this.tasks.push({
+                name: 'promise',
+                args: { id, state },
+                callback: async (args) => {
+                    this.log.debug(`[STATE CHANGE] ======================= ${args.id} =======================`);
+                    this.log.debug(`[STATE CHANGE] stateChange => ${args.state.val}`);
 
-            if ((state.val === null) || (state.val === undefined) || isNaN(state.val)) {
-                this.log.warn(`[STATE CHANGE] wrong value => ${state.val} on ${id} => check the other adapter where value comes from `);
-            } else {
-                if (this.typeObjects.sumDelta.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] schedule onStateChangeSumDeltaValue for ${id}`);
-                    this.onStateChangeSumDeltaValue(id, state.val);
-                } else if (this.typeObjects.avg.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] schedule onStateChangeAvgValue for ${id}`);
-                    this.onStateChangeAvgValue(id, state.val);
+                    if ((args.state.val === null) || (args.state.val === undefined) || isNaN(args.state.val)) {
+                        this.log.warn(`[STATE CHANGE] wrong value => ${args.state.val} on ${args.id} => check the other adapter where value comes from `);
+                    } else {
+                        if (this.typeObjects.sumDelta.includes(args.id)) {
+                            this.log.debug(`[STATE CHANGE] schedule onStateChangeSumDeltaValue for ${args.id}`);
+                            this.onStateChangeSumDeltaValue(args.id, args.state.val);
+                        } else if (this.typeObjects.avg.includes(args.id)) {
+                            this.log.debug(`[STATE CHANGE] schedule onStateChangeAvgValue for ${args.id}`);
+                            this.onStateChangeAvgValue(args.id, args.state.val);
+                        }
+
+                        if (this.typeObjects.minmax.includes(args.id)) {
+                            this.log.debug(`[STATE CHANGE] schedule onStateChangeMinMaxValue for ${args.id}`);
+                            this.onStateChangeMinMaxValue(args.id, args.state.val);
+                        }
+
+                        if (this.typeObjects.count.includes(args.id)) {
+                            this.log.debug(`[STATE CHANGE] schedule onStateChangeCountValue for ${args.id}`);
+                            this.onStateChangeCountValue(args.id, args.state.val);
+                        }
+
+                        if (this.typeObjects.sumCount.includes(args.id)) {
+                            this.log.debug(`[STATE CHANGE] schedule onStateChangeSumCountValue for ${args.id}`);
+                            this.onStateChangeSumCountValue(args.id, args.state.val);
+                        }
+
+                        if (this.typeObjects.timeCount.includes(args.id)) {
+                            this.log.debug(`[STATE CHANGE] schedule onStateChangeTimeCntValue for ${args.id}`);
+                            this.onStateChangeTimeCntValue(args.id, args.state);
+                        }
+
+                        // 5min is treated cyclically
+                    }
                 }
-
-                if (this.typeObjects.minmax.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] schedule onStateChangeMinMaxValue for ${id}`);
-                    this.onStateChangeMinMaxValue(id, state.val);
-                }
-
-                if (this.typeObjects.count.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] schedule onStateChangeCountValue for ${id}`);
-                    this.onStateChangeCountValue(id, state.val);
-                }
-
-                if (this.typeObjects.sumCount.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] schedule onStateChangeSumCountValue for ${id}`);
-                    this.onStateChangeSumCountValue(id, state.val);
-                }
-
-                if (this.typeObjects.timeCount.includes(id)) {
-                    this.log.debug(`[STATE CHANGE] schedule onStateChangeTimeCntValue for ${id}`);
-                    this.onStateChangeTimeCntValue(id, state);
-                }
-
-                // 5min is treated cyclically
-            }
+            });
         }
+
+        isStart && this.processTasks();
     }
 
     /**
