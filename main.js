@@ -1095,179 +1095,160 @@ class Statistics extends utils.Adapter {
             await this.extendObjectAsync(`temp.${type}.${id}.${objects[s]}`, obj);
         }
 
-        this.setInitial(type, id);
+        await this.setInitial(type, id);
     }
 
-    setInitial(type, id) {
-        const isStart = !this.tasks.length;
+    async setInitial(type, id) {
 
         const saveObjects = nameObjects[type].save;
         for (let s = 0; s < saveObjects.length; s++) {
-            this.tasks.push({
-                name: 'promise',
-                args: {
-                    type: type,
-                    trueId: id,
-                    name: saveObjects[s]
-                },
-                callback: async (args) => {
-                    const targetId = `save.${args.type}.${args.trueId}.${args.name}`;
-                    const currentVal = await this.getValueAsync(targetId);
+            const name = saveObjects[s];
 
-                    if (currentVal === null) {
-                        this.log.debug(`[SET INITIAL] "${args.trueId}" -> ${targetId}`);
+            const targetId = `save.${type}.${id}.${name}`;
+            const currentVal = await this.getValueAsync(targetId);
 
-                        if (args.type === 'count') {
-                            await this.setValueAsync(targetId, 0);
-                        } else if (args.type === 'sumCount') {
-                            await this.setValueAsync(targetId, 0);
-                        } else if (args.type === 'sumDelta') {
-                            if (args.name === 'last') {
-                                const sumDeltaInitVal = await this.getForeignStateAsync(args.trueId);
+            if (currentVal === null) {
+                this.log.debug(`[SET INITIAL] "${id}" -> ${targetId}`);
 
-                                if (sumDeltaInitVal && sumDeltaInitVal.val) {
-                                    this.log.debug(`[SET INITIAL] "${args.trueId}" sumDelta init value: ${sumDeltaInitVal.val}`);
-                                    await this.setValueAsync(targetId, sumDeltaInitVal.val);
-                                }
-                            } else if (args.name === 'delta') {
-                                await this.setValueAsync(targetId, 0);
-                            } else {
-                                await this.setValueAsync(targetId, 0);
-                            }
-                        } else if (args.type === 'minmax') {
-                            const minmaxInitVal = await this.getForeignStateAsync(args.trueId);
+                if (type === 'count') {
+                    await this.setValueAsync(targetId, 0);
+                } else if (type === 'sumCount') {
+                    await this.setValueAsync(targetId, 0);
+                } else if (type === 'sumDelta') {
+                    if (name === 'last') {
+                        const sumDeltaInitVal = await this.getForeignStateAsync(id);
 
-                            if (minmaxInitVal && minmaxInitVal.val !== null) {
-                                this.log.debug(`[SET INITIAL] ${args.trueId} minmax init value: ${minmaxInitVal.val}`);
-                                await this.setValueAsync(targetId, minmaxInitVal.val);
-                            }
-                        } else if (args.type === 'timeCount') {
-                            await this.setValueAsync(targetId, 0);
-                        } else if (args.type === 'sumGroup') {
-                            await this.setValueAsync(targetId, 0);
+                        if (sumDeltaInitVal && sumDeltaInitVal.val) {
+                            this.log.debug(`[SET INITIAL] "${id}" sumDelta init value: ${sumDeltaInitVal.val}`);
+                            await this.setValueAsync(targetId, sumDeltaInitVal.val);
                         }
+                    } else if (name === 'delta') {
+                        await this.setValueAsync(targetId, 0);
+                    } else {
+                        await this.setValueAsync(targetId, 0);
                     }
+                } else if (type === 'minmax') {
+                    const minmaxInitVal = await this.getForeignStateAsync(id);
+
+                    if (minmaxInitVal && minmaxInitVal.val !== null) {
+                        this.log.debug(`[SET INITIAL] ${id} minmax init value: ${minmaxInitVal.val}`);
+                        await this.setValueAsync(targetId, minmaxInitVal.val);
+                    }
+                } else if (type === 'timeCount') {
+                    await this.setValueAsync(targetId, 0);
+                } else if (type === 'sumGroup') {
+                    await this.setValueAsync(targetId, 0);
                 }
-            });
+            }
         }
 
         const tempObjects = nameObjects[type].temp;
         for (let s = 0; s < tempObjects.length; s++) {
-            this.tasks.push({
-                name: 'promise',
-                args: {
-                    type: type,
-                    trueId: id,
-                    name: tempObjects[s]
-                },
-                callback: async (args) => {
-                    const targetId = `temp.${args.type}.${args.trueId}.${args.name}`;
-                    const currentVal = await this.getValueAsync(targetId);
+            const name = tempObjects[s];
 
-                    if (currentVal === null) {
-                        this.log.debug(`[SET INITIAL] "${args.trueId}" -> ${targetId}`);
+            const targetId = `temp.${type}.${id}.${name}`;
+            const currentVal = await this.getValueAsync(targetId);
 
-                        if (args.type === 'count') {
-                            const countInitVal = await this.getForeignStateAsync(args.trueId);
+            if (currentVal === null) {
+                this.log.debug(`[SET INITIAL] "${id}" -> ${targetId}`);
 
-                            if (args.name === 'lastPulse') {
-                                if (countInitVal && countInitVal.val !== null) {
-                                    if (isTrue(countInitVal.val) || isFalse(countInitVal.val)) {
-                                        this.log.debug(`[SET INITIAL] "${args.trueId}" count init value: ${countInitVal.val}`);
-                                        await this.setValueAsync(targetId, countInitVal.val);
-                                    } else {
-                                        this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in count`);
-                                    }
-                                }
+                if (type === 'count') {
+                    const countInitVal = await this.getForeignStateAsync(id);
+
+                    if (name === 'lastPulse') {
+                        if (countInitVal && countInitVal.val !== null) {
+                            if (isTrue(countInitVal.val) || isFalse(countInitVal.val)) {
+                                this.log.debug(`[SET INITIAL] "${id}" count init value: ${countInitVal.val}`);
+                                await this.setValueAsync(targetId, countInitVal.val);
                             } else {
-                                await this.setValueAsync(targetId, 0);
+                                this.log.error(`[SET INITIAL] "${id}" unknown state to be evaluated in count`);
                             }
-                        } else if (args.type === 'sumCount') {
-                            const sumCountInitVal = await this.getForeignStateAsync(args.trueId);
+                        }
+                    } else {
+                        await this.setValueAsync(targetId, 0);
+                    }
+                } else if (type === 'sumCount') {
+                    const sumCountInitVal = await this.getForeignStateAsync(id);
 
-                            if (args.name === 'lastPulse') {
-                                if (sumCountInitVal && sumCountInitVal.val !== null) {
-                                    if (isTrue(sumCountInitVal.val) || isFalse(sumCountInitVal.val)) {
-                                        this.log.debug(`[SET INITIAL] "${args.trueId}" sumCount init value: ${sumCountInitVal.val}`);
-                                        await this.setValueAsync(targetId, sumCountInitVal.val);
-                                    } else {
-                                        this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in sumCount`);
-                                    }
-                                }
+                    if (name === 'lastPulse') {
+                        if (sumCountInitVal && sumCountInitVal.val !== null) {
+                            if (isTrue(sumCountInitVal.val) || isFalse(sumCountInitVal.val)) {
+                                this.log.debug(`[SET INITIAL] "${id}" sumCount init value: ${sumCountInitVal.val}`);
+                                await this.setValueAsync(targetId, sumCountInitVal.val);
                             } else {
-                                await this.setValueAsync(targetId, 0);
+                                this.log.error(`[SET INITIAL] "${id}" unknown state to be evaluated in sumCount`);
                             }
-                        } else if (args.type === 'sumDelta') {
-                            await this.setValueAsync(targetId, 0);
-                        } else if (args.type === 'minmax') {
-                            const minmaxInitVal = await this.getForeignStateAsync(args.trueId);
+                        }
+                    } else {
+                        await this.setValueAsync(targetId, 0);
+                    }
+                } else if (type === 'sumDelta') {
+                    await this.setValueAsync(targetId, 0);
+                } else if (type === 'minmax') {
+                    const minmaxInitVal = await this.getForeignStateAsync(id);
 
-                            if (minmaxInitVal && minmaxInitVal.val !== null) {
-                                this.log.debug(`[SET INITIAL] ${args.trueId} minmax init value: ${minmaxInitVal.val}`);
-                                await this.setValueAsync(targetId, minmaxInitVal.val);
-                            }
-                        } else if (args.type === 'avg') {
-                            const avgInitVal = await this.getForeignStateAsync(args.trueId);
+                    if (minmaxInitVal && minmaxInitVal.val !== null) {
+                        this.log.debug(`[SET INITIAL] ${id} minmax init value: ${minmaxInitVal.val}`);
+                        await this.setValueAsync(targetId, minmaxInitVal.val);
+                    }
+                } else if (type === 'avg') {
+                    const avgInitVal = await this.getForeignStateAsync(id);
 
-                            if (avgInitVal && avgInitVal.val !== null) {
-                                if (args.name.indexOf('Count') > -1) {
-                                    this.log.debug(`[SET INITIAL] ${args.trueId} avg init value: 1`);
-                                    await this.setValueAsync(targetId, 1);
-                                } else {
-                                    this.log.debug(`[SET INITIAL] ${args.trueId} avg init value: ${avgInitVal.val}`);
-                                    await this.setValueAsync(targetId, avgInitVal.val);
-                                }
-                            }
-                        } else if (args.type === 'timeCount') {
-                            if (['last01', 'last10', 'last'].includes(args.name)) {
-                                const timeCountInitVal = await this.getForeignStateAsync(args.trueId);
-
-                                if (args.name === 'last01') {
-                                    if (timeCountInitVal && timeCountInitVal.val !== null) {
-                                        if (isFalse(timeCountInitVal.val)) {
-                                            this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: NOW`);
-                                            await this.setValueAsync(targetId, Date.now());
-                                        } else if (isTrue(timeCountInitVal.val)) {
-                                            this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: ${timeCountInitVal.lc}`);
-                                            await this.setValueAsync(targetId, timeCountInitVal.lc);
-                                        } else {
-                                            this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in timeCount`);
-                                        }
-                                    }
-                                } else if (args.name === 'last10') {
-                                    if (timeCountInitVal && timeCountInitVal.val !== null) {
-                                        if (isFalse(timeCountInitVal.val)) {
-                                            this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: ${timeCountInitVal.lc}`);
-                                            await this.setValueAsync(targetId, timeCountInitVal.lc);
-                                        } else if (isTrue(timeCountInitVal.val)) {
-                                            this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: NOW`);
-                                            await this.setValueAsync(targetId, Date.now());
-                                        } else {
-                                            this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in timeCount`);
-                                        }
-                                    }
-                                } else if (args.name === 'last') {
-                                    if (timeCountInitVal && timeCountInitVal.val !== null) {
-                                        if (isTrue(timeCountInitVal.val) || isFalse(timeCountInitVal.val)) {
-                                            this.log.debug(`[SET INITIAL] "${args.trueId}" timeCount init value: ${timeCountInitVal.val}`);
-                                            await this.setValueAsync(targetId, timeCountInitVal.val);
-                                        } else {
-                                            this.log.error(`[SET INITIAL] "${args.trueId}" unknown state to be evaluated in timeCount`);
-                                        }
-                                    }
-                                }
-                            } else {
-                                await this.setValueAsync(targetId, 0);
-                            }
-                        } else if (args.type === 'sumGroup') {
-                            await this.setValueAsync(targetId, 0);
+                    if (avgInitVal && avgInitVal.val !== null) {
+                        if (name.indexOf('Count') > -1) {
+                            this.log.debug(`[SET INITIAL] ${id} avg init value: 1`);
+                            await this.setValueAsync(targetId, 1);
+                        } else {
+                            this.log.debug(`[SET INITIAL] ${id} avg init value: ${avgInitVal.val}`);
+                            await this.setValueAsync(targetId, avgInitVal.val);
                         }
                     }
-                }
-            });
-        }
+                } else if (type === 'timeCount') {
+                    if (['last01', 'last10', 'last'].includes(name)) {
+                        const timeCountInitVal = await this.getForeignStateAsync(id);
 
-        isStart && this.processTasks();
+                        if (name === 'last01') {
+                            if (timeCountInitVal && timeCountInitVal.val !== null) {
+                                if (isFalse(timeCountInitVal.val)) {
+                                    this.log.debug(`[SET INITIAL] "${id}" timeCount init value: NOW`);
+                                    await this.setValueAsync(targetId, Date.now());
+                                } else if (isTrue(timeCountInitVal.val)) {
+                                    this.log.debug(`[SET INITIAL] "${id}" timeCount init value: ${timeCountInitVal.lc}`);
+                                    await this.setValueAsync(targetId, timeCountInitVal.lc);
+                                } else {
+                                    this.log.error(`[SET INITIAL] "${id}" unknown state to be evaluated in timeCount`);
+                                }
+                            }
+                        } else if (name === 'last10') {
+                            if (timeCountInitVal && timeCountInitVal.val !== null) {
+                                if (isFalse(timeCountInitVal.val)) {
+                                    this.log.debug(`[SET INITIAL] "${id}" timeCount init value: ${timeCountInitVal.lc}`);
+                                    await this.setValueAsync(targetId, timeCountInitVal.lc);
+                                } else if (isTrue(timeCountInitVal.val)) {
+                                    this.log.debug(`[SET INITIAL] "${id}" timeCount init value: NOW`);
+                                    await this.setValueAsync(targetId, Date.now());
+                                } else {
+                                    this.log.error(`[SET INITIAL] "${id}" unknown state to be evaluated in timeCount`);
+                                }
+                            }
+                        } else if (name === 'last') {
+                            if (timeCountInitVal && timeCountInitVal.val !== null) {
+                                if (isTrue(timeCountInitVal.val) || isFalse(timeCountInitVal.val)) {
+                                    this.log.debug(`[SET INITIAL] "${id}" timeCount init value: ${timeCountInitVal.val}`);
+                                    await this.setValueAsync(targetId, timeCountInitVal.val);
+                                } else {
+                                    this.log.error(`[SET INITIAL] "${id}" unknown state to be evaluated in timeCount`);
+                                }
+                            }
+                        }
+                    } else {
+                        await this.setValueAsync(targetId, 0);
+                    }
+                } else if (type === 'sumGroup') {
+                    await this.setValueAsync(targetId, 0);
+                }
+            }
+        }
     }
 
     processNext() {
