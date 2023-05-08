@@ -330,15 +330,14 @@ class Statistics extends utils.Adapter {
 
                 this.removeObject(id);
                 this.setupObjects([id]);
-                this.log.debug(`[OBJECT CHANGE] saved (updated) typeObject: ${JSON.stringify(this.statDP[id])}`);
+                this.log.debug(`[OBJECT CHANGE] saved (updated) typeObject of stat "${id}": ${JSON.stringify(this.statDP[id])}`);
             } else {
                 this.statDP[id] = obj.common.custom[this.namespace];
                 this.setupObjects([id]);
-                this.log.info('enabled logging of ' + id);
-                this.log.debug(`[OBJECT CHANGE] saved (new) typeObjects: ${JSON.stringify(this.statDP[id])}`);
+                this.log.debug(`[OBJECT CHANGE] saved (new) typeObjects of stat "${id}": ${JSON.stringify(this.statDP[id])}`);
             }
         } else if (this.statDP[id]) {
-            this.log.debug(`[OBJECT CHANGE] removing typeObjects: ${JSON.stringify(this.statDP[id])}`);
+            this.log.debug(`[OBJECT CHANGE] removing typeObjects of stat "${id}": ${JSON.stringify(this.statDP[id])}`);
 
             // Delete objects of all types
             Object.keys(this.typeObjects).forEach(type => {

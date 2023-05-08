@@ -5,13 +5,13 @@ const { tests } = require('@iobroker/testing');
 const chai = require('chai');
 const expect = chai.expect;
 
-function sleep(duration) {
+async function sleep(duration) {
     return new Promise((resolve) => {
         setTimeout(resolve, duration);
     });
 }
 
-function assertStateChangesTo(harness, id, value, action) {
+async function assertStateChangesTo(harness, id, value, action) {
     return new Promise((resolve, reject) => {
         const ac = new AbortController();
 
@@ -104,50 +104,53 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                await sleep(1000);
+                return sleep(1000);
             });
 
-            it('enableStatistics - existing ID', function (done) {
+            it('enableStatistics - existing ID', async function () {
                 this.timeout(60000);
 
-                // Perform the actual test
-                harness.sendTo(adapterNamespace, 'enableStatistics', { id: customNumberObjId }, async (data) => {
-                    expect(data.success).to.be.true;
-                    expect(data.err).to.be.null;
+                return new Promise((resolve) => {
+                    harness.sendTo(adapterNamespace, 'enableStatistics', { id: customNumberObjId }, async (data) => {
+                        expect(data.success).to.be.true;
+                        expect(data.err).to.be.null;
 
-                    const customObj = await harness.objects.getObjectAsync(customNumberObjId);
+                        const customObj = await harness.objects.getObjectAsync(customNumberObjId);
 
-                    expect(customObj.common.custom[adapterNamespace].enabled).to.be.true;
-                    expect(customObj.common.custom[adapterNamespace].avg).to.be.true; // default for number states
+                        expect(customObj.common.custom[adapterNamespace].enabled).to.be.true;
+                        expect(customObj.common.custom[adapterNamespace].avg).to.be.true; // default for number states
 
-                    done();
+                        resolve();
+                    });
                 });
             });
 
-            it('enableStatistics - non existing ID', function (done) {
+            it('enableStatistics - non existing ID', async function () {
                 this.timeout(60000);
 
-                // Perform the actual test
-                harness.sendTo(adapterNamespace, 'enableStatistics', { id: 'this.id.does.not.exist' }, async (data) => {
-                    expect(data.success).to.be.false;
-                    expect(data.err).to.be.not.empty;
+                return new Promise((resolve) => {
+                    harness.sendTo(adapterNamespace, 'enableStatistics', { id: 'this.id.does.not.exist' }, async (data) => {
+                        expect(data.success).to.be.false;
+                        expect(data.err).to.be.not.empty;
 
-                    done();
+                        resolve();
+                    });
                 });
             });
 
-            it('groups', function (done) {
+            it('groups', async function () {
                 this.timeout(60000);
 
-                // Perform the actual test
-                harness.sendTo(adapterNamespace, 'groups', '', async (data) => {
-                    expect(data).to.be.an('array');
-                    //expect(data).to.have.lengthOf(1);
+                return new Promise((resolve) => {
+                    harness.sendTo(adapterNamespace, 'groups', '', async (data) => {
+                        expect(data).to.be.an('array');
+                        //expect(data).to.have.lengthOf(1);
 
-                    expect(data[0]).to.have.own.property('label');
-                    expect(data[0]).to.have.own.property('value');
+                        expect(data[0]).to.have.own.property('label');
+                        expect(data[0]).to.have.own.property('value');
 
-                    done();
+                        resolve();
+                    });
                 });
             });
         });
@@ -214,7 +217,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                await sleep(1000);
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -318,7 +321,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                await sleep(1000);
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -419,7 +422,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                await sleep(1000);
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -528,7 +531,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                await sleep(1000);
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -641,7 +644,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                await sleep(1000);
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -722,7 +725,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                await sleep(1000);
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -812,7 +815,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             beforeEach(async function() {
                 // Wait until adapter has created all objects/states
-                await sleep(1000);
+                return sleep(1000);
             });
 
             it('calculation', async function () {
@@ -927,14 +930,14 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.startAdapterAndWait();
             });
 
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                await sleep(1000);
-            });
-
             after(async function() {
                 await harness.objects.delObjectAsync(customNumberObjId1);
                 await harness.objects.delObjectAsync(customNumberObjId2);
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                return sleep(1000);
             });
 
             it('calculation', async function () {
