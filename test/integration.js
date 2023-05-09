@@ -105,6 +105,11 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                await sleep(1000);
+            });
+
             it('enableStatistics - existing ID', async function () {
                 this.timeout(60000);
 
@@ -216,6 +221,11 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                await sleep(1000);
+            });
+
             it('calculation', async function () {
                 this.timeout(60000);
 
@@ -318,6 +328,11 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                await sleep(1000);
+            });
+
             it('calculation', async function () {
                 this.timeout(60000);
 
@@ -415,6 +430,11 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await sleep(1000);
                 await harness.stopAdapter();
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -522,6 +542,11 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await sleep(1000);
                 await harness.stopAdapter();
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -635,6 +660,11 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                await sleep(1000);
+            });
+
             it('calculation', async function () {
                 this.timeout(60000);
 
@@ -712,6 +742,11 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await sleep(1000);
                 await harness.stopAdapter();
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -800,6 +835,11 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await sleep(1000);
                 await harness.stopAdapter();
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                await sleep(1000);
             });
 
             it('calculation', async function () {
@@ -920,6 +960,11 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await sleep(1000);
                 await harness.stopAdapter();
+            });
+
+            beforeEach(async function() {
+                // Wait until adapter has created all objects/states
+                await sleep(1000);
             });
 
             it('calculation', async function () {
