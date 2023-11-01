@@ -32,7 +32,7 @@
     "node": ">=16"
   },
   "dependencies": {
-    "cron": "^3.0.0",
+    "cron": "^3.1.6",
     "@iobroker/adapter-core": "^3.0.3"
   },
   "devDependencies": {
