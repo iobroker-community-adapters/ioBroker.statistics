@@ -263,7 +263,7 @@ class Statistics extends utils.Adapter {
             this.log.error(`creating cron weekSave errored with: ${e}`);
         }
 
-        // Monthly at 1 of every month at 00:00
+        // Monthly at 1st of every month at 00:00
         try {
             this.crons.monthSave = new CronJob('0 0 1 * *',
                 () => this.saveValues(MONTH),
@@ -275,9 +275,9 @@ class Statistics extends utils.Adapter {
             this.log.error(`creating cron monthSave errored with: ${e}`);
         }
 
-        // Quarter
+        // Quarterly at 1st of every quarter at 00:00
         try {
-            this.crons.quarterSave = new CronJob('0 0 1 0,3,6,9 *',
+            this.crons.quarterSave = new CronJob('0 0 1 1,4,7,10 *',
                 () => this.saveValues(QUARTER),
                 () => this.log.debug('stopped quarterSave'),
                 true,
@@ -287,10 +287,10 @@ class Statistics extends utils.Adapter {
             this.log.error(`creating cron quarterSave errored with: ${e}`);
         }
 
-        // New year
+        // New year at 1st of every year at 00:00
         try {
-            this.crons.yearSave = new CronJob('0 0 1 0 *',
-                () => this.saveValues(YEAR), // Months is value range 0-11
+            this.crons.yearSave = new CronJob('0 0 1 1 *',
+                () => this.saveValues(YEAR),
                 () => this.log.debug('stopped yearSave'),
                 true,
                 timezone
@@ -301,7 +301,7 @@ class Statistics extends utils.Adapter {
 
         for (const type in this.crons) {
             if (Object.prototype.hasOwnProperty.call(this.crons, type) && this.crons[type]) {
-                this.log.debug(`[SETUP] ${type} status = ${this.crons[type].running} next event: ${timeConverter(this.crons[type].nextDates())}`);
+                this.log.debug(`[SETUP] ${type} status = "${this.crons[type].running ? 'running' : 'error'}", next event: ${timeConverter(this.crons[type].nextDate())}`);
             }
         }
     }
