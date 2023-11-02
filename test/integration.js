@@ -40,7 +40,7 @@ async function assertStateChangesTo(harness, id, value, action) {
 
 async function assertStateEquals(harness, id, value) {
     const state = await harness.states.getStateAsync(id);
-    expect(state, `${id} should be an object`).to.be.an('object');
+    expect(state, `${id} should be an object (with value ${value})`).to.be.an('object');
     if (state) {
         expect(state.val, `${id} should have value ${value}`).to.equal(value);
     }

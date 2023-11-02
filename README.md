@@ -51,6 +51,7 @@ iobroker add statistics
 	### __WORK IN PROGRESS__
 -->
 ### __WORK IN PROGRESS__
+NodeJS 16.x is required
 
 * (klein0r) Show error if groups are not configured correctly
 
