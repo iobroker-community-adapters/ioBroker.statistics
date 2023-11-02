@@ -425,6 +425,8 @@ class Statistics extends utils.Adapter {
 
         if (msg.command === 'groups' && msg.callback) {
             this.sendTo(msg.from, msg.command, (this.config.groups || []).map(item => ({ label: item.name, value: item.id })), msg.callback);
+        } else if (msg.command === 'getCrons') {
+            this.sendTo(msg.from, msg.command, Object.keys(this.crons).map(item => ({ label: item, value: new Date(this.crons[item].nextDate()).getTime() })), msg.callback);
         } else if (msg.command === 'enableStatistics') {
             if (typeof msg.message === 'object' && msg.message?.id) {
                 const objId = msg.message.id;

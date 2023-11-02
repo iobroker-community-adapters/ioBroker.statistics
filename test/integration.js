@@ -156,6 +156,30 @@ tests.integration(path.join(__dirname, '..'), {
                     });
                 });
             });
+
+            it('getCrons', async function () {
+                this.timeout(60000);
+
+                const validCrons = ['fiveMin', 'fifteenMinSave', 'hourSave', 'dayTriggerTimeCount', 'daySave', 'weekSave', 'monthSave', 'quarterSave', 'yearSave'];
+
+                return new Promise((resolve) => {
+                    harness.sendTo(adapterNamespace, 'getCrons', '', (data) => {
+                        expect(data).to.be.an('array');
+                        expect(data).to.have.lengthOf(9);
+
+                        for (const cron of data) {
+                            expect(cron).to.have.own.property('label');
+                            expect(cron).to.have.own.property('value');
+
+                            expect(cron.label, `cron.label is invalid`).to.be.oneOf(validCrons);
+                            expect(cron.value, `cron.value must be a number - ${cron.label}`).to.be.a('number');
+                            expect(cron.value, `cron.value must be in the future - ${cron.label}`).to.be.greaterThan(Date.now());
+                        }
+
+                        resolve();
+                    });
+                });
+            });
         });
 
         suite('Test Number avg', (getHarness) => {
