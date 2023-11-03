@@ -12,6 +12,12 @@ async function sleep(duration) {
 }
 
 async function assertStateChangesTo(harness, id, value, action) {
+    const result = await waitUntilStateChangesTo(harness, id, value, action);
+
+    expect(result, `${id} should change to value ${value}`).to.equal(value);
+}
+
+async function waitUntilStateChangesTo(harness, id, value, action) {
     return new Promise((resolve, reject) => {
         const ac = new AbortController();
 
@@ -21,14 +27,12 @@ async function assertStateChangesTo(harness, id, value, action) {
         }, 10 * 1000);
 
         harness.on('stateChange', async (changedId, state) => {
-            if (id === changedId && state) {
+            if (id === changedId && state && state.val === value) {
                 if (!ac.signal.aborted) {
                     clearTimeout(timeout);
                     ac.abort();
 
-                    expect(state.val, `${id} should change to value ${value}`).to.equal(value);
-
-                    resolve(true);
+                    resolve(state.val);
                 }
             }
         }, { signal: ac.signal });
@@ -96,25 +100,7 @@ tests.integration(path.join(__dirname, '..'), {
                 });
 
                 // Wait for adapter startup
-                await new Promise((resolve, reject) => {
-                    const ac = new AbortController();
-
-                    const timeout = setTimeout(() => {
-                        ac.abort();
-                        reject(`Adapter not started in given time range`);
-                    }, 5 * 1000);
-
-                    harness.on('stateChange', async (id, state) => {
-                        if (id === `${harness.adapterName}.0.info.started` && state && state.val === true) {
-                            if (!ac.signal.aborted) {
-                                clearTimeout(timeout);
-                                ac.abort();
-
-                                resolve(true);
-                            }
-                        }
-                    }, { signal: ac.signal });
-
+                await waitUntilStateChangesTo(harness, `${harness.adapterName}.0.info.started`, true, () => {
                     harness.startAdapterAndWait();
                 });
             });
@@ -255,25 +241,7 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
 
                 // Wait for adapter startup
-                await new Promise((resolve, reject) => {
-                    const ac = new AbortController();
-
-                    const timeout = setTimeout(() => {
-                        ac.abort();
-                        reject(`Adapter not started in given time range`);
-                    }, 5 * 1000);
-
-                    harness.on('stateChange', async (id, state) => {
-                        if (id === `${harness.adapterName}.0.info.started` && state && state.val === true) {
-                            if (!ac.signal.aborted) {
-                                clearTimeout(timeout);
-                                ac.abort();
-
-                                resolve(true);
-                            }
-                        }
-                    }, { signal: ac.signal });
-
+                await waitUntilStateChangesTo(harness, `${harness.adapterName}.0.info.started`, true, () => {
                     harness.startAdapterAndWait();
                 });
             });
@@ -379,25 +347,7 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
 
                 // Wait for adapter startup
-                await new Promise((resolve, reject) => {
-                    const ac = new AbortController();
-
-                    const timeout = setTimeout(() => {
-                        ac.abort();
-                        reject(`Adapter not started in given time range`);
-                    }, 5 * 1000);
-
-                    harness.on('stateChange', async (id, state) => {
-                        if (id === `${harness.adapterName}.0.info.started` && state && state.val === true) {
-                            if (!ac.signal.aborted) {
-                                clearTimeout(timeout);
-                                ac.abort();
-
-                                resolve(true);
-                            }
-                        }
-                    }, { signal: ac.signal });
-
+                await waitUntilStateChangesTo(harness, `${harness.adapterName}.0.info.started`, true, () => {
                     harness.startAdapterAndWait();
                 });
             });
@@ -500,25 +450,7 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
 
                 // Wait for adapter startup
-                await new Promise((resolve, reject) => {
-                    const ac = new AbortController();
-
-                    const timeout = setTimeout(() => {
-                        ac.abort();
-                        reject(`Adapter not started in given time range`);
-                    }, 5 * 1000);
-
-                    harness.on('stateChange', async (id, state) => {
-                        if (id === `${harness.adapterName}.0.info.started` && state && state.val === true) {
-                            if (!ac.signal.aborted) {
-                                clearTimeout(timeout);
-                                ac.abort();
-
-                                resolve(true);
-                            }
-                        }
-                    }, { signal: ac.signal });
-
+                await waitUntilStateChangesTo(harness, `${harness.adapterName}.0.info.started`, true, () => {
                     harness.startAdapterAndWait();
                 });
             });
@@ -629,25 +561,7 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId, { val: 10, ack: true });
 
                 // Wait for adapter startup
-                await new Promise((resolve, reject) => {
-                    const ac = new AbortController();
-
-                    const timeout = setTimeout(() => {
-                        ac.abort();
-                        reject(`Adapter not started in given time range`);
-                    }, 5 * 1000);
-
-                    harness.on('stateChange', async (id, state) => {
-                        if (id === `${harness.adapterName}.0.info.started` && state && state.val === true) {
-                            if (!ac.signal.aborted) {
-                                clearTimeout(timeout);
-                                ac.abort();
-
-                                resolve(true);
-                            }
-                        }
-                    }, { signal: ac.signal });
-
+                await waitUntilStateChangesTo(harness, `${harness.adapterName}.0.info.started`, true, () => {
                     harness.startAdapterAndWait();
                 });
             });
@@ -762,25 +676,7 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId, { val: 1000, ack: true });
 
                 // Wait for adapter startup
-                await new Promise((resolve, reject) => {
-                    const ac = new AbortController();
-
-                    const timeout = setTimeout(() => {
-                        ac.abort();
-                        reject(`Adapter not started in given time range`);
-                    }, 5 * 1000);
-
-                    harness.on('stateChange', async (id, state) => {
-                        if (id === `${harness.adapterName}.0.info.started` && state && state.val === true) {
-                            if (!ac.signal.aborted) {
-                                clearTimeout(timeout);
-                                ac.abort();
-
-                                resolve(true);
-                            }
-                        }
-                    }, { signal: ac.signal });
-
+                await waitUntilStateChangesTo(harness, `${harness.adapterName}.0.info.started`, true, () => {
                     harness.startAdapterAndWait();
                 });
             });
@@ -863,25 +759,7 @@ tests.integration(path.join(__dirname, '..'), {
                 });
 
                 // Wait for adapter startup
-                await new Promise((resolve, reject) => {
-                    const ac = new AbortController();
-
-                    const timeout = setTimeout(() => {
-                        ac.abort();
-                        reject(`Adapter not started in given time range`);
-                    }, 5 * 1000);
-
-                    harness.on('stateChange', async (id, state) => {
-                        if (id === `${harness.adapterName}.0.info.started` && state && state.val === true) {
-                            if (!ac.signal.aborted) {
-                                clearTimeout(timeout);
-                                ac.abort();
-
-                                resolve(true);
-                            }
-                        }
-                    }, { signal: ac.signal });
-
+                await waitUntilStateChangesTo(harness, `${harness.adapterName}.0.info.started`, true, () => {
                     harness.startAdapterAndWait();
                 });
             });
@@ -899,14 +777,12 @@ tests.integration(path.join(__dirname, '..'), {
 
                 const tempId = `${harness.adapterName}.0.temp.count.${customBooleanObjId}`;
 
-                for (let i = 0; i < 10; i++) {
-                    await harness.states.setStateAsync(customBooleanObjId, { val: true, ack: true });
-                    await sleep(100);
-                    await harness.states.setStateAsync(customBooleanObjId, { val: false, ack: true });
-                    await sleep(200);
-                }
-
-                await assertStateEquals(harness, `${tempId}.day`, 10);
+                await assertStateChangesTo(harness, `${tempId}.day`, 10, () => {
+                    for (let i = 0; i < 10; i++) {
+                        harness.states.setState(customBooleanObjId, { val: true, ack: true });
+                        harness.states.setState(customBooleanObjId, { val: false, ack: true });
+                    }
+                });
             });
 
             it('calculation no false', async function () {
@@ -915,12 +791,11 @@ tests.integration(path.join(__dirname, '..'), {
 
                 const tempId = `${harness.adapterName}.0.temp.count.${customBooleanObjId}`;
 
-                for (let i = 0; i < 10; i++) {
-                    await harness.states.setStateAsync(customBooleanObjId, { val: true, ack: true });
-                    await sleep(10);
-                }
-
-                await assertStateEquals(harness, `${tempId}.day`, 11);
+                await assertStateChangesTo(harness, `${tempId}.day`, 11, () => {
+                    for (let i = 0; i < 10; i++) {
+                        harness.states.setState(customBooleanObjId, { val: true, ack: true });
+                    }
+                });
             });
         });
 
@@ -976,25 +851,7 @@ tests.integration(path.join(__dirname, '..'), {
                 });
 
                 // Wait for adapter startup
-                await new Promise((resolve, reject) => {
-                    const ac = new AbortController();
-
-                    const timeout = setTimeout(() => {
-                        ac.abort();
-                        reject(`Adapter not started in given time range`);
-                    }, 5 * 1000);
-
-                    harness.on('stateChange', async (id, state) => {
-                        if (id === `${harness.adapterName}.0.info.started` && state && state.val === true) {
-                            if (!ac.signal.aborted) {
-                                clearTimeout(timeout);
-                                ac.abort();
-
-                                resolve(true);
-                            }
-                        }
-                    }, { signal: ac.signal });
-
+                await waitUntilStateChangesTo(harness, `${harness.adapterName}.0.info.started`, true, () => {
                     harness.startAdapterAndWait();
                 });
             });
@@ -1118,25 +975,7 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.states.setStateAsync(customNumberObjId2, { val: 50, ack: true });
 
                 // Wait for adapter startup
-                await new Promise((resolve, reject) => {
-                    const ac = new AbortController();
-
-                    const timeout = setTimeout(() => {
-                        ac.abort();
-                        reject(`Adapter not started in given time range`);
-                    }, 5 * 1000);
-
-                    harness.on('stateChange', async (id, state) => {
-                        if (id === `${harness.adapterName}.0.info.started` && state && state.val === true) {
-                            if (!ac.signal.aborted) {
-                                clearTimeout(timeout);
-                                ac.abort();
-
-                                resolve(true);
-                            }
-                        }
-                    }, { signal: ac.signal });
-
+                await waitUntilStateChangesTo(harness, `${harness.adapterName}.0.info.started`, true, () => {
                     harness.startAdapterAndWait();
                 });
             });
