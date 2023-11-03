@@ -107,6 +107,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             it('enableStatistics - existing ID', async function () {
                 this.timeout(60000);
+                await sleep(1000);
 
                 return new Promise((resolve) => {
                     harness.sendTo(adapterNamespace, 'enableStatistics', { id: customNumberObjId }, async (data) => {
@@ -125,6 +126,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             it('enableStatistics - non existing ID', async function () {
                 this.timeout(60000);
+                await sleep(1000);
 
                 return new Promise((resolve) => {
                     harness.sendTo(adapterNamespace, 'enableStatistics', { id: 'this.id.does.not.exist' }, (data) => {
@@ -138,6 +140,7 @@ tests.integration(path.join(__dirname, '..'), {
 
             it('groups', async function () {
                 this.timeout(60000);
+                await sleep(1000);
 
                 return new Promise((resolve) => {
                     harness.sendTo(adapterNamespace, 'groups', '', (data) => {
