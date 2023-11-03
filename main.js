@@ -716,8 +716,7 @@ class Statistics extends utils.Adapter {
     }
 
     async setupObjects(ids) {
-        for (let i = 0; i < ids.length; i++) {
-            const id = ids[i];
+        for (const id of ids) {
             const obj = this.statDP[id];
 
             if (obj.groupFactor && obj.groupFactor !== '0' && obj.groupFactor !== 0) {

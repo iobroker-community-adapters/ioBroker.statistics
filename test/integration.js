@@ -1,6 +1,6 @@
 'use strict';
 
-const path = require('path');
+const path = require('node:path');
 const { tests } = require('@iobroker/testing');
 const chai = require('chai');
 const expect = chai.expect;
@@ -103,11 +103,6 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await sleep(1000);
                 await harness.stopAdapter();
-            });
-
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                await sleep(1000);
             });
 
             it('enableStatistics - existing ID', async function () {
@@ -245,13 +240,9 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                await sleep(1000);
-            });
-
             it('calculation', async function () {
                 this.timeout(60000);
+                await sleep(1000);
 
                 const tempId = `${harness.adapterName}.0.temp.avg.${customNumberObjId}`;
 
@@ -352,13 +343,9 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                await sleep(1000);
-            });
-
             it('calculation', async function () {
                 this.timeout(60000);
+                await sleep(1000);
 
                 const saveId = `${harness.adapterName}.0.save.sumDelta.${customNumberObjId}`;
                 const tempId = `${harness.adapterName}.0.temp.sumDelta.${customNumberObjId}`;
@@ -456,13 +443,9 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                await sleep(1000);
-            });
-
             it('calculation', async function () {
                 this.timeout(60000);
+                await sleep(1000);
 
                 const saveId = `${harness.adapterName}.0.save.sumDelta.${customNumberObjId}`;
                 const tempId = `${harness.adapterName}.0.temp.sumDelta.${customNumberObjId}`;
@@ -568,13 +551,9 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                await sleep(1000);
-            });
-
             it('calculation', async function () {
                 this.timeout(60000);
+                await sleep(1000);
 
                 const saveId = `${harness.adapterName}.0.save.sumDelta.${customNumberObjId}`;
                 const tempId = `${harness.adapterName}.0.temp.avg.${customNumberObjId}`;
@@ -684,13 +663,9 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                await sleep(1000);
-            });
-
             it('calculation', async function () {
                 this.timeout(60000);
+                await sleep(1000);
 
                 for (let i = 1; i <= 5; i++) {
                     await harness.states.setStateAsync(customNumberObjId, { val: 1000 + (i * 3.3), ack: true });
@@ -768,13 +743,10 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                await sleep(1000);
-            });
-
             it('calculation', async function () {
                 this.timeout(60000);
+                await sleep(1000);
+
                 const tempId = `${harness.adapterName}.0.temp.count.${customBooleanObjId}`;
 
                 for (let i = 0; i < 10; i++) {
@@ -789,6 +761,8 @@ tests.integration(path.join(__dirname, '..'), {
 
             it('calculation no false', async function () {
                 this.timeout(60000);
+                await sleep(1000);
+
                 const tempId = `${harness.adapterName}.0.temp.count.${customBooleanObjId}`;
 
                 for (let i = 0; i < 10; i++) {
@@ -861,13 +835,10 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                await sleep(1000);
-            });
-
             it('calculation', async function () {
                 this.timeout(60000);
+                await sleep(1000);
+
                 const tempId = `${harness.adapterName}.0.temp.sumCount.${customBooleanObjId}`;
 
                 for (let i = 0; i < 10; i++) {
@@ -986,13 +957,9 @@ tests.integration(path.join(__dirname, '..'), {
                 await harness.stopAdapter();
             });
 
-            beforeEach(async function() {
-                // Wait until adapter has created all objects/states
-                await sleep(1000);
-            });
-
             it('calculation', async function () {
                 this.timeout(60000);
+                await sleep(1000);
 
                 const tempId1 = `${harness.adapterName}.0.temp.sumDelta.${customNumberObjId1}`;
                 const tempId2 = `${harness.adapterName}.0.temp.sumDelta.${customNumberObjId2}`;
