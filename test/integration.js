@@ -3,7 +3,6 @@
 const path = require('node:path');
 const { tests } = require('@iobroker/testing');
 const chai = require('chai');
-const { rejects } = require('node:assert');
 const expect = chai.expect;
 
 async function sleep(duration) {
