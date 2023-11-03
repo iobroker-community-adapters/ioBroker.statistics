@@ -55,6 +55,7 @@ NodeJS 16.x is required
 
 * (klein0r) Show error if groups are not configured correctly
 * (klein0r) Fixed cron expressions for quarter and year
+* (klein0r) Added indicators for startup and working
 
 ### 2.3.1 (2023-01-11)
 * (klein0r) Added Ukrainian language

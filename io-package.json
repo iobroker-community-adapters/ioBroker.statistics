@@ -196,6 +196,75 @@
   },
   "instanceObjects": [
     {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": {
+          "en": "Information",
+          "de": "Information",
+          "ru": "Информация",
+          "pt": "Em formação",
+          "nl": "Informatie",
+          "fr": "Informations",
+          "it": "Informazione",
+          "es": "Información",
+          "pl": "Informacja",
+          "uk": "Інформація",
+          "zh-cn": "信息"
+        }
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.started",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Start completed",
+          "de": "Start abgeschlossen",
+          "ru": "Начать завершено",
+          "pt": "Início concluído",
+          "nl": "Start voltooid",
+          "fr": "Début terminé",
+          "it": "Inizio completato",
+          "es": "Inicio terminado",
+          "pl": "Start",
+          "uk": "Початок завершено",
+          "zh-cn": "完成工作"
+        },
+        "type": "boolean",
+        "role": "indicator",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.working",
+      "type": "state",
+      "common": {
+        "name": {
+          "en": "Calculation running",
+          "de": "Berechnung läuft",
+          "ru": "Расчетный ход",
+          "pt": "Correção de cálculo",
+          "nl": "De berekening loopt",
+          "fr": "Mode de calcul",
+          "it": "Calcolo in esecuzione",
+          "es": "Cálculo en funcionamiento",
+          "pl": "Calculacja",
+          "uk": "Розрахунок",
+          "zh-cn": "计算"
+        },
+        "type": "boolean",
+        "role": "indicator.working",
+        "read": true,
+        "write": false
+      },
+      "native": {}
+    },
+    {
       "_id": "save",
       "type": "folder",
       "common": {

@@ -140,6 +140,7 @@ class Statistics extends utils.Adapter {
     }
 
     async onReady() {
+        await this.setStateAsync('info.started', { val: false, ack: true });
         // typeObjects is rebuilt after starting the adapter
         // deleting data points during runtime must be cleaned up in both arrays
         // reading the setting (here come with other setting!)
@@ -304,6 +305,8 @@ class Statistics extends utils.Adapter {
                 this.log.debug(`[SETUP] ${type} status = "${this.crons[type].running ? 'running' : 'error'}", next event: ${timeConverter(this.crons[type].nextDate())}`);
             }
         }
+
+        await this.setStateAsync('info.started', { val: true, ack: true });
     }
 
     /**
@@ -528,6 +531,9 @@ class Statistics extends utils.Adapter {
      */
     onUnload(callback) {
         try {
+            this.setStateAsync('info.started', { val: false, ack: true });
+            this.setStateAsync('info.working', { val: false, ack: true });
+
             // possibly also delete a few schedules
             for (const type in this.crons) {
                 if (Object.prototype.hasOwnProperty.call(this.crons, type) && this.crons[type]) {
@@ -1272,7 +1278,11 @@ class Statistics extends utils.Adapter {
             const processCallbacks = this.tasksFinishedCallbacks;
             this.tasksFinishedCallbacks = [];
             processCallbacks.forEach(cb => setImmediate(cb));
+
+            this.setStateChangedAsync('info.working', { val: false, ack: true });
             return;
+        } else {
+            this.setStateChangedAsync('info.working', { val: true, ack: true });
         }
 
         const task = this.tasks[0];
@@ -1282,7 +1292,7 @@ class Statistics extends utils.Adapter {
                     this.processNext();
                 });
             } else {
-                this.log.error('error async task');
+                this.log.error('[processTasks] error async task');
                 this.processNext();
             }
         }
