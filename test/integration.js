@@ -785,17 +785,19 @@ tests.integration(path.join(__dirname, '..'), {
                 });
             });
 
-            it('calculation no false', async function () {
+            it('calculation (no false)', async function () {
                 this.timeout(60000);
                 await sleep(1000);
 
                 const tempId = `${harness.adapterName}.0.temp.count.${customBooleanObjId}`;
 
-                await assertStateChangesTo(harness, `${tempId}.day`, 11, () => {
-                    for (let i = 0; i < 10; i++) {
-                        harness.states.setState(customBooleanObjId, { val: true, ack: true });
-                    }
-                });
+                // just +1 (ignore other setState)
+                for (let i = 0; i < 10; i++) {
+                    await harness.states.setStateAsync(customBooleanObjId, { val: true, ack: true });
+                }
+
+                await sleep(1000);
+                await assertStateEquals(harness, `${tempId}.day`, 11);
             });
         });
 
@@ -869,14 +871,12 @@ tests.integration(path.join(__dirname, '..'), {
 
                 const tempId = `${harness.adapterName}.0.temp.sumCount.${customBooleanObjId}`;
 
-                for (let i = 0; i < 10; i++) {
-                    await harness.states.setStateAsync(customBooleanObjId, { val: true, ack: true });
-                    await sleep(100);
-                    await harness.states.setStateAsync(customBooleanObjId, { val: false, ack: true });
-                    await sleep(200);
-                }
-
-                await assertStateEquals(harness, `${tempId}.day`, 30);
+                await assertStateChangesTo(harness, `${tempId}.day`, 30, () => {
+                    for (let i = 0; i < 10; i++) {
+                        harness.states.setState(customBooleanObjId, { val: true, ack: true });
+                        harness.states.setState(customBooleanObjId, { val: false, ack: true });
+                    }
+                });
             });
         });
 
@@ -933,7 +933,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 sumIgnoreMinus: true, // relevant for this test
                                 groupFactor: 0.001, // relevant for this test
                                 sumGroup: 'energy', // relevant for this test
-                                logName: 'mySumGroupByDeltaNumber'
+                                logName: 'mySumGroupByDeltaNumber1'
                             }
                         }
                     },
@@ -963,7 +963,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 sumIgnoreMinus: false, // relevant for this test
                                 groupFactor: 0.005, // relevant for this test
                                 sumGroup: 'energy', // relevant for this test
-                                logName: 'mySumGroupByDeltaNumber'
+                                logName: 'mySumGroupByDeltaNumber2'
                             }
                         }
                     },
