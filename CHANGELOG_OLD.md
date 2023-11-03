@@ -1,4 +1,10 @@
 # Older changes
+## 2.1.0 (2022-06-16)
+* (klein0r) Added support for translated object names
+* (klein0r) Fixed sum calculation
+* (klein0r) Increased precision to 5 digits
+* (klein0r) Translated all objects
+
 ## 2.0.0 (2022-06-13)
 * (klein0r) Added Admin 5 configuration
 * (klein0r) Updated translations

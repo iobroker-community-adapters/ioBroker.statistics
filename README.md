@@ -50,7 +50,7 @@ iobroker add statistics
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
-### __WORK IN PROGRESS__
+### 2.4.0 (2023-11-03)
 NodeJS 16.x is required
 
 * (klein0r) Show error if groups are not configured correctly
@@ -77,12 +77,6 @@ NodeJS 14.5.0 is required
 
 ### 2.1.1 (2022-06-16)
 * (klein0r) Fixed usage of default values for groups
-
-### 2.1.0 (2022-06-16)
-* (klein0r) Added support for translated object names
-* (klein0r) Fixed sum calculation
-* (klein0r) Increased precision to 5 digits
-* (klein0r) Translated all objects
 
 ## License
 

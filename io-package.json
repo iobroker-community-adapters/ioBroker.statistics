@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "statistics",
-    "version": "2.3.1",
+    "version": "2.4.0",
     "news": {
+      "2.4.0": {
+        "en": "NodeJS 16.x is required\n\n* Show error if groups are not configured correctly\n* Fixed cron expressions for quarter and year\n* Added indicators for startup and working",
+        "de": "NodeJS 16.x ist erforderlich\n\n* Fehler anzeigen, wenn Gruppen nicht korrekt konfiguriert sind\n* Feste Cron-Ausdrücke für Quartal und Jahr\n* Zusätzliche Indikatoren für Start- und Arbeitsansätze",
+        "ru": "NodeJS 16.x требуется\n\n* Показать ошибку, если группы не настроены правильно\n* Фиксированные cron выражения для квартала и года\n* Добавлены индикаторы для запуска и работы",
+        "pt": "NodeJS 16.x é necessário\n\n* Mostrar erro se os grupos não estiverem configurados corretamente\n* Expressões cron fixas para trimestre e ano\n* Adicionados indicadores para startup e trabalho",
+        "nl": "NodeJS 16.x is vereist\n\n♪ Show foutor if groups are not configu ♪\nQuality over Quantity (QoQ) Releases Vertaling:\n♪ Added indicators for startup and work",
+        "fr": "NodeJS 16.x est nécessaire\n\n* Afficher l'erreur si les groupes ne sont pas configuré correctement\n* Expressions de cron fixe pour trimestre et année\n* Ajout d ' indicateurs de démarrage et de travail",
+        "it": "NodeJS 16.x è richiesto\n\n* Mostra errore se i gruppi non sono configurati correttamente\n* Espressioni di cron fisse per trimestre e anno\n* Indicatori aggiunti per l'avvio e il lavoro",
+        "es": "NodeJS 16.x es necesario\n\n* Mostrar error si los grupos no están configurados correctamente\n* Expresiones fijas de cron para cuarto y año\n* Indicadores añadidos para el inicio y el trabajo",
+        "pl": "NodeJS 16 (ang.)\n\n* Postępowanie błędów czy grupy nie są poprawnie skonfigurowane\n* Fixed cron expressions for quarter and year (ang.)\n* Wodniki dla startupu i pracy",
+        "uk": "NodeJS 16.x обов'язковий\n\n* Показати помилку, якщо групи не налаштовані правильно\n* Фіксовані експреси за квартал і рік\n* Додано індикатори для запуску та роботи",
+        "zh-cn": "不需要16.JS16x。\n\n* 如果小组不作正确配置,则有关错误。\n* 季度和一年的固定的忠诚发言\n* 增加开办和工作指标"
+      },
       "2.3.1": {
         "en": "Added Ukrainian language",
         "de": "Ukrainische Sprache",
@@ -80,19 +93,6 @@
         "pl": "Admin 5\nTłumaczenia poprawione",
         "uk": "Додана конфігурація Admin 5\nОновлені переклади",
         "zh-cn": "增编5个组合\n最新翻译"
-      },
-      "1.1.1": {
-        "en": "Prevent warn logs when using non-number states as statistic source",
-        "de": "Verhindern Sie Warnprotokolle, wenn Sie Status als Statistikquelle verwenden, die keine Zahlen sind",
-        "ru": "Предотвращение журналов предупреждений при использовании нечисловых состояний в качестве источника статистики",
-        "pt": "Evitar logs de aviso ao usar estados não numéricos como fonte de estatística",
-        "nl": "Voorkom waarschuwingslogboeken bij het gebruik van niet-getalstaten als statistische bron",
-        "fr": "Empêcher les journaux d'avertissement lors de l'utilisation d'états non numériques comme source de statistiques",
-        "it": "Impedisci i registri di avviso quando si utilizzano stati non numerici come origine statistica",
-        "es": "Evite los registros de advertencia cuando utilice estados que no sean números como fuente de estadísticas",
-        "pl": "Zapobiegaj ostrzeżeniom podczas używania stanów nieliczbowych jako źródła statystyk",
-        "uk": "Запобігання журналу попереджень при використанні нечислових станів як джерела статистики",
-        "zh-cn": "使用非数字状态作为统计源时防止警告日志"
       }
     },
     "titleLang": {
