@@ -123,7 +123,11 @@
     },
     "platform": "Javascript/Node.js",
     "mode": "daemon",
-    "license": "MIT",
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
+    "automaticUpgrade": "patch",
     "icon": "statistics.png",
     "enabled": true,
     "preserveSettings": "custom",
