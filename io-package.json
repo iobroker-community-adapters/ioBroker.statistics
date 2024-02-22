@@ -127,7 +127,6 @@
       "license": "MIT",
       "type": "free"
     },
-    "automaticUpgrade": "patch",
     "icon": "statistics.png",
     "enabled": true,
     "preserveSettings": "custom",
