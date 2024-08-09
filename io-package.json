@@ -16,19 +16,6 @@
         "uk": "NodeJS 16.x обов'язковий\n\n* Показати помилку, якщо групи не налаштовані правильно\n* Фіксовані експреси за квартал і рік\n* Додано індикатори для запуску та роботи",
         "zh-cn": "不需要16.JS16x。\n\n* 如果小组不作正确配置,则有关错误。\n* 季度和一年的固定的忠诚发言\n* 增加开办和工作指标"
       },
-      "2.3.1": {
-        "en": "Added Ukrainian language",
-        "de": "Ukrainische Sprache",
-        "ru": "Добавлен украинский язык",
-        "pt": "Adicionado idioma ucraniano",
-        "nl": "Voeg Oekraïense taal toe",
-        "fr": "Ajout de la langue ukrainienne",
-        "it": "Aggiunto lingua ucraina",
-        "es": "Idioma ucraniano añadido",
-        "pl": "Język ukraiński",
-        "uk": "Українська мова",
-        "zh-cn": "增加乌克兰语"
-      },
       "2.3.0": {
         "en": "NodeJS 14.5.0 is required\n\n* Added hourly, weekly, monthly, ... averages\n* Added promises to avoid parallel execution of tasks (lead to incorrect calculations)\n* Fixed init values for save/temp\n* Added option to enable statistics for objects via sendTo\n* Allow sum delta to substract values (negative delta)\n* Delete states when option in unchecked\n* Removed dayMin and dayMax from avg (use minmax for that case!)\n* Fix: Calculation of avg when no change of value",
         "de": "NodeJS 14.5.0 ist erforderlich\n\n* Hinzugefügt stündlich, wöchentlich, monatlich, ... Durchschnitte\n* Zugesagte Versprechen zur Vermeidung paralleler Ausführung von Aufgaben (zu falschen Berechnungen führen)\n* Feste Initwerte für Speicher/Zeit\n* Zusätzliche Möglichkeit, Statistiken über Objekte per sendTo zu aktivieren\n* Lassen Sie die Summe delta zu subtrahierenden Werten (negative delta)\n* Status löschen, wenn Option unkontrolliert\n*Entfernt TagMin und TagMax von avg (verwenden minmax für diesen Fall!)\n* Fix: Berechnung von avg, wenn keine Wertänderung",
