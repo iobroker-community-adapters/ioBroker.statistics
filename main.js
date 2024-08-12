@@ -545,7 +545,7 @@ class Statistics extends utils.Adapter {
             this.log.info('cleaned everything up...');
 
             callback();
-        } catch (e) {
+        } catch {
             callback();
         }
     }
