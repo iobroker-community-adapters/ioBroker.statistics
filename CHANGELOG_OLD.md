@@ -1,4 +1,7 @@
 # Older changes
+## 2.1.1 (2022-06-16)
+* (klein0r) Fixed usage of default values for groups
+
 ## 2.1.0 (2022-06-16)
 * (klein0r) Added support for translated object names
 * (klein0r) Fixed sum calculation

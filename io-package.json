@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "statistics",
-    "version": "2.4.0",
+    "version": "3.0.0",
     "news": {
+      "3.0.0": {
+        "en": "NodeJS >= 18.x and js-controller >= 5 is required",
+        "de": "NodeJS >= 18.x und js-Controller >= 5 ist erforderlich",
+        "ru": "NodeJS >= 18.x и js-контроллер >= 5 требуется",
+        "pt": "NodeJS >= 18.x e js-controller >= 5 é necessário",
+        "nl": "Voor de toepassing van de onderverdelingen 870190 tot en met 870290 wordt onder post 8702 verstaan: 5 is vereist",
+        "fr": "NodeJS >= 18.x et js-controller >= 5 est nécessaire",
+        "it": "NodeJS >= 18.x e js-controller 5 è richiesto",
+        "es": "NodeJS >= 18.x y js-controller Se requiere 5",
+        "pl": "NodeJS > = 18.x i kontroler js- > = 5 jest wymagane",
+        "uk": "NodeJS >= 18.x та js-controller >= 5 обов'язково",
+        "zh-cn": "节点JS18x和js控制器QQ 需要5个"
+      },
       "2.4.0": {
         "en": "NodeJS 16.x is required\n\n* Show error if groups are not configured correctly\n* Fixed cron expressions for quarter and year\n* Added indicators for startup and working",
         "de": "NodeJS 16.x ist erforderlich\n\n* Fehler anzeigen, wenn Gruppen nicht korrekt konfiguriert sind\n* Feste Cron-Ausdrücke für Quartal und Jahr\n* Zusätzliche Indikatoren für Start- und Arbeitsansätze",
