@@ -1,6 +1,9 @@
 {
     "i18n": true,
     "type": "tabs",
+    "tabsStyle": {
+        "width": "calc(100% - 100px)"
+    },
     "items": {
         "_options": {
             "type": "panel",
@@ -8,27 +11,33 @@
             "items": {
                 "impUnitPerImpulse": {
                     "type": "number",
+                    "xs": 12,
                     "sm": 12,
                     "md": 4,
                     "lg": 4,
+                    "xl": 4,
                     "label": "Units per impulse (default)",
                     "help": "One impulse is equal to this value"
                 },
                 "impFactor": {
                     "type": "number",
                     "step": 0.001,
+                    "xs": 12,
                     "sm": 12,
                     "md": 4,
                     "lg": 4,
+                    "xl": 4,
                     "label": "Group factor (default)",
                     "help": "Values will be added to groups with this factor"
                 },
                 "timezone": {
                     "newLine": true,
                     "type": "text",
+                    "xs": 12,
                     "sm": 12,
                     "md": 4,
                     "lg": 4,
+                    "xl": 4,
                     "label": "Time zone",
                     "help": "e.g. Europe/Berlin (leave empty for default settings)"
                 }
@@ -40,9 +49,11 @@
             "items": {
                 "groups": {
                     "type": "table",
+                    "xs": 12,
                     "sm": 12,
                     "md": 12,
                     "lg": 12,
+                    "xl": 12,
                     "label": "Groups",
                     "items": [
                         {
