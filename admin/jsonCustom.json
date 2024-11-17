@@ -7,7 +7,11 @@
             "label": "Name",
             "help": "Name of statistics log",
             "defaultFunc": "(customObj && customObj._id && String(customObj._id).split('.').pop()) || ''",
-            "sm": 6
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "_info": {
             "hidden": "customObj.common.type === 'boolean' || customObj.common.type === 'number'",
@@ -15,7 +19,11 @@
             "type": "header",
             "text": "The data type of this state is not supported (has to be boolean or number)",
             "size": 4,
-            "sm": 12
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "_binary": {
             "hidden": "customObj.common.type !== 'boolean'",
@@ -23,7 +31,11 @@
             "type": "header",
             "text": "For impulses (boolean data points)",
             "size": 4,
-            "sm": 12
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "count": {
             "hidden": "customObj.common.type !== 'boolean'",
@@ -32,7 +44,11 @@
             "label": "Count",
             "help": "Count pulses or edge changes",
             "default": false,
-            "sm": 4
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "fiveMin": {
             "hidden": "customObj.common.type !== 'boolean' || !data.count",
@@ -40,7 +56,11 @@
             "label": "5min values",
             "help": "Determines the consumption every 5 minutes",
             "default": false,
-            "sm": 4
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "sumCount": {
             "hidden": "customObj.common.type !== 'boolean'",
@@ -49,7 +69,11 @@
             "label": "Counting -> Consumption",
             "help": "Determines the consumption from counting",
             "default": false,
-            "sm": 4
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "impUnitPerImpulse": {
             "hidden": "customObj.common.type !== 'boolean' || !data.sumCount",
@@ -57,7 +81,11 @@
             "label": "Units per impulse",
             "help": "One impulse is equal to this value",
             "default": 1,
-            "sm": 4
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "impUnit": {
             "hidden": "customObj.common.type !== 'boolean' || !data.sumCount",
@@ -65,7 +93,11 @@
             "label": "Units",
             "help": "kWh, m, liters, or similar",
             "default": "",
-            "sm": 4
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "timeCount": {
             "hidden": "customObj.common.type !== 'boolean'",
@@ -74,7 +106,11 @@
             "label": "Operating time",
             "help": "Determines times for values 0 and 1",
             "default": false,
-            "sm": 4
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
 
         "_analog": {
@@ -83,7 +119,11 @@
             "type": "header",
             "text": "For analog values (number data points)",
             "size": 4,
-            "sm": 12
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "avg": {
             "hidden": "customObj.common.type !== 'number'",
@@ -92,7 +132,11 @@
             "label": "Average",
             "help": "Creates avaerage / daily values",
             "default": false,
-            "sm": 4
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "minmax": {
             "hidden": "customObj.common.type !== 'number'",
@@ -101,7 +145,11 @@
             "label": "Min/Max values",
             "help": "Creates daily, weekly, monthly, quarterly and annual values",
             "default": false,
-            "sm": 4
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "sumDelta": {
             "hidden": "customObj.common.type !== 'number'",
@@ -110,7 +158,11 @@
             "label": "Delta consumption",
             "help": "Convert consecutive meter readings into consumption values",
             "default": false,
-            "sm": 4
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "sumIgnoreMinus": {
             "hidden": "customObj.common.type !== 'number' || !data.sumDelta",
@@ -118,7 +170,11 @@
             "label": "Ignore errors",
             "help": "Ignores difference if new value less than old one",
             "default": false,
-            "sm": 4
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
 
         "_group": {
@@ -127,7 +183,11 @@
             "type": "header",
             "text": "Groups",
             "size": 4,
-            "sm": 12
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "sumGroup": {
             "hidden": "!data.sumDelta && !data.sumCount",
@@ -136,7 +196,11 @@
             "label": "Group",
             "help": "Can be configured in adapter configuration",
             "command": "groups",
-            "sm": 6
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         },
         "groupFactor": {
             "hidden": "(!data.sumDelta && !data.sumCount) || !data.sumGroup",
@@ -145,7 +209,11 @@
             "label": "Counting factor",
             "help": "Conversion factor for consumption counter",
             "default": 1,
-            "sm": 6
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
         }
     }
 }
