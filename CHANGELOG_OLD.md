@@ -1,4 +1,7 @@
 # Older changes
+## 2.2.0 (2022-07-07)
+* (klein0r) Added absolute min and max values
+
 ## 2.1.1 (2022-06-16)
 * (klein0r) Fixed usage of default values for groups
 

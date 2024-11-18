@@ -50,7 +50,7 @@ iobroker add statistics
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
-### __WORK IN PROGRESS__
+### 3.1.0 (2024-11-18)
 
 * (@simatec) Added responsive jsonConfig
 * (@klein0r) Copy unit of source state to all statistic states
@@ -79,9 +79,6 @@ NodeJS 14.5.0 is required
 * (klein0r) Delete states when option in unchecked
 * (klein0r) Removed dayMin and dayMax from avg (use minmax for that case!)
 * (klein0r) Fix: Calculation of avg when no change of value
-
-### 2.2.0 (2022-07-07)
-* (klein0r) Added absolute min and max values
 
 ## License
 

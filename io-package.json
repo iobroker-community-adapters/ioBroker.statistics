@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "statistics",
-    "version": "3.0.0",
+    "version": "3.1.0",
     "news": {
+      "3.1.0": {
+        "en": "Added responsive jsonConfig\nCopy unit of source state to all statistic states",
+        "de": "Zusätzlicher responsive jsonConfig\nKopieren der Einheit des Quellzustands in alle Statistikzustände",
+        "ru": "Добавить отзывчивый jsonConfig\nКопировать единицу исходного состояния во все состояния статистики",
+        "pt": "Adicionado resposta jsonConfig\nUnidade de cópia do estado de origem para todos os estados estatísticos",
+        "nl": "Toegevoegd responsive jsonConfig\nKopieer eenheid van brontoestand naar alle statistiekstaten",
+        "fr": "Ajout de jsonConfig réactif\nCopier l'unité de l'état source à tous les états statistiques",
+        "it": "Aggiunto responsive jsonConfig\nCopia unità di stato sorgente in tutti gli stati stati statistici",
+        "es": "JsonConfig receptivo\nUnidad de copia del estado fuente a todos los estados estadísticos",
+        "pl": "Dodano reagujący jsonConfig\nJednostka kopiująca stanu źródłowego do wszystkich stanów statystycznych",
+        "uk": "Додано чуйний jsonConfig\nСкопіювати блок початкового стану на всі статистичні стани",
+        "zh-cn": "添加响应的 json 配置\n复制来源状态单位到所有统计状态"
+      },
       "3.0.0": {
         "en": "NodeJS >= 18.x and js-controller >= 5 is required",
         "de": "NodeJS >= 18.x und js-Controller >= 5 ist erforderlich",
@@ -80,19 +93,6 @@
         "pl": "Wsparcie dla tłumaczonych nazw obiektów\nObliczenia sumowania Fixa\nDokładność do 5 cyfr\nWszystkie obiekty translacyjne",
         "uk": "Додано підтримку перекладених імен об'єктів\nРозрахунок фіксованої суми\nПідвищено точність до 5 цифр\nПерекладено всі об'єкти",
         "zh-cn": "增加对翻译目标名称的支持\n固定的计算\n精 度增加5个数\n适用于所有物体"
-      },
-      "2.0.0": {
-        "en": "Added Admin 5 configuration\nUpdated translations",
-        "de": "Admin 5 Konfiguration hinzugefügt\nAktualisierte Übersetzungen",
-        "ru": "Добавлена настройка Admin 5\nОбновленные переводы",
-        "pt": "Adicionado configuração Admin 5\nTraduções atualizadas",
-        "nl": "Admin 5 configu\nVertaling:",
-        "fr": "Ajout de la configuration Admin 5\nTraductions actualisées",
-        "it": "Configurazione Admin 5\nTraduzioni aggiornate",
-        "es": "Configuración de Admin 5\nTraducciones actualizadas",
-        "pl": "Admin 5\nTłumaczenia poprawione",
-        "uk": "Додана конфігурація Admin 5\nОновлені переклади",
-        "zh-cn": "增编5个组合\n最新翻译"
       }
     },
     "titleLang": {
