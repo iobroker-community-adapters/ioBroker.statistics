@@ -737,9 +737,12 @@ class Statistics extends utils.Adapter {
                 obj.impUnitPerImpulse = this.config.impUnitPerImpulse; // Default from config if 0
             }
 
+            const sourceObj = await this.getForeignObjectAsync(id);
+            const sourceUnit = sourceObj?.type === 'state' && sourceObj?.common?.unit;
+
             // function is called with the custom objects
             this.log.debug(`[CREATION] ============================== ${id} =============================`);
-            this.log.debug(`[CREATION] setup of object ${id}: ${JSON.stringify(obj)}`);
+            this.log.debug(`[CREATION] setup of object "${id}": ${JSON.stringify(obj)}`);
             const logName = obj.logName;
 
             // count
@@ -750,7 +753,7 @@ class Statistics extends utils.Adapter {
                     this.typeObjects.count.push(id);
                 }
 
-                await this.defineObject('count', id, logName); // type, id, name
+                await this.defineObject('count', id, logName);
             }
 
             // sumCount
@@ -761,7 +764,7 @@ class Statistics extends utils.Adapter {
                     this.typeObjects.sumCount.push(id);
                 }
 
-                await this.defineObject('sumCount', id, logName, obj.impUnit); // type, id, name, Unit
+                await this.defineObject('sumCount', id, logName, obj.impUnit);
             }
 
             // sumDelta
@@ -772,7 +775,7 @@ class Statistics extends utils.Adapter {
                     this.typeObjects.sumDelta.push(id);
                 }
 
-                await this.defineObject('sumDelta', id, logName); // type, id, name
+                await this.defineObject('sumDelta', id, logName, sourceUnit);
             }
 
             // minMax
@@ -783,7 +786,7 @@ class Statistics extends utils.Adapter {
                     this.typeObjects.minmax.push(id);
                 }
 
-                await this.defineObject('minmax', id, logName); // type, id, name
+                await this.defineObject('minmax', id, logName, sourceUnit);
             }
 
             // avg
@@ -794,7 +797,7 @@ class Statistics extends utils.Adapter {
                     this.typeObjects.avg.push(id);
                 }
 
-                await this.defineObject('avg', id, logName); // type, id, name
+                await this.defineObject('avg', id, logName, sourceUnit);
             }
 
             // timeCount
@@ -805,7 +808,7 @@ class Statistics extends utils.Adapter {
                     this.typeObjects.timeCount.push(id);
                 }
 
-                await this.defineObject('timeCount', id, logName); // type, id, name
+                await this.defineObject('timeCount', id, logName);
             }
 
             // fiveMin
@@ -816,7 +819,7 @@ class Statistics extends utils.Adapter {
                     this.typeObjects.fiveMin.push(id);
                 }
 
-                await this.defineObject('fiveMin', id, logName); // type, id, name
+                await this.defineObject('fiveMin', id, logName);
             }
 
             // sumGroup
@@ -1017,16 +1020,16 @@ class Statistics extends utils.Adapter {
             common: {
                 name: {
                     en: `Saved values for ${name.en}`,
-                    de: `Gespeicherte Werte für ${name.de || name.en}`,
-                    ru: `Сохраненные значения для ${name.ru || name.en}`,
-                    pt: `Valores salvos para ${name.pt || name.en}`,
-                    nl: `Bespaarde waarden voor ${name.nl || name.en}`,
-                    fr: `Valeurs sauvegardées pour ${name.fr || name.en}`,
-                    it: `Valori salvati per ${name.it || name.en}`,
-                    es: `Valores guardados para ${name.es || name.en}`,
-                    pl: `Oszczędne wartości dla ${name.pl || name.en}`,
-                    uk: `Збережені значення для ${name.uk || name.en}`,
-                    'zh-cn': `保存的价值 ${name['zh-cn'] || name.en}`
+                    de: `Gespeicherte Werte für ${name.de ?? name.en}`,
+                    ru: `Сохраненные значения для ${name.ru ?? name.en}`,
+                    pt: `Valores salvos para ${name.pt ?? name.en}`,
+                    nl: `Bespaarde waarden voor ${name.nl ?? name.en}`,
+                    fr: `Valeurs sauvegardées pour ${name.fr ?? name.en}`,
+                    it: `Valori salvati per ${name.it ?? name.en}`,
+                    es: `Valores guardados para ${name.es ?? name.en}`,
+                    pl: `Oszczędne wartości dla ${name.pl ?? name.en}`,
+                    uk: `Збережені значення для ${name.uk ?? name.en}`,
+                    'zh-cn': `保存的价值 ${name['zh-cn'] ?? name.en}`
                 }
             },
             native: {
@@ -1040,16 +1043,16 @@ class Statistics extends utils.Adapter {
             common: {
                 name: {
                     en: `Temporary values for ${name.en}`,
-                    de: `Vorläufige Werte für ${name.de || name.en}`,
-                    ru: `Временные значения для ${name.ru || name.en}`,
-                    pt: `Valores temporários para ${name.pt || name.en}`,
-                    nl: `Tijdelijke waarden voor ${name.nl || name.en}`,
-                    fr: `Valeurs temporaires pour ${name.fr || name.en}`,
-                    it: `Valori temporanei per ${name.it || name.en}`,
-                    es: `Valores temporales para ${name.es || name.en}`,
-                    pl: `Temporary wartości dla ${name.pl || name.en}`,
-                    uk: `Тимчасові значення для ${name.uk || name.en}`,
-                    'zh-cn': `${name['zh-cn'] || name.en} 的临时值`,
+                    de: `Vorläufige Werte für ${name.de ?? name.en}`,
+                    ru: `Временные значения для ${name.ru ?? name.en}`,
+                    pt: `Valores temporários para ${name.pt ?? name.en}`,
+                    nl: `Tijdelijke waarden voor ${name.nl ?? name.en}`,
+                    fr: `Valeurs temporaires pour ${name.fr ?? name.en}`,
+                    it: `Valori temporanei per ${name.it ?? name.en}`,
+                    es: `Valores temporales para ${name.es ?? name.en}`,
+                    pl: `Temporary wartości dla ${name.pl ?? name.en}`,
+                    uk: `Тимчасові значення для ${name.uk ?? name.en}`,
+                    'zh-cn': `${name['zh-cn'] ?? name.en} 的临时值`,
                 }
             },
             native: {
@@ -1076,7 +1079,7 @@ class Statistics extends utils.Adapter {
                 obj.common.unit = unit;
             }
 
-            await this.extendObjectAsync(`save.${type}.${id}.${objects[s]}`, obj);
+            await this.extendObject(`save.${type}.${id}.${objects[s]}`, obj);
         }
 
         // states for the temporary values
@@ -1099,15 +1102,15 @@ class Statistics extends utils.Adapter {
                 obj.common.unit = unit;
             }
 
-            await this.extendObjectAsync(`temp.${type}.${id}.${objects[s]}`, obj);
+            await this.extendObject(`temp.${type}.${id}.${objects[s]}`, obj);
         }
 
         await this.setInitial(type, id);
     }
 
     async setInitial(type, id) {
-
         const saveObjects = nameObjects[type].save;
+
         for (let s = 0; s < saveObjects.length; s++) {
             const name = saveObjects[s];
 
@@ -1115,7 +1118,7 @@ class Statistics extends utils.Adapter {
             const currentVal = await this.getValueAsync(targetId);
 
             if (currentVal === null) {
-                this.log.debug(`[SET INITIAL] "${id}" -> ${targetId}`);
+                this.log.debug(`[SET INITIAL] "${id}" -> "${targetId}"`);
 
                 if (type === 'count') {
                     await this.setValueAsync(targetId, 0);
@@ -1157,7 +1160,7 @@ class Statistics extends utils.Adapter {
             const currentVal = await this.getValueAsync(targetId);
 
             if (currentVal === null) {
-                this.log.debug(`[SET INITIAL] "${id}" -> ${targetId}`);
+                this.log.debug(`[SET INITIAL] "${id}" -> "${targetId}"`);
 
                 if (type === 'count') {
                     const countInitVal = await this.getForeignStateAsync(id);

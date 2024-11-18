@@ -53,6 +53,7 @@ iobroker add statistics
 ### __WORK IN PROGRESS__
 
 * (@simatec) Added responsive jsonConfig
+* (@klein0r) Copy unit of source state to all statistic states
 
 ### 3.0.0 (2024-11-15)
 NodeJS >= 18.x and js-controller >= 5 is required
