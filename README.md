@@ -50,6 +50,9 @@ iobroker add statistics
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__
 -->
+### __WORK IN PROGRESS__
+NodeJS >= 20.x and js-controller >= 6 is required
+
 ### 3.1.0 (2024-11-18)
 
 * (@simatec) Added responsive jsonConfig
