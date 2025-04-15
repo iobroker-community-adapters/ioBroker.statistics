@@ -18,60 +18,109 @@ const YEAR = 'year';
 const nameObjects = {
     count: {
         save: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR],
-        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, 'last5Min', 'lastPulse']
+        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, 'last5Min', 'lastPulse'],
     },
     sumCount: {
         save: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR],
-        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, 'lastPulse']
+        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, 'lastPulse'],
     },
     sumDelta: {
         save: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR, 'delta', 'last'],
-        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR]
+        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR],
     },
     minmax: {
         save: [
-            'dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin',
-            'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax',
-            'absMin', 'absMax'
+            'dayMin',
+            'weekMin',
+            'monthMin',
+            'quarterMin',
+            'yearMin',
+            'dayMax',
+            'weekMax',
+            'monthMax',
+            'quarterMax',
+            'yearMax',
+            'absMin',
+            'absMax',
         ],
         temp: [
-            'dayMin', 'weekMin', 'monthMin', 'quarterMin', 'yearMin',
-            'dayMax', 'weekMax', 'monthMax', 'quarterMax', 'yearMax',
-            'last'
-        ]
+            'dayMin',
+            'weekMin',
+            'monthMin',
+            'quarterMin',
+            'yearMin',
+            'dayMax',
+            'weekMax',
+            'monthMax',
+            'quarterMax',
+            'yearMax',
+            'last',
+        ],
     },
     avg: {
         save: ['15MinAvg', 'hourAvg', 'dayAvg', 'weekAvg', 'monthAvg', 'quarterAvg', 'yearAvg'],
         temp: [
-            '15MinAvg', '15MinCount', '15MinSum',
-            'hourAvg', 'hourCount', 'hourSum',
-            'dayAvg', 'dayCount', 'daySum',
-            'weekAvg', 'weekCount', 'weekSum',
-            'monthAvg', 'monthCount', 'monthSum',
-            'quarterAvg', 'quarterCount', 'quarterSum',
-            'yearAvg', 'yearCount', 'yearSum',
-            'last'
-        ]
+            '15MinAvg',
+            '15MinCount',
+            '15MinSum',
+            'hourAvg',
+            'hourCount',
+            'hourSum',
+            'dayAvg',
+            'dayCount',
+            'daySum',
+            'weekAvg',
+            'weekCount',
+            'weekSum',
+            'monthAvg',
+            'monthCount',
+            'monthSum',
+            'quarterAvg',
+            'quarterCount',
+            'quarterSum',
+            'yearAvg',
+            'yearCount',
+            'yearSum',
+            'last',
+        ],
     },
     timeCount: {
         save: [
-            'onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear',
-            'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear'
+            'onDay',
+            'onWeek',
+            'onMonth',
+            'onQuarter',
+            'onYear',
+            'offDay',
+            'offWeek',
+            'offMonth',
+            'offQuarter',
+            'offYear',
         ],
         temp: [
-            'onDay', 'onWeek', 'onMonth', 'onQuarter', 'onYear',
-            'offDay', 'offWeek', 'offMonth', 'offQuarter', 'offYear',
-            'last01', 'last10', 'last'
-        ]
+            'onDay',
+            'onWeek',
+            'onMonth',
+            'onQuarter',
+            'onYear',
+            'offDay',
+            'offWeek',
+            'offMonth',
+            'offQuarter',
+            'offYear',
+            'last01',
+            'last10',
+            'last',
+        ],
     },
     fiveMin: {
         save: ['mean5Min', 'dayMax5Min', 'dayMin5Min'],
-        temp: ['mean5Min', 'dayMax5Min', 'dayMin5Min']
+        temp: ['mean5Min', 'dayMax5Min', 'dayMin5Min'],
     },
     sumGroup: {
         save: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR],
-        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR]
-    }
+        temp: [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR],
+    },
 };
 
 const column = [MIN15, HOUR, DAY, WEEK, MONTH, QUARTER, YEAR];
@@ -82,7 +131,15 @@ function isTrue(val) {
 }
 
 function isFalse(val) {
-    return val === 0 || val === '0' || val === false || val === 'false' || val === 'off' || val === 'OFF' || val === 'standby';
+    return (
+        val === 0 ||
+        val === '0' ||
+        val === false ||
+        val === 'false' ||
+        val === 'off' ||
+        val === 'OFF' ||
+        val === 'standby'
+    );
 }
 
 function roundValue(value, precision = 0) {
@@ -100,14 +157,14 @@ function timeConverter(timestamp) {
     const min = a.getMinutes();
     const sec = a.getSeconds();
 
-    return `${date < 10 ? ' ' + date : date} ${month} ${year} ${hour < 10 ? '0' + hour : hour}:${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`;
+    return `${date < 10 ? ` ${date}` : date} ${month} ${year} ${hour < 10 ? `0${hour}` : hour}:${min < 10 ? `0${min}` : min}:${sec < 10 ? `0${sec}` : sec}`;
 }
 
 class Statistics extends utils.Adapter {
     constructor(options) {
         super({
             ...options,
-            name: 'statistics'
+            name: 'statistics',
         });
 
         this.tasks = [];
@@ -152,7 +209,9 @@ class Statistics extends utils.Adapter {
                 if (doc.rows[i].value) {
                     const id = doc.rows[i].id;
                     const custom = doc.rows[i].value;
-                    if (!custom || !custom[this.namespace] || !custom[this.namespace].enabled) continue;
+                    if (!custom || !custom[this.namespace] || !custom[this.namespace].enabled) {
+                        continue;
+                    }
 
                     this.log.info(`[SETUP] enabled statistics for ${id}`);
 
@@ -173,9 +232,16 @@ class Statistics extends utils.Adapter {
                             this.typeObjects.sumGroup.push(groupId);
                         }
 
-                        await this.defineObject('sumGroup', groupId, `Sum for ${groupConfig.name}`, groupConfig.priceUnit);
+                        await this.defineObject(
+                            'sumGroup',
+                            groupId,
+                            `Sum for ${groupConfig.name}`,
+                            groupConfig.priceUnit,
+                        );
                     } else {
-                        this.log.error(`Found group without id in configuration - skipping! Check your instance configuration for groups`);
+                        this.log.error(
+                            `Found group without id in configuration - skipping! Check your instance configuration for groups`,
+                        );
                     }
                 }
             }
@@ -194,11 +260,12 @@ class Statistics extends utils.Adapter {
 
         // every 5min
         try {
-            this.crons.fiveMin = new CronJob('*/5 * * * *',
+            this.crons.fiveMin = new CronJob(
+                '*/5 * * * *',
                 () => this.fiveMin(),
                 () => this.log.debug('stopped fiveMin'),
                 true,
-                timezone
+                timezone,
             );
         } catch (e) {
             this.log.error(`creating cron fiveMin errored with: ${e}`);
@@ -206,11 +273,12 @@ class Statistics extends utils.Adapter {
 
         // Every 15 minutes
         try {
-            this.crons.fifteenMinSave = new CronJob('0,15,30,45 * * * *',
+            this.crons.fifteenMinSave = new CronJob(
+                '0,15,30,45 * * * *',
                 () => this.saveValues(MIN15),
                 () => this.log.debug('stopped fifteenMinSave'),
                 true,
-                timezone
+                timezone,
             );
         } catch (e) {
             this.log.error(`creating cron fifteenMinSave errored with: ${e}`);
@@ -218,11 +286,12 @@ class Statistics extends utils.Adapter {
 
         // Hourly at 00 min
         try {
-            this.crons.hourSave = new CronJob('0 * * * *',
+            this.crons.hourSave = new CronJob(
+                '0 * * * *',
                 () => this.saveValues(HOUR),
                 () => this.log.debug('stopped hourSave'),
                 true,
-                timezone
+                timezone,
             );
         } catch (e) {
             this.log.error(`creating cron hourSave errored with: ${e}`);
@@ -230,11 +299,12 @@ class Statistics extends utils.Adapter {
 
         // daily at 23:59:58
         try {
-            this.crons.dayTriggerTimeCount = new CronJob('58 59 23 * * *',
+            this.crons.dayTriggerTimeCount = new CronJob(
+                '58 59 23 * * *',
                 () => this.setTimeCountMidnight(),
                 () => this.log.debug('stopped dayTriggerTimeCount'),
                 true,
-                timezone
+                timezone,
             );
         } catch (e) {
             this.log.error(`creating cron dayTriggerTimeCount errored with: ${e}`);
@@ -242,11 +312,12 @@ class Statistics extends utils.Adapter {
 
         // daily at 00:00
         try {
-            this.crons.daySave = new CronJob('0 0 * * *',
+            this.crons.daySave = new CronJob(
+                '0 0 * * *',
                 () => this.saveValues(DAY),
                 () => this.log.debug('stopped daySave'),
                 true,
-                timezone
+                timezone,
             );
         } catch (e) {
             this.log.error(`creating cron daySave errored with: ${e}`);
@@ -254,11 +325,12 @@ class Statistics extends utils.Adapter {
 
         // Monday 00:00
         try {
-            this.crons.weekSave = new CronJob('0 0 * * 1',
+            this.crons.weekSave = new CronJob(
+                '0 0 * * 1',
                 () => this.saveValues(WEEK),
                 () => this.log.debug('stopped weekSave'),
                 true,
-                timezone
+                timezone,
             );
         } catch (e) {
             this.log.error(`creating cron weekSave errored with: ${e}`);
@@ -266,11 +338,12 @@ class Statistics extends utils.Adapter {
 
         // Monthly at 1st of every month at 00:00
         try {
-            this.crons.monthSave = new CronJob('0 0 1 * *',
+            this.crons.monthSave = new CronJob(
+                '0 0 1 * *',
                 () => this.saveValues(MONTH),
                 () => this.log.debug('stopped monthSave'),
                 true,
-                timezone
+                timezone,
             );
         } catch (e) {
             this.log.error(`creating cron monthSave errored with: ${e}`);
@@ -278,11 +351,12 @@ class Statistics extends utils.Adapter {
 
         // Quarterly at 1st of every quarter at 00:00
         try {
-            this.crons.quarterSave = new CronJob('0 0 1 1,4,7,10 *',
+            this.crons.quarterSave = new CronJob(
+                '0 0 1 1,4,7,10 *',
                 () => this.saveValues(QUARTER),
                 () => this.log.debug('stopped quarterSave'),
                 true,
-                timezone
+                timezone,
             );
         } catch (e) {
             this.log.error(`creating cron quarterSave errored with: ${e}`);
@@ -290,11 +364,12 @@ class Statistics extends utils.Adapter {
 
         // New year at 1st of every year at 00:00
         try {
-            this.crons.yearSave = new CronJob('0 0 1 1 *',
+            this.crons.yearSave = new CronJob(
+                '0 0 1 1 *',
                 () => this.saveValues(YEAR),
                 () => this.log.debug('stopped yearSave'),
                 true,
-                timezone
+                timezone,
             );
         } catch (e) {
             this.log.error(`creating cron yearSave errored with: ${e}`);
@@ -302,7 +377,9 @@ class Statistics extends utils.Adapter {
 
         for (const type in this.crons) {
             if (Object.prototype.hasOwnProperty.call(this.crons, type) && this.crons[type]) {
-                this.log.debug(`[SETUP] ${type} status = "${this.crons[type].running ? 'running' : 'error'}", next event: ${timeConverter(this.crons[type].nextDate())}`);
+                this.log.debug(
+                    `[SETUP] ${type} status = "${this.crons[type].running ? 'running' : 'error'}", next event: ${timeConverter(this.crons[type].nextDate())}`,
+                );
             }
         }
 
@@ -319,7 +396,7 @@ class Statistics extends utils.Adapter {
         this.tasks.push({
             name: 'promise',
             args: { id, obj },
-            callback: async (args) => {
+            callback: async args => {
                 // Warning, obj can be null if it was deleted
                 if (args?.obj?.common?.custom?.[this.namespace] && args.obj.common.custom[this.namespace]?.enabled) {
                     this.log.debug(`[OBJECT CHANGE] stat "${args.id}": ${JSON.stringify(args.obj.common.custom)}`);
@@ -339,14 +416,20 @@ class Statistics extends utils.Adapter {
 
                         this.removeObject(args.id);
                         this.setupObjects([args.id]);
-                        this.log.debug(`[OBJECT CHANGE] saved (updated) typeObject of stat "${args.id}": ${JSON.stringify(this.statDP[args.id])}`);
+                        this.log.debug(
+                            `[OBJECT CHANGE] saved (updated) typeObject of stat "${args.id}": ${JSON.stringify(this.statDP[args.id])}`,
+                        );
                     } else {
                         this.statDP[args.id] = args.obj.common.custom[this.namespace];
                         this.setupObjects([args.id]);
-                        this.log.debug(`[OBJECT CHANGE] saved (new) typeObjects of stat "${args.id}": ${JSON.stringify(this.statDP[args.id])}`);
+                        this.log.debug(
+                            `[OBJECT CHANGE] saved (new) typeObjects of stat "${args.id}": ${JSON.stringify(this.statDP[args.id])}`,
+                        );
                     }
                 } else if (this.statDP[args.id]) {
-                    this.log.debug(`[OBJECT CHANGE] removing typeObjects of stat "${args.id}": ${JSON.stringify(this.statDP[args.id])}`);
+                    this.log.debug(
+                        `[OBJECT CHANGE] removing typeObjects of stat "${args.id}": ${JSON.stringify(this.statDP[args.id])}`,
+                    );
 
                     // Delete objects of all types
                     Object.keys(this.typeObjects).forEach(type => {
@@ -359,7 +442,7 @@ class Statistics extends utils.Adapter {
                     this.unsubscribeForeignObjects(args.id);
                     this.unsubscribeForeignStates(args.id);
                 }
-            }
+            },
         });
 
         isStart && this.processTasks();
@@ -376,12 +459,14 @@ class Statistics extends utils.Adapter {
             this.tasks.push({
                 name: 'promise',
                 args: { id, state },
-                callback: async (args) => {
+                callback: async args => {
                     this.log.debug(`[STATE CHANGE] ======================= ${args.id} =======================`);
                     this.log.debug(`[STATE CHANGE] stateChange => ${args.state.val}`);
 
-                    if ((args.state.val === null) || (args.state.val === undefined) || isNaN(args.state.val)) {
-                        this.log.warn(`[STATE CHANGE] wrong value => ${args.state.val} on ${args.id} => check the other adapter where value comes from `);
+                    if (args.state.val === null || args.state.val === undefined || isNaN(args.state.val)) {
+                        this.log.warn(
+                            `[STATE CHANGE] wrong value => ${args.state.val} on ${args.id} => check the other adapter where value comes from `,
+                        );
                     } else {
                         if (this.typeObjects.sumDelta.includes(args.id)) {
                             this.log.debug(`[STATE CHANGE] schedule onStateChangeSumDeltaValue for ${args.id}`);
@@ -413,7 +498,7 @@ class Statistics extends utils.Adapter {
 
                         // 5min is treated cyclically
                     }
-                }
+                },
             });
         }
 
@@ -427,26 +512,43 @@ class Statistics extends utils.Adapter {
         this.log.debug(`[onMessage] Received ${JSON.stringify(msg)}`);
 
         if (msg.command === 'groups' && msg.callback) {
-            this.sendTo(msg.from, msg.command, (this.config.groups || []).map(item => ({ label: item.name, value: item.id })), msg.callback);
+            this.sendTo(
+                msg.from,
+                msg.command,
+                (this.config.groups || []).map(item => ({ label: item.name, value: item.id })),
+                msg.callback,
+            );
         } else if (msg.command === 'getCrons') {
-            this.sendTo(msg.from, msg.command, Object.keys(this.crons).map(item => ({ label: item, value: new Date(this.crons[item].nextDate()).getTime() })), msg.callback);
+            this.sendTo(
+                msg.from,
+                msg.command,
+                Object.keys(this.crons).map(item => ({
+                    label: item,
+                    value: new Date(this.crons[item].nextDate()).getTime(),
+                })),
+                msg.callback,
+            );
         } else if (msg.command === 'enableStatistics') {
             if (typeof msg.message === 'object' && msg.message?.id) {
                 const objId = msg.message.id;
 
                 this.getForeignObject(objId, (err, obj) => {
                     if (err || !obj) {
-                        this.sendTo(msg.from, msg.command, {
-                            success: false,
-                            err: `Unable to get object with ID ${objId}`
-                        }, msg.callback);
+                        this.sendTo(
+                            msg.from,
+                            msg.command,
+                            {
+                                success: false,
+                                err: `Unable to get object with ID ${objId}`,
+                            },
+                            msg.callback,
+                        );
                     } else {
                         if (obj?.type === 'state') {
-
                             const objCustomOptions = {
                                 common: {
-                                    custom: {}
-                                }
+                                    custom: {},
+                                },
                             };
 
                             const objCustomDefaults = {
@@ -469,51 +571,72 @@ class Statistics extends utils.Adapter {
                                 sumGroup: undefined, // requires .sumCount = true or .sumDelta = true
                                 groupFactor: 1, // requres sumGroup
 
-                                logName: String(obj._id).split('.').pop()
+                                logName: String(obj._id).split('.').pop(),
                             };
 
                             if (typeof msg.message === 'object' && typeof msg.message?.options === 'object') {
                                 objCustomOptions.common.custom[this.namespace] = {
                                     ...objCustomDefaults,
-                                    ...msg.message.options
+                                    ...msg.message.options,
                                 };
                             } else {
                                 objCustomOptions.common.custom[this.namespace] = {
                                     ...objCustomDefaults,
                                     count: obj.common.type === 'boolean',
-                                    avg: obj.common.type === 'number'
+                                    avg: obj.common.type === 'number',
                                 };
                             }
 
-                            this.log.debug(`Extending state ${JSON.stringify(obj)} with ${JSON.stringify(objCustomOptions)}`);
-                            this.extendForeignObject(objId, objCustomOptions, (err) => {
+                            this.log.debug(
+                                `Extending state ${JSON.stringify(obj)} with ${JSON.stringify(objCustomOptions)}`,
+                            );
+                            this.extendForeignObject(objId, objCustomOptions, err => {
                                 if (err) {
                                     this.log.error(`enableStatistics of ${objId} failed: ${err}`);
-                                    this.sendTo(msg.from, msg.command, {
-                                        success: false,
-                                        err: err
-                                    }, msg.callback);
+                                    this.sendTo(
+                                        msg.from,
+                                        msg.command,
+                                        {
+                                            success: false,
+                                            err: err,
+                                        },
+                                        msg.callback,
+                                    );
                                 } else {
-                                    this.sendTo(msg.from, msg.command, {
-                                        success: true,
-                                        err: null
-                                    }, msg.callback);
+                                    this.sendTo(
+                                        msg.from,
+                                        msg.command,
+                                        {
+                                            success: true,
+                                            err: null,
+                                        },
+                                        msg.callback,
+                                    );
                                 }
                             });
-
                         } else {
-                            this.sendTo(msg.from, msg.command, {
-                                success: false,
-                                err: `Object with ID ${objId} is not a state: ${obj?.type}`
-                            }, msg.callback);
+                            this.sendTo(
+                                msg.from,
+                                msg.command,
+                                {
+                                    success: false,
+                                    err: `Object with ID ${objId} is not a state: ${obj?.type}`,
+                                },
+                                msg.callback,
+                            );
                         }
                     }
                 });
             } else {
-                this.sendTo(msg.from, msg.command, {
-                    success: false,
-                    err: `Configuration missing - please set at least { id: 'your.object.id' }`
-                }, msg.callback);
+                this.sendTo(
+                    msg.from,
+                    msg.command,
+                    {
+                        success: false,
+                        err: `Configuration missing - please set at least { id: 'your.object.id' }`,
+                    },
+                    msg.callback,
+                );
             }
         } else if (msg.command === 'saveValues') {
             // Used for integration tests
@@ -588,7 +711,7 @@ class Statistics extends utils.Adapter {
     async setValueAsync(id, value) {
         return new Promise((resolve, reject) => {
             this.states[id] = value;
-            this.setState(id, { val: value, ack: true }, (err) => {
+            this.setState(id, { val: value, ack: true }, err => {
                 if (err) {
                     reject(err);
                 }
@@ -606,7 +729,7 @@ class Statistics extends utils.Adapter {
             ts.setMilliseconds(0);
 
             this.states[id] = value;
-            this.setState(id, { val: value, ts: ts.getTime(), ack: true }, (err) => {
+            this.setState(id, { val: value, ts: ts.getTime(), ack: true }, err => {
                 if (err) {
                     reject(err);
                 }
@@ -623,7 +746,7 @@ class Statistics extends utils.Adapter {
 
         if (type === MIN15) {
             // value may not be older than 15 min
-            now.setMinutes(now.getMinutes() - now.getMinutes() % 15);
+            now.setMinutes(now.getMinutes() - (now.getMinutes() % 15));
         } else if (type === HOUR) {
             // value may not be older than full hour
             now.setMinutes(0);
@@ -646,7 +769,7 @@ class Statistics extends utils.Adapter {
             now.setHours(0);
             now.setDate(1);
             // 0, 3, 6, 9
-            now.setMonth(now.getMonth() - now.getMonth() % 3);
+            now.setMonth(now.getMonth() - (now.getMonth() % 3));
         } else if (type === YEAR) {
             // value may not be older than 1 Januar of today
             now.setMinutes(0);
@@ -654,7 +777,7 @@ class Statistics extends utils.Adapter {
             now.setDate(1);
             now.setMonth(0);
         } else {
-            this.log.error('Unknown calc type: ' + type);
+            this.log.error(`Unknown calc type: ${type}`);
             return value;
         }
 
@@ -694,10 +817,9 @@ class Statistics extends utils.Adapter {
             await this.setValueAsync(args.temp, actual);
 
             return true;
-        } else {
-            this.log.debug(`[SAVE VALUES & SET DAILY START MINMAX] Process ${args.temp} => no value found`);
-            return false;
         }
+        this.log.debug(`[SAVE VALUES & SET DAILY START MINMAX] Process ${args.temp} => no value found`);
+        return false;
     }
 
     setTimeCountMidnight() {
@@ -706,7 +828,8 @@ class Statistics extends utils.Adapter {
                 const id = this.typeObjects.timeCount[s];
                 // bevor umgespeichert wird, muß noch ein Aufruf mit actual erfolgen, damit die restliche Zeit vom letzten Signalwechsel bis Mitternacht erfolgt
                 // aufruf von newTimeCntValue(id, "last") damit wird gleicher Zustand getriggert und last01 oder last10 zu Mitternacht neu gesetzt
-                this.getState(`temp.timeCount.${id}.last`, (err, last) => { //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
+                this.getState(`temp.timeCount.${id}.last`, (err, last) => {
+                    //hier muss nur id stehen, dann aber noch Beachtung des Timestamps
                     //evtl. status ermitteln und dann setForeignState nochmals den Zustand schreiben um anzutriggern und aktuelle Zeit zu verwenden (bzw. 00:00:00)
                     const ts = new Date();
                     //ts.setMinutes(ts.getMinutes() - 1);
@@ -883,11 +1006,11 @@ class Statistics extends utils.Adapter {
                     name: 'promise',
                     args: {
                         temp: `temp.${dayTypes[t]}.${id}.${nameObjId}`,
-                        save: `save.${dayTypes[t]}.${id}.${nameObjId}`
+                        save: `save.${dayTypes[t]}.${id}.${nameObjId}`,
                     },
-                    callback: async (args) => {
+                    callback: async args => {
                         await this.copyValue(args.temp, args.save);
-                    }
+                    },
                 });
             }
         }
@@ -899,17 +1022,20 @@ class Statistics extends utils.Adapter {
                     name: 'promise',
                     args: {
                         id: this.typeObjects.avg[s],
-                        timePeriod: timePeriod
+                        timePeriod: timePeriod,
                     },
-                    callback: async (args) => {
-                        await this.copyValue(`temp.avg.${args.id}.${timePeriod}Avg`, `save.avg.${args.id}.${timePeriod}Avg`);
+                    callback: async args => {
+                        await this.copyValue(
+                            `temp.avg.${args.id}.${timePeriod}Avg`,
+                            `save.avg.${args.id}.${timePeriod}Avg`,
+                        );
 
                         const prevValue = await this.getValueAsync(`temp.avg.${args.id}.last`);
 
                         await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Avg`, prevValue);
                         await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Count`, 1);
                         await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Sum`, prevValue);
-                    }
+                    },
                 });
             }
         }
@@ -923,22 +1049,22 @@ class Statistics extends utils.Adapter {
                     name: 'promise',
                     args: {
                         temp: `temp.fiveMin.${id}.dayMin5Min`,
-                        save: `save.fiveMin.${id}.dayMin5Min`
+                        save: `save.fiveMin.${id}.dayMin5Min`,
                     },
-                    callback: async (args) => {
-                        await  this.copyValue(args.temp, args.save);
-                    }
+                    callback: async args => {
+                        await this.copyValue(args.temp, args.save);
+                    },
                 });
 
                 this.tasks.push({
                     name: 'promise',
                     args: {
                         temp: `temp.fiveMin.${id}.dayMax5Min`,
-                        save: `save.fiveMin.${id}.dayMax5Min`
+                        save: `save.fiveMin.${id}.dayMax5Min`,
                     },
-                    callback: async (args) => {
+                    callback: async args => {
                         await this.copyValue(args.temp, args.save);
-                    }
+                    },
                 });
             }
         }
@@ -953,23 +1079,23 @@ class Statistics extends utils.Adapter {
                     this.tasks.push({
                         name: 'promise',
                         args: {
-                            temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[tp - 2], // 0 is onDay
-                            save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[tp - 2],
+                            temp: `temp.timeCount.${id}.${nameObjects.timeCount.temp[tp - 2]}`, // 0 is onDay
+                            save: `save.timeCount.${id}.${nameObjects.timeCount.temp[tp - 2]}`,
                         },
-                        callback: async (args) => {
+                        callback: async args => {
                             await this.copyValue(args.temp, args.save);
-                        }
+                        },
                     });
 
                     this.tasks.push({
                         name: 'promise',
                         args: {
-                            temp: 'temp.timeCount.' + id + '.' + nameObjects.timeCount.temp[tp + 3], // +5 is offDay
-                            save: 'save.timeCount.' + id + '.' + nameObjects.timeCount.temp[tp + 3],
+                            temp: `temp.timeCount.${id}.${nameObjects.timeCount.temp[tp + 3]}`, // +5 is offDay
+                            save: `save.timeCount.${id}.${nameObjects.timeCount.temp[tp + 3]}`,
                         },
-                        callback: async (args) => {
+                        callback: async args => {
                             await this.copyValue(args.temp, args.save);
-                        }
+                        },
                     });
                 }
             }
@@ -984,20 +1110,20 @@ class Statistics extends utils.Adapter {
                     this.tasks.push({
                         name: 'promise',
                         args: {
-                            temp: 'temp.minmax.' + id + '.' + nameObjects.minmax.temp[tp - 2], // 0 ist minDay
-                            save: 'save.minmax.' + id + '.' + nameObjects.minmax.temp[tp - 2],
-                            actual: 'temp.minmax.' + id + '.last',
+                            temp: `temp.minmax.${id}.${nameObjects.minmax.temp[tp - 2]}`, // 0 ist minDay
+                            save: `save.minmax.${id}.${nameObjects.minmax.temp[tp - 2]}`,
+                            actual: `temp.minmax.${id}.last`,
                         },
-                        callback: this.copyValueActMinMax.bind(this)
+                        callback: this.copyValueActMinMax.bind(this),
                     });
                     this.tasks.push({
                         name: 'promise',
                         args: {
-                            temp: 'temp.minmax.' + id + '.' + nameObjects.minmax.temp[tp + 3], // +5 ist maxDay
-                            save: 'save.minmax.' + id + '.' + nameObjects.minmax.temp[tp + 3],
-                            actual: 'temp.minmax.' + id + '.last',
+                            temp: `temp.minmax.${id}.${nameObjects.minmax.temp[tp + 3]}`, // +5 ist maxDay
+                            save: `save.minmax.${id}.${nameObjects.minmax.temp[tp + 3]}`,
+                            actual: `temp.minmax.${id}.last`,
                         },
-                        callback: this.copyValueActMinMax.bind(this)
+                        callback: this.copyValueActMinMax.bind(this),
                     });
                 }
             }
@@ -1010,7 +1136,7 @@ class Statistics extends utils.Adapter {
         // Workaround for untranslated objects
         if (typeof name !== 'object') {
             name = {
-                en: name
+                en: name,
             };
         }
 
@@ -1029,12 +1155,12 @@ class Statistics extends utils.Adapter {
                     es: `Valores guardados para ${name.es ?? name.en}`,
                     pl: `Oszczędne wartości dla ${name.pl ?? name.en}`,
                     uk: `Збережені значення для ${name.uk ?? name.en}`,
-                    'zh-cn': `保存的价值 ${name['zh-cn'] ?? name.en}`
-                }
+                    'zh-cn': `保存的价值 ${name['zh-cn'] ?? name.en}`,
+                },
             },
             native: {
-                addr: id
-            }
+                addr: id,
+            },
         });
 
         // Create temp channel
@@ -1053,11 +1179,11 @@ class Statistics extends utils.Adapter {
                     pl: `Temporary wartości dla ${name.pl ?? name.en}`,
                     uk: `Тимчасові значення для ${name.uk ?? name.en}`,
                     'zh-cn': `${name['zh-cn'] ?? name.en} 的临时值`,
-                }
+                },
             },
             native: {
-                addr: id
-            }
+                addr: id,
+            },
         });
 
         // states for the saved values
@@ -1223,7 +1349,9 @@ class Statistics extends utils.Adapter {
                                     this.log.debug(`[SET INITIAL] "${id}" timeCount init value: NOW`);
                                     await this.setValueAsync(targetId, Date.now());
                                 } else if (isTrue(timeCountInitVal.val)) {
-                                    this.log.debug(`[SET INITIAL] "${id}" timeCount init value: ${timeCountInitVal.lc}`);
+                                    this.log.debug(
+                                        `[SET INITIAL] "${id}" timeCount init value: ${timeCountInitVal.lc}`,
+                                    );
                                     await this.setValueAsync(targetId, timeCountInitVal.lc);
                                 } else {
                                     this.log.error(`[SET INITIAL] "${id}" unknown state to be evaluated in timeCount`);
@@ -1232,7 +1360,9 @@ class Statistics extends utils.Adapter {
                         } else if (name === 'last10') {
                             if (timeCountInitVal && timeCountInitVal.val !== null) {
                                 if (isFalse(timeCountInitVal.val)) {
-                                    this.log.debug(`[SET INITIAL] "${id}" timeCount init value: ${timeCountInitVal.lc}`);
+                                    this.log.debug(
+                                        `[SET INITIAL] "${id}" timeCount init value: ${timeCountInitVal.lc}`,
+                                    );
                                     await this.setValueAsync(targetId, timeCountInitVal.lc);
                                 } else if (isTrue(timeCountInitVal.val)) {
                                     this.log.debug(`[SET INITIAL] "${id}" timeCount init value: NOW`);
@@ -1244,7 +1374,9 @@ class Statistics extends utils.Adapter {
                         } else if (name === 'last') {
                             if (timeCountInitVal && timeCountInitVal.val !== null) {
                                 if (isTrue(timeCountInitVal.val) || isFalse(timeCountInitVal.val)) {
-                                    this.log.debug(`[SET INITIAL] "${id}" timeCount init value: ${timeCountInitVal.val}`);
+                                    this.log.debug(
+                                        `[SET INITIAL] "${id}" timeCount init value: ${timeCountInitVal.val}`,
+                                    );
                                     await this.setValueAsync(targetId, timeCountInitVal.val);
                                 } else {
                                     this.log.error(`[SET INITIAL] "${id}" unknown state to be evaluated in timeCount`);
@@ -1284,9 +1416,8 @@ class Statistics extends utils.Adapter {
 
             this.setStateChangedAsync('info.working', { val: false, ack: true });
             return;
-        } else {
-            this.setStateChangedAsync('info.working', { val: true, ack: true });
         }
+        this.setStateChangedAsync('info.working', { val: true, ack: true });
 
         const task = this.tasks[0];
         if (task.name === 'promise') {
@@ -1327,7 +1458,7 @@ class Statistics extends utils.Adapter {
                 this.tasks.push({
                     name: 'promise',
                     args: { id: this.typeObjects.fiveMin[t] },
-                    callback: async (args) => {
+                    callback: async args => {
                         this.log.debug(`[EXECUTING] fiveMin call ${args.id}`);
 
                         if (!this.statDP[args.id]) {
@@ -1355,7 +1486,9 @@ class Statistics extends utils.Adapter {
                         }
 
                         const delta = actual - prevValue;
-                        this.log.debug(`[STATE CHANGE] fiveMin; of : ${args.id} with min: ${min} max: ${max} actual: ${actual} prevValue: ${prevValue} delta: ${delta}`);
+                        this.log.debug(
+                            `[STATE CHANGE] fiveMin; of : ${args.id} with min: ${min} max: ${max} actual: ${actual} prevValue: ${prevValue} delta: ${delta}`,
+                        );
                         await this.setValueStatAsync(`temp.fiveMin.${args.id}.mean5Min`, delta);
 
                         if (min === null || delta < min) {
@@ -1367,7 +1500,7 @@ class Statistics extends utils.Adapter {
                             this.log.debug(`[STATE CHANGE] new Max temp.fiveMin.${args.id}.dayMax5Min: ${delta}`);
                             await this.setValueStatAsync(`temp.fiveMin.${args.id}.dayMax5Min`, delta);
                         }
-                    }
+                    },
                 });
             }
 
@@ -1385,8 +1518,9 @@ class Statistics extends utils.Adapter {
                 name: 'promise',
                 args: {
                     id,
-                    value
-                }, callback: async (args) => {
+                    value,
+                },
+                callback: async args => {
                     this.log.debug(`[EXECUTING] avg call ${args.id}`);
 
                     if (!this.statDP[args.id]) {
@@ -1410,9 +1544,12 @@ class Statistics extends utils.Adapter {
                         sum = sum ? sum + args.value : args.value;
 
                         await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Sum`, sum);
-                        await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Avg`, roundValue(sum / count, PRECISION));
+                        await this.setValueAsync(
+                            `temp.avg.${args.id}.${timePeriod}Avg`,
+                            roundValue(sum / count, PRECISION),
+                        );
                     }
-                }
+                },
             });
 
             isStart && this.processTasks();
@@ -1434,9 +1571,9 @@ class Statistics extends utils.Adapter {
                 name: 'promise',
                 args: {
                     id,
-                    state
+                    state,
                 },
-                callback: async (args) => {
+                callback: async args => {
                     this.log.debug(`[EXECUTING] time count ${args.id}`);
 
                     if (!this.statDP[args.id]) {
@@ -1460,12 +1597,17 @@ class Statistics extends utils.Adapter {
                         this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${args.state.val}`);
                         await this.setValueAsync(`temp.timeCount.${args.id}.last`, args.state.val);
 
-                        this.log.debug(`[STATE CHANGE] new last01 temp.timeCount.${args.id}.last01: ${args.state.ts} ${timeConverter(args.state.ts)}` );
+                        this.log.debug(
+                            `[STATE CHANGE] new last01 temp.timeCount.${args.id}.last01: ${args.state.ts} ${timeConverter(args.state.ts)}`,
+                        );
                         await this.setValueAsync(`temp.timeCount.${args.id}.last01`, args.state.ts);
 
-                        this.log.debug(`[STATE CHANGE] 0->1 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`);
+                        this.log.debug(
+                            `[STATE CHANGE] 0->1 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`,
+                        );
 
-                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
+                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
+                            // über alle Zeiträume den Wert aufaddieren
                             if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
                                 const timeCountId = `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`;
 
@@ -1488,12 +1630,17 @@ class Statistics extends utils.Adapter {
                         this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${args.state.val}`);
                         await this.setValueAsync(`temp.timeCount.${args.id}.last`, args.state.val);
 
-                        this.log.debug(`[STATE CHANGE] new last01 temp.timeCount.${args.id}.last01: ${args.state.ts} ${timeConverter(args.state.ts)}`);
+                        this.log.debug(
+                            `[STATE CHANGE] new last01 temp.timeCount.${args.id}.last01: ${args.state.ts} ${timeConverter(args.state.ts)}`,
+                        );
                         await this.setValueAsync(`temp.timeCount.${args.id}.last01`, args.state.ts);
 
-                        this.log.debug(`[STATE EQUAL] 1->1 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`);
+                        this.log.debug(
+                            `[STATE EQUAL] 1->1 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`,
+                        );
 
-                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
+                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
+                            // über alle Zeiträume den Wert aufaddieren
                             if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) {
                                 const timeCountId = `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`;
 
@@ -1503,16 +1650,16 @@ class Statistics extends utils.Adapter {
                             }
                         }
                     }
-                }
+                },
             });
         } else if (isFalse(state.val)) {
             this.tasks.push({
                 name: 'promise',
                 args: {
                     id,
-                    state
+                    state,
                 },
-                callback: async (args) => {
+                callback: async args => {
                     this.log.debug(`[EXECUTING] time count ${args.id}`);
 
                     if (!this.statDP[args.id]) {
@@ -1536,12 +1683,17 @@ class Statistics extends utils.Adapter {
                         this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${args.state.val}`);
                         await this.setValueAsync(`temp.timeCount.${args.id}.last`, args.state.val);
 
-                        this.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${args.state.ts} ${timeConverter(args.state.ts)}`);
+                        this.log.debug(
+                            `[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${args.state.ts} ${timeConverter(args.state.ts)}`,
+                        );
                         await this.setValueAsync(`temp.timeCount.${args.id}.last10`, args.state.ts);
 
-                        this.log.debug(`[STATE CHANGE] 1->0 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`);
+                        this.log.debug(
+                            `[STATE CHANGE] 1->0 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`,
+                        );
 
-                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) { // über alle Zeiträume den Wert aufaddieren
+                        for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
+                            // über alle Zeiträume den Wert aufaddieren
                             if (nameObjects.timeCount.temp[s].match(/^on\w+$/)) {
                                 const timeCountId = `temp.timeCount.${args.id}.${nameObjects.timeCount.temp[s]}`;
 
@@ -1565,10 +1717,14 @@ class Statistics extends utils.Adapter {
                         this.log.debug(`[STATE CHANGE] new last temp.timeCount.${args.id}.last: ${args.state.val}`);
                         await this.setValueAsync(`temp.timeCount.${args.id}.last`, args.state.val);
 
-                        this.log.debug(`[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${args.state.ts} ${timeConverter(args.state.ts)}`);
+                        this.log.debug(
+                            `[STATE CHANGE] new last10 temp.timeCount.${args.id}.last10: ${args.state.ts} ${timeConverter(args.state.ts)}`,
+                        );
                         await this.setValueAsync(`temp.timeCount.${args.id}.last10`, args.state.ts);
 
-                        this.log.debug(`[STATE EQUAL] 0->0 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`);
+                        this.log.debug(
+                            `[STATE EQUAL] 0->0 delta ${delta} state ${timeConverter(args.state.ts)} last ${timeConverter(last)}`,
+                        );
 
                         for (let s = 0; s < nameObjects.timeCount.temp.length; s++) {
                             if (nameObjects.timeCount.temp[s].match(/off\w+$/)) {
@@ -1580,7 +1736,7 @@ class Statistics extends utils.Adapter {
                             }
                         }
                     }
-                }
+                },
             });
         }
 
@@ -1600,7 +1756,7 @@ class Statistics extends utils.Adapter {
         this.tasks.push({
             name: 'promise',
             args: { id, value },
-            callback: async (args) => {
+            callback: async args => {
                 this.log.debug(`[EXECUTING] count call ${args.id}`);
 
                 if (!this.statDP[args.id]) {
@@ -1621,7 +1777,7 @@ class Statistics extends utils.Adapter {
                         }
                     }
                 }
-            }
+            },
         });
 
         isStart && this.processTasks();
@@ -1640,7 +1796,7 @@ class Statistics extends utils.Adapter {
         this.tasks.push({
             name: 'promise',
             args: { id, value },
-            callback: async (args) => {
+            callback: async args => {
                 this.log.debug(`[EXECUTING] sum count ${args.id}`);
 
                 if (!this.statDP[args.id]) {
@@ -1650,10 +1806,11 @@ class Statistics extends utils.Adapter {
 
                 if (await this.isTrueNew(args.id, args.value, 'sumCount')) {
                     // Calculation of consumption (what is a physical-sized pulse)
-                    if (this.typeObjects.sumCount &&
+                    if (
+                        this.typeObjects.sumCount &&
                         this.typeObjects.sumCount.includes(args.id) &&
-                        this.statDP[args.id].impUnitPerImpulse) {
-
+                        this.statDP[args.id].impUnitPerImpulse
+                    ) {
                         const impUnitPerImpulse = this.statDP[args.id].impUnitPerImpulse;
 
                         for (let s = 0; s < nameObjects.sumCount.temp.length; s++) {
@@ -1662,7 +1819,9 @@ class Statistics extends utils.Adapter {
                             const prevValue = await this.getValueAsync(sumCountId);
                             const newValue = prevValue ? prevValue + impUnitPerImpulse : impUnitPerImpulse;
 
-                            this.log.debug(`[STATE CHANGE] Increase ${sumCountId} on ${impUnitPerImpulse} to ${newValue}`);
+                            this.log.debug(
+                                `[STATE CHANGE] Increase ${sumCountId} on ${impUnitPerImpulse} to ${newValue}`,
+                            );
                             await this.setValueAsync(sumCountId, newValue);
                         }
 
@@ -1686,13 +1845,15 @@ class Statistics extends utils.Adapter {
                                 */
 
                                 const newValue = roundValue((prevValue || 0) + sumGroupDelta, PRECISION);
-                                this.log.debug(`[STATE CHANGE] Increase ${sumGroupId} on ${sumGroupDelta} to ${newValue}`);
+                                this.log.debug(
+                                    `[STATE CHANGE] Increase ${sumGroupId} on ${sumGroupDelta} to ${newValue}`,
+                                );
                                 await this.setValueAsync(sumGroupId, newValue);
                             }
                         }
                     }
                 }
-            }
+            },
         });
 
         isStart && this.processTasks();
@@ -1711,8 +1872,9 @@ class Statistics extends utils.Adapter {
                 name: 'promise',
                 args: {
                     id,
-                    value
-                }, callback: async (args) => {
+                    value,
+                },
+                callback: async args => {
                     this.log.debug(`[EXECUTING] minmax ${args.id}`);
 
                     if (!this.statDP[args.id]) {
@@ -1750,7 +1912,7 @@ class Statistics extends utils.Adapter {
                             this.log.debug(`[STATE CHANGE] new ${timePeriod} max for "${args.id}: ${args.value}`);
                         }
                     }
-                }
+                },
             });
 
             isStart && this.processTasks();
@@ -1773,9 +1935,9 @@ class Statistics extends utils.Adapter {
             name: 'promise',
             args: {
                 id,
-                value
+                value,
             },
-            callback: async (args) => {
+            callback: async args => {
                 this.log.debug(`[EXECUTING] sum delta ${args.id}`);
 
                 if (!this.statDP[args.id]) {
@@ -1847,7 +2009,7 @@ class Statistics extends utils.Adapter {
                 if (this.typeObjects.avg.includes(args.id)) {
                     this.onStateChangeAvgValue(args.id, delta);
                 }
-            }
+            },
         });
 
         isStart && this.processTasks();
@@ -1857,9 +2019,9 @@ class Statistics extends utils.Adapter {
 if (require.main !== module) {
     // Export the constructor in compact mode
     /**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
+     * @param {Partial<utils.AdapterOptions>} [options]
      */
-    module.exports = (options) => new Statistics(options);
+    module.exports = options => new Statistics(options);
 } else {
     // otherwise start the instance directly
     new Statistics();
