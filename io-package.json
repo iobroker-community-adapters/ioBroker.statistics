@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "statistics",
-    "version": "3.1.0",
+    "version": "4.0.0",
     "news": {
+      "4.0.0": {
+        "en": "NodeJS >= 20.x and js-controller >= 6 is required",
+        "de": "NodeJS >= 20.x und js-Controller >= 6 ist erforderlich",
+        "ru": "NodeJS >= 20.x и js-контроллер >= 6 Требуется",
+        "pt": "NodeJS >= 20.x e js-controller >= 6 é necessário",
+        "nl": "Van niet-gelegeerd staal 6 is vereist",
+        "fr": "NodeJS >= 20.x et js-controller >= 6 est nécessaire",
+        "it": "NodeJS >= 20.x e js-controller >= 6 è richiesto",
+        "es": "NodeJS ю= 20.x y js-controller Se requiere 6",
+        "pl": "NodeJS > = 20 x i kontroler js- > = 6 jest wymagane",
+        "uk": "NodeJS >= 20.x та js-controller >= 6 обов'язковий",
+        "zh-cn": "节点JS20x和js控制器QQ 需要6个"
+      },
       "3.1.0": {
         "en": "Added responsive jsonConfig\nCopy unit of source state to all statistic states",
         "de": "Zusätzlicher responsive jsonConfig\nKopieren der Einheit des Quellzustands in alle Statistikzustände",
@@ -80,19 +93,6 @@
         "pl": "Wykorzystanie domyślnych wartości dla grup",
         "uk": "Виправлено використання значень за замовчуванням для груп",
         "zh-cn": "对集团采用缺省值"
-      },
-      "2.1.0": {
-        "en": "Added support for translated object names\nFixed sum calculation\nIncreased precision to 5 digits\nTranslated all objects",
-        "de": "Unterstützung für übersetzte Objektnamen hinzugefügt\nBereinigte Summenberechnung\nErhöhte Präzision auf 5 Stellen\nÜbersetzt alle Objekte",
-        "ru": "Добавлена поддержка переведенных объектов\nФиксированный расчет суммы\nПовышенная точность до 5 цифр\nПереведено все объекты",
-        "pt": "Adicionado suporte para nomes de objetos traduzidos\nCálculo fixo da soma\nAumento da precisão para 5 dígitos\nTraduzido todos os objetos",
-        "nl": "Vertaling:\nVertaling:\nVerhoogde precisie naar 5 cijfers\nVertaald alle objecten",
-        "fr": "Ajout du support pour les noms d'objets traduits\nCalcul forfaitaire\nPrécision accrue à 5 chiffres\nTraduit tous les objets",
-        "it": "Aggiunto supporto per i nomi degli oggetti tradotti\nCalcolo della somma fissa\nAumento della precisione a 5 cifre\nTradotto tutti gli oggetti",
-        "es": "Apoyo adicional para los nombres de objetos traducidos\nCálculo de la suma fija\nMayor precisión a 5 dígitos\nTraducidos todos los objetos",
-        "pl": "Wsparcie dla tłumaczonych nazw obiektów\nObliczenia sumowania Fixa\nDokładność do 5 cyfr\nWszystkie obiekty translacyjne",
-        "uk": "Додано підтримку перекладених імен об'єктів\nРозрахунок фіксованої суми\nПідвищено точність до 5 цифр\nПерекладено всі об'єкти",
-        "zh-cn": "增加对翻译目标名称的支持\n固定的计算\n精 度增加5个数\n适用于所有物体"
       }
     },
     "titleLang": {
