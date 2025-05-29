@@ -686,16 +686,16 @@ class Statistics extends utils.Adapter {
     async getValueAsync(id) {
         return new Promise((resolve, reject) => {
             if (Object.prototype.hasOwnProperty.call(this.states, id)) {
-                resolve(this.states[id]);
+                resolve(this.states[id].val);
             } else {
                 this.getState(id, (err, state) => {
                     if (err) {
                         reject(err);
                     }
 
-                    this.states[id] = state ? state.val : null;
+                    this.states[id] = state ? { val: state.val, ts: state.ts } : null;
 
-                    resolve(this.states[id]);
+                    resolve(this.states[id].val);
                 });
             }
         });
@@ -703,8 +703,9 @@ class Statistics extends utils.Adapter {
 
     async setValueAsync(id, value) {
         return new Promise((resolve, reject) => {
-            this.states[id] = value;
-            this.setState(id, { val: value, ack: true }, err => {
+            const ts = Date.now();
+            this.states[id] = { val: value, ts };
+            this.setState(id, { val: value, ts, ack: true }, err => {
                 if (err) {
                     reject(err);
                 }
@@ -721,7 +722,7 @@ class Statistics extends utils.Adapter {
             ts.setSeconds(59);
             ts.setMilliseconds(0);
 
-            this.states[id] = value;
+            this.states[id] = { val: value, ts: ts.getTime() };
             this.setState(id, { val: value, ts: ts.getTime(), ack: true }, err => {
                 if (err) {
                     reject(err);
