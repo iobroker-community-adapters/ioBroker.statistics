@@ -1535,19 +1535,16 @@ class Statistics extends utils.Adapter {
                     for (let c = 0; c < column.length; c++) {
                         const timePeriod = column[c];
 
+                        let avg = await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}Avg`);
+
                         let count = await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}Count`);
                         count = count ? count + 1 : 1;
 
                         await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Count`, count);
 
-                        let sum = await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}Sum`);
-                        sum = sum ? sum + args.value : args.value;
+                        avg += (args.value - avg) / count;
 
-                        await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Sum`, sum);
-                        await this.setValueAsync(
-                            `temp.avg.${args.id}.${timePeriod}Avg`,
-                            roundValue(sum / count, PRECISION),
-                        );
+                        await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Avg`, roundValue(avg, PRECISION));
                     }
                 },
             });
