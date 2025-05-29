@@ -62,25 +62,18 @@ const nameObjects = {
         temp: [
             '15MinAvg',
             '15MinCount',
-            '15MinSum',
             'hourAvg',
             'hourCount',
-            'hourSum',
             'dayAvg',
             'dayCount',
-            'daySum',
             'weekAvg',
             'weekCount',
-            'weekSum',
             'monthAvg',
             'monthCount',
-            'monthSum',
             'quarterAvg',
             'quarterCount',
-            'quarterSum',
             'yearAvg',
             'yearCount',
-            'yearSum',
             'last',
         ],
     },
@@ -1229,6 +1222,12 @@ class Statistics extends utils.Adapter {
             }
 
             await this.extendObject(`temp.${type}.${id}.${objects[s]}`, obj);
+        }
+
+        // Delete old sum states
+        const oldStates = ['15MinAvg', '15MinSum', 'hourSum', 'daySum', 'weekSum', 'monthSum', 'quarterSum', 'yearSum'];
+        for (const oldStateId of oldStates) {
+            await this.delObjectAsync(`temp.${type}.${id}.${oldStateId}`);
         }
 
         await this.setInitial(type, id);
