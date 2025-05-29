@@ -34,5 +34,7 @@
     "Can be configured in adapter configuration": "Kan worden geconfigureerd in adapterconfiguratie",
     "Counting factor": "telfactor",
     "Conversion factor for consumption counter": "Conversiefactor voor verbruiksteller",
-    "The data type of this state is not supported (has to be boolean or number)": "Het gegevenstype van deze status wordt niet ondersteund (moet boolean of getal zijn)"
+    "The data type of this state is not supported (has to be boolean or number)": "Het gegevenstype van deze status wordt niet ondersteund (moet boolean of getal zijn)",
+    "Weighted average": "Gewogen gemiddeld",
+    "Calculate average based on time delta": "Bereken het gemiddelde op basis van tijd delta"
 }

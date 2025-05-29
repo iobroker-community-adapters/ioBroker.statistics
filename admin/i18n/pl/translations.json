@@ -34,5 +34,7 @@
     "Can be configured in adapter configuration": "Możliwość konfiguracji w konfiguracji adaptera",
     "Counting factor": "Czynnik zliczający",
     "Conversion factor for consumption counter": "Współczynnik przeliczeniowy licznika zużycia",
-    "The data type of this state is not supported (has to be boolean or number)": "Typ danych tego stanu nie jest obsługiwany (musi to być wartość logiczna lub liczba)"
+    "The data type of this state is not supported (has to be boolean or number)": "Typ danych tego stanu nie jest obsługiwany (musi to być wartość logiczna lub liczba)",
+    "Weighted average": "Średnia ważona",
+    "Calculate average based on time delta": "Oblicz średnią na podstawie delty czasowej"
 }

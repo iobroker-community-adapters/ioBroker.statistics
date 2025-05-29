@@ -138,6 +138,18 @@
             "lg": 4,
             "xl": 4
         },
+        "avgWeighted": {
+            "hidden": "customObj.common.type !== 'number' || !data.avg",
+            "type": "checkbox",
+            "label": "Weighted average",
+            "help": "Calculate average based on time delta",
+            "default": false,
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
+        },
         "minmax": {
             "hidden": "customObj.common.type !== 'number'",
             "newLine": true,

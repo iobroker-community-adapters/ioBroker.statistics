@@ -34,5 +34,7 @@
     "Can be configured in adapter configuration": "可以在适配器配置中配置",
     "Counting factor": "计数因子",
     "Conversion factor for consumption counter": "消耗计数器的转换系数",
-    "The data type of this state is not supported (has to be boolean or number)": "不支持此状态的数据类型（必须是布尔值或数字）"
+    "The data type of this state is not supported (has to be boolean or number)": "不支持此状态的数据类型（必须是布尔值或数字）",
+    "Weighted average": "加权平均值",
+    "Calculate average based on time delta": "根据时间增量计算平均值"
 }

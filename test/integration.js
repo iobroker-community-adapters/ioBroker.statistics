@@ -227,6 +227,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 impUnit: '',
                                 timeCount: false,
                                 avg: true, // relevant for this test
+                                avgWeighted: false, // relevant for this test
                                 minmax: true, // relevant for this test
                                 sumDelta: false,
                                 sumIgnoreMinus: false,
@@ -329,6 +330,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 impUnit: '',
                                 timeCount: false,
                                 avg: false,
+                                avgWeighted: false,
                                 minmax: false,
                                 sumDelta: true, // relevant for this test
                                 sumIgnoreMinus: false, // relevant for this test
@@ -432,6 +434,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 impUnit: '',
                                 timeCount: false,
                                 avg: false,
+                                avgWeighted: false,
                                 minmax: false,
                                 sumDelta: true, // relevant for this test
                                 sumIgnoreMinus: true, // relevant for this test
@@ -543,6 +546,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 impUnit: '',
                                 timeCount: false,
                                 avg: true, // relevant for this test
+                                avgWeighted: false, // relevant for this test
                                 minmax: true, // relevant for this test
                                 sumDelta: true, // relevant for this test
                                 sumIgnoreMinus: false, // relevant for this test
@@ -654,6 +658,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 impUnit: '',
                                 timeCount: false,
                                 avg: false,
+                                avgWeighted: false,
                                 minmax: false,
                                 sumDelta: true, // relevant for this test
                                 sumIgnoreMinus: false, // relevant for this test
@@ -739,6 +744,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 impUnit: '',
                                 timeCount: false,
                                 avg: false,
+                                avgWeighted: false,
                                 minmax: false,
                                 sumDelta: false,
                                 sumIgnoreMinus: false,
@@ -833,6 +839,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 impUnit: 'Wh',  // relevant for this test
                                 timeCount: false,
                                 avg: false,
+                                avgWeighted: false,
                                 minmax: false,
                                 sumDelta: false,
                                 sumIgnoreMinus: false,
@@ -920,6 +927,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 impUnit: '',
                                 timeCount: false,
                                 avg: false,
+                                avgWeighted: false,
                                 minmax: false,
                                 sumDelta: true, // relevant for this test
                                 sumIgnoreMinus: true, // relevant for this test
@@ -950,6 +958,7 @@ tests.integration(path.join(__dirname, '..'), {
                                 impUnit: '',
                                 timeCount: false,
                                 avg: false,
+                                avgWeighted: false,
                                 minmax: false,
                                 sumDelta: true, // relevant for this test
                                 sumIgnoreMinus: false, // relevant for this test

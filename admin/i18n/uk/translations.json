@@ -34,5 +34,7 @@
     "Can be configured in adapter configuration": "Можна налаштувати в конфігурації адаптера",
     "Counting factor": "Рахунковий коефіцієнт",
     "Conversion factor for consumption counter": "Коефіцієнт перерахунку для лічильника споживання",
-    "The data type of this state is not supported (has to be boolean or number)": "Тип даних цього стану не підтримується (має бути логічним значенням або числом)"
+    "The data type of this state is not supported (has to be boolean or number)": "Тип даних цього стану не підтримується (має бути логічним значенням або числом)",
+    "Weighted average": "Зважений середній",
+    "Calculate average based on time delta": "Обчисліть середнє на основі часу дельти"
 }

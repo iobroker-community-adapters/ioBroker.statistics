@@ -34,5 +34,7 @@
     "Can be configured in adapter configuration": "Может быть настроен в конфигурации адаптера",
     "Counting factor": "Фактор подсчета",
     "Conversion factor for consumption counter": "Коэффициент пересчета для счетчика расхода",
-    "The data type of this state is not supported (has to be boolean or number)": "Тип данных этого состояния не поддерживается (должен быть логическим или числовым)."
+    "The data type of this state is not supported (has to be boolean or number)": "Тип данных этого состояния не поддерживается (должен быть логическим или числовым).",
+    "Weighted average": "Средневзвешенное",
+    "Calculate average based on time delta": "Рассчитайте среднее значение в зависимости от Delta Time Delta"
 }

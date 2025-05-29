@@ -174,6 +174,7 @@ class Statistics extends utils.Adapter {
             sumDelta: [],
             sumGroup: [],
             avg: [],
+            avgWeighted: [],
             minmax: [],
             count: [],
             sumCount: [],
@@ -557,6 +558,7 @@ class Statistics extends utils.Adapter {
 
                                 // for number states
                                 avg: false,
+                                avgWeighted: false,
                                 minmax: false,
                                 sumDelta: false,
                                 sumIgnoreMinus: false,
@@ -912,6 +914,12 @@ class Statistics extends utils.Adapter {
 
                 if (!this.typeObjects.avg.includes(id)) {
                     this.typeObjects.avg.push(id);
+                }
+
+                if (obj.avgWeighted) {
+                    if (!this.typeObjects.avgWeighted.includes(id)) {
+                        this.typeObjects.avgWeighted.push(id);
+                    }
                 }
 
                 await this.defineObject('avg', id, logName, sourceUnit);

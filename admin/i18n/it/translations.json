@@ -34,5 +34,7 @@
     "Can be configured in adapter configuration": "Può essere configurato nella configurazione dell'adattatore",
     "Counting factor": "Fattore di conteggio",
     "Conversion factor for consumption counter": "Fattore di conversione per contatore dei consumi",
-    "The data type of this state is not supported (has to be boolean or number)": "Il tipo di dati di questo stato non è supportato (deve essere booleano o numerico)"
+    "The data type of this state is not supported (has to be boolean or number)": "Il tipo di dati di questo stato non è supportato (deve essere booleano o numerico)",
+    "Weighted average": "Media ponderata",
+    "Calculate average based on time delta": "Calcola la media in base al tempo del tempo"
 }

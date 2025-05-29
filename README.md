@@ -52,6 +52,7 @@ iobroker add statistics
 -->
 ### __WORK IN PROGRESS__
 
+* (@klein0r) Added option to use a weighted average (based on time delta between changes)
 * (@klein0r) Optimized avg calculation (without using a sum)
 
 ### 4.0.0 (2025-04-16)
