@@ -23,7 +23,7 @@
     "kWh, m, liters, or similar": "кВтч, м, литры и т. д.",
     "For analog values (number data points)": "Для аналоговых значений (число точек данных)",
     "Average": "Средний",
-    "Creates avaerage / daily values": "Создает средние / дневные значения",
+    "Creates average / daily values": "Создает средние / дневные значения",
     "Min/Max values": "Мин./макс. значения",
     "Creates daily, weekly, monthly, quarterly and annual values": "Создает ежедневные, еженедельные, месячные, квартальные и годовые значения",
     "Delta consumption": "Дельта потребления",

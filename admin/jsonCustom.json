@@ -130,7 +130,7 @@
             "newLine": true,
             "type": "checkbox",
             "label": "Average",
-            "help": "Creates avaerage / daily values",
+            "help": "Creates average / daily values",
             "default": false,
             "xs": 12,
             "sm": 12,

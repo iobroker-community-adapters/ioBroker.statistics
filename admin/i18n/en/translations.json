@@ -23,7 +23,7 @@
     "kWh, m, liters, or similar": "kWh, m, liters, or similar",
     "For analog values (number data points)": "For analog values (numeric data points)",
     "Average": "Average",
-    "Creates avaerage / daily values": "Creates avaerage / daily values",
+    "Creates average / daily values": "Creates average / daily values",
     "Min/Max values": "Min/Max values",
     "Creates daily, weekly, monthly, quarterly and annual values": "Creates daily, weekly, monthly, quarterly and annual values",
     "Delta consumption": "Delta consumption",
