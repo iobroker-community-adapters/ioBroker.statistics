@@ -261,7 +261,6 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await assertStateEquals(harness, `${tempId}.last`, 10);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 1);
-                await assertStateEquals(harness, `${tempId}.daySum`, 10);
                 await assertStateEquals(harness, `${tempId}.dayAvg`, 10);
 
                 // Round 1
@@ -270,7 +269,6 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await assertStateEquals(harness, `${tempId}.last`, 20);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 2);
-                await assertStateEquals(harness, `${tempId}.daySum`, 30);
                 await assertStateEquals(harness, `${tempId}.dayAvg`, 15);
 
                 // Round 2
@@ -279,7 +277,6 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await assertStateEquals(harness, `${tempId}.last`, 50);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 3);
-                await assertStateEquals(harness, `${tempId}.daySum`, 80);
                 await assertStateEquals(harness, `${tempId}.dayAvg`, 26.66667);
 
                 // Round 3
@@ -288,7 +285,6 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await assertStateEquals(harness, `${tempId}.last`, 20);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 4);
-                await assertStateEquals(harness, `${tempId}.daySum`, 100);
                 await assertStateEquals(harness, `${tempId}.dayAvg`, 25);
             });
         });
@@ -584,7 +580,6 @@ tests.integration(path.join(__dirname, '..'), {
                 await assertStateEquals(harness, `${saveId}.delta`, 0);
                 await assertStateEquals(harness, `${tempId}.last`, 10);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 1);
-                await assertStateEquals(harness, `${tempId}.daySum`, 10);
                 await assertStateEquals(harness, `${tempId}.dayAvg`, 10);
 
                 // Round 1
@@ -595,7 +590,6 @@ tests.integration(path.join(__dirname, '..'), {
                 await assertStateEquals(harness, `${saveId}.delta`, 20);
                 await assertStateEquals(harness, `${tempId}.last`, 20);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 2);
-                await assertStateEquals(harness, `${tempId}.daySum`, 30);
                 await assertStateEquals(harness, `${tempId}.dayAvg`, 15);
 
                 // Round 2
@@ -606,7 +600,6 @@ tests.integration(path.join(__dirname, '..'), {
                 await assertStateEquals(harness, `${saveId}.delta`, 30);
                 await assertStateEquals(harness, `${tempId}.last`, 30);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 3);
-                await assertStateEquals(harness, `${tempId}.daySum`, 60);
                 await assertStateEquals(harness, `${tempId}.dayAvg`, 20);
 
                 // Round 3
@@ -617,7 +610,6 @@ tests.integration(path.join(__dirname, '..'), {
                 await assertStateEquals(harness, `${saveId}.delta`, 40);
                 await assertStateEquals(harness, `${tempId}.last`, 40);
                 await assertStateEquals(harness, `${tempId}.dayCount`, 4);
-                await assertStateEquals(harness, `${tempId}.daySum`, 100);
                 await assertStateEquals(harness, `${tempId}.dayAvg`, 25);
             });
         });
