@@ -1028,7 +1028,6 @@ class Statistics extends utils.Adapter {
 
                         await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Avg`, prevValue);
                         await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Count`, 1);
-                        await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Sum`, prevValue);
                     },
                 });
             }
