@@ -8,6 +8,7 @@ class TimeWeightedAverage {
 
     /**
      * Fügt einen neuen Messwert hinzu
+     *
      * @param {number} value - Neuer Wert
      */
     add(value) {
