@@ -2,19 +2,11 @@
   "name": "iobroker.statistics",
   "version": "4.0.0",
   "description": "ioBroker statistics Adapter",
-  "author": {
-    "name": "foxthefox",
-    "email": "foxthefox@wysiwis.net"
-  },
+  "author": "foxthefox <foxthefox@wysiwis.net>",
   "contributors": [
-    {
-      "name": "Bluefox",
-      "email": "dogafox@gmail.com"
-    },
-    {
-      "name": "Matthias Kleine",
-      "email": "info@haus-automatisierung.com"
-    }
+    "Bluefox <dogafox@gmail.com>",
+    "Matthias Kleine <info@haus-automatisierung.com>",
+    "iobroker-community-adapters <iobroker-community-adapters@gmx.de>"
   ],
   "homepage": "https://github.com/iobroker-community-adapters/ioBroker.statistics",
   "license": "MIT",
