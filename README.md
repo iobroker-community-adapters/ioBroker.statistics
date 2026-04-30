@@ -52,6 +52,7 @@ iobroker add statistics
 -->
 
 ### **WORK IN PROGRESS**
+- (copilot) Adapter requires node.js >= 22 now
 - (copilot) Adapter requires admin >= 7.7.22 now
 
 ### __WORK IN PROGRESS__
