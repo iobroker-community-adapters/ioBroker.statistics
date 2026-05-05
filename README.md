@@ -83,6 +83,8 @@ NodeJS 16.x is required
 ### 2.3.1 (2023-01-11)
 * (klein0r) Added Ukrainian language
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## License
 
 The MIT License (MIT)
