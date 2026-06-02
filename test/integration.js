@@ -1082,14 +1082,14 @@ tests.integration(path.join(__dirname, '..'), {
                         write: true,
                         custom: {
                             'statistics.0': {
-                                enabled: true,
+                                enabled: true, // relevant for this test
                                 count: false,
                                 fiveMin: false,
                                 sumCount: false,
                                 impUnitPerImpulse: 1,
                                 impUnit: '',
                                 timeCount: false,
-                                avg: true,
+                                avg: true, // relevant for this test
                                 avgWeighted: true, // relevant for this test
                                 minmax: false,
                                 sumDelta: false,
