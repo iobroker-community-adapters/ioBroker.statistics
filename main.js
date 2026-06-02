@@ -685,27 +685,40 @@ class Statistics extends utils.Adapter {
         return newPulse;
     }
 
-    async getValueAsync(id) {
+    async getCachedStateAsync(id) {
         return new Promise((resolve, reject) => {
             if (Object.prototype.hasOwnProperty.call(this.states, id)) {
-                resolve(this.states[id].val);
+                resolve(this.states[id]);
             } else {
                 this.getState(id, (err, state) => {
                     if (err) {
                         reject(err);
                     }
 
-                    this.states[id] = state ? { val: state.val, ts: state.ts } : null;
+                    this.states[id] = state;
 
-                    resolve(this.states[id].val);
+                    resolve(this.states[id]);
                 });
             }
         });
     }
 
-    async setValueAsync(id, value) {
+    async getValueAsync(id) {
+        const state = await this.getCachedStateAsync(id);
+        return state?.val ?? null;
+    }
+
+    async getValueTimeAsync(id) {
+        const state = await this.getCachedStateAsync(id);
+        return state?.ts ?? null;
+    }
+
+    async setValueAsync(id, value, ts) {
         return new Promise((resolve, reject) => {
-            const ts = Date.now();
+            if (!ts) {
+                ts = Date.now();
+            }
+
             this.states[id] = { val: value, ts };
             this.setState(id, { val: value, ts, ack: true }, err => {
                 if (err) {
@@ -1535,9 +1548,9 @@ class Statistics extends utils.Adapter {
                         return false;
                     }
 
-                    this.log.debug(`[STATE CHANGE] new last for "temp.avg.${args.id}.last: ${args.value}`);
-
-                    await this.setValueAsync(`temp.avg.${args.id}.last`, args.value);
+                    const timestamp = Date.now();
+                    const lastValue = await this.getValueAsync(`temp.avg.${args.id}.last`);
+                    const lastTime = await this.getValueTimeAsync(`temp.avg.${args.id}.last`);
 
                     for (let c = 0; c < column.length; c++) {
                         const timePeriod = column[c];
@@ -1549,10 +1562,27 @@ class Statistics extends utils.Adapter {
 
                         await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Count`, count);
 
-                        avg += (args.value - avg) / count;
+                        // weighted average data
+                        if (lastTime !== null && lastValue !== null) {
+                            const deltaTime = timestamp - lastTime;
+                            this.weightedSum += lastValue * deltaTime;
+                            this.totalTime += deltaTime;
+                        }
+
+                        if (this.typeObjects.avgWeighted.includes(args.id)) {
+                            // weighted average
+                            // avg = this.totalTime > 0 ? this.weightedSum / this.totalTime : 0;
+                        } else {
+                            // Normal average
+                            avg += (args.value - avg) / count;
+                        }
 
                         await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Avg`, roundValue(avg, PRECISION));
                     }
+
+                    this.log.debug(`[STATE CHANGE] new last for "temp.avg.${args.id}.last: ${args.value}`);
+
+                    await this.setValueAsync(`temp.avg.${args.id}.last`, args.value, timestamp);
                 },
             });
 
