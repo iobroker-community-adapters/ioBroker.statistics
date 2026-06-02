@@ -188,7 +188,7 @@ class Statistics extends utils.Adapter {
             sumDelta: [],
             sumGroup: [],
             avg: [],
-            avgWeighted: /** @type {string[]} */ ([]),
+            avgWeighted: [],
             minmax: [],
             count: [],
             sumCount: [],
@@ -1596,8 +1596,10 @@ class Statistics extends utils.Adapter {
                         if (this.typeObjects.avgWeighted.includes(args.id)) {
                             if (lastTime !== null && lastValue !== null) {
                                 const deltaTime = timestamp - lastTime;
-                                let wSum = (await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}WeightedSum`)) ?? 0;
-                                let tTime = (await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}TotalTime`)) ?? 0;
+                                let wSum =
+                                    (await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}WeightedSum`)) ?? 0;
+                                let tTime =
+                                    (await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}TotalTime`)) ?? 0;
                                 wSum += lastValue * deltaTime;
                                 tTime += deltaTime;
                                 await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}WeightedSum`, wSum);
