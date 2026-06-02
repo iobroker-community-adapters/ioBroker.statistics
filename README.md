@@ -76,10 +76,11 @@ NodeJS 16.x is required
 * (klein0r) Fixed cron expressions for quarter and year
 * (klein0r) Added indicators for startup and working
 
-[Older changelogs can be found there](CHANGELOG_OLD.md)## License
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
+## License
 
 The MIT License (MIT)
-
 
 Copyright (c) 2026 iobroker-community-adapters <iobroker-community-adapters@gmx.de>  
 Copyright (c) 2018-2026 foxthefox <foxthefox@wysiwis.net>,
