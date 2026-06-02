@@ -1270,7 +1270,7 @@ class Statistics extends utils.Adapter {
         }
 
         // Delete old sum states
-        const oldStates = ['15MinAvg', '15MinSum', 'hourSum', 'daySum', 'weekSum', 'monthSum', 'quarterSum', 'yearSum'];
+        const oldStates = ['15MinSum', 'hourSum', 'daySum', 'weekSum', 'monthSum', 'quarterSum', 'yearSum'];
         for (const oldStateId of oldStates) {
             if (!nameObjects[type].temp.includes(oldStateId)) {
                 await this.delObjectAsync(`temp.${type}.${id}.${oldStateId}`);
