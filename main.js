@@ -62,18 +62,32 @@ const nameObjects = {
         temp: [
             '15MinAvg',
             '15MinCount',
+            '15MinWeightedSum',
+            '15MinTotalTime',
             'hourAvg',
             'hourCount',
+            'hourWeightedSum',
+            'hourTotalTime',
             'dayAvg',
             'dayCount',
+            'dayWeightedSum',
+            'dayTotalTime',
             'weekAvg',
             'weekCount',
+            'weekWeightedSum',
+            'weekTotalTime',
             'monthAvg',
             'monthCount',
+            'monthWeightedSum',
+            'monthTotalTime',
             'quarterAvg',
             'quarterCount',
+            'quarterWeightedSum',
+            'quarterTotalTime',
             'yearAvg',
             'yearCount',
+            'yearWeightedSum',
+            'yearTotalTime',
             'last',
         ],
     },
@@ -174,7 +188,7 @@ class Statistics extends utils.Adapter {
             sumDelta: [],
             sumGroup: [],
             avg: [],
-            avgWeighted: [],
+            avgWeighted: /** @type {string[]} */ ([]),
             minmax: [],
             count: [],
             sumCount: [],
@@ -685,27 +699,40 @@ class Statistics extends utils.Adapter {
         return newPulse;
     }
 
-    async getValueAsync(id) {
+    async getCachedStateAsync(id) {
         return new Promise((resolve, reject) => {
             if (Object.prototype.hasOwnProperty.call(this.states, id)) {
-                resolve(this.states[id].val);
+                resolve(this.states[id]);
             } else {
                 this.getState(id, (err, state) => {
                     if (err) {
                         reject(err);
                     }
 
-                    this.states[id] = state ? { val: state.val, ts: state.ts } : null;
+                    this.states[id] = state;
 
-                    resolve(this.states[id].val);
+                    resolve(this.states[id]);
                 });
             }
         });
     }
 
-    async setValueAsync(id, value) {
+    async getValueAsync(id) {
+        const state = await this.getCachedStateAsync(id);
+        return state?.val ?? null;
+    }
+
+    async getValueTimeAsync(id) {
+        const state = await this.getCachedStateAsync(id);
+        return state?.ts ?? null;
+    }
+
+    async setValueAsync(id, value, ts) {
         return new Promise((resolve, reject) => {
-            const ts = Date.now();
+            if (!ts) {
+                ts = Date.now();
+            }
+
             this.states[id] = { val: value, ts };
             this.setState(id, { val: value, ts, ack: true }, err => {
                 if (err) {
@@ -1036,6 +1063,11 @@ class Statistics extends utils.Adapter {
 
                         await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Avg`, prevValue);
                         await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Count`, 1);
+
+                        if (this.typeObjects.avgWeighted.includes(args.id)) {
+                            await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}WeightedSum`, 0);
+                            await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}TotalTime`, 0);
+                        }
                     },
                 });
             }
@@ -1225,7 +1257,12 @@ class Statistics extends utils.Adapter {
 
             obj.native.addr = id;
 
-            if (unit && !['dayCount', 'lastPulse'].includes(objects[s])) {
+            if (
+                unit &&
+                !['dayCount', 'lastPulse'].includes(objects[s]) &&
+                !objects[s].endsWith('WeightedSum') &&
+                !objects[s].endsWith('TotalTime')
+            ) {
                 obj.common.unit = unit;
             }
 
@@ -1233,9 +1270,11 @@ class Statistics extends utils.Adapter {
         }
 
         // Delete old sum states
-        const oldStates = ['15MinAvg', '15MinSum', 'hourSum', 'daySum', 'weekSum', 'monthSum', 'quarterSum', 'yearSum'];
+        const oldStates = ['15MinSum', 'hourSum', 'daySum', 'weekSum', 'monthSum', 'quarterSum', 'yearSum'];
         for (const oldStateId of oldStates) {
-            await this.delObjectAsync(`temp.${type}.${id}.${oldStateId}`);
+            if (!nameObjects[type].temp.includes(oldStateId)) {
+                await this.delObjectAsync(`temp.${type}.${id}.${oldStateId}`);
+            }
         }
 
         await this.setInitial(type, id);
@@ -1335,15 +1374,20 @@ class Statistics extends utils.Adapter {
                         await this.setValueAsync(targetId, minmaxInitVal.val);
                     }
                 } else if (type === 'avg') {
-                    const avgInitVal = await this.getForeignStateAsync(id);
+                    if (name.endsWith('WeightedSum') || name.endsWith('TotalTime')) {
+                        this.log.debug(`[SET INITIAL] ${id} avg init value: 0 (weighted)`);
+                        await this.setValueAsync(targetId, 0);
+                    } else {
+                        const avgInitVal = await this.getForeignStateAsync(id);
 
-                    if (avgInitVal && avgInitVal.val !== null) {
-                        if (name.indexOf('Count') > -1) {
-                            this.log.debug(`[SET INITIAL] ${id} avg init value: 1`);
-                            await this.setValueAsync(targetId, 1);
-                        } else {
-                            this.log.debug(`[SET INITIAL] ${id} avg init value: ${avgInitVal.val}`);
-                            await this.setValueAsync(targetId, avgInitVal.val);
+                        if (avgInitVal && avgInitVal.val !== null) {
+                            if (name.indexOf('Count') > -1) {
+                                this.log.debug(`[SET INITIAL] ${id} avg init value: 1`);
+                                await this.setValueAsync(targetId, 1);
+                            } else {
+                                this.log.debug(`[SET INITIAL] ${id} avg init value: ${avgInitVal.val}`);
+                                await this.setValueAsync(targetId, avgInitVal.val);
+                            }
                         }
                     }
                 } else if (type === 'timeCount') {
@@ -1535,9 +1579,9 @@ class Statistics extends utils.Adapter {
                         return false;
                     }
 
-                    this.log.debug(`[STATE CHANGE] new last for "temp.avg.${args.id}.last: ${args.value}`);
-
-                    await this.setValueAsync(`temp.avg.${args.id}.last`, args.value);
+                    const timestamp = Date.now();
+                    const lastValue = await this.getValueAsync(`temp.avg.${args.id}.last`);
+                    const lastTime = await this.getValueTimeAsync(`temp.avg.${args.id}.last`);
 
                     for (let c = 0; c < column.length; c++) {
                         const timePeriod = column[c];
@@ -1549,10 +1593,30 @@ class Statistics extends utils.Adapter {
 
                         await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Count`, count);
 
-                        avg += (args.value - avg) / count;
+                        if (this.typeObjects.avgWeighted.includes(args.id)) {
+                            if (lastTime !== null && lastValue !== null) {
+                                const deltaTime = timestamp - lastTime;
+                                let wSum = (await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}WeightedSum`)) ?? 0;
+                                let tTime = (await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}TotalTime`)) ?? 0;
+                                wSum += lastValue * deltaTime;
+                                tTime += deltaTime;
+                                await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}WeightedSum`, wSum);
+                                await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}TotalTime`, tTime);
+                                avg = tTime > 0 ? wSum / tTime : args.value;
+                            } else {
+                                avg = args.value;
+                            }
+                        } else {
+                            // Normal average
+                            avg += (args.value - avg) / count;
+                        }
 
                         await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Avg`, roundValue(avg, PRECISION));
                     }
+
+                    this.log.debug(`[STATE CHANGE] new last for "temp.avg.${args.id}.last: ${args.value}`);
+
+                    await this.setValueAsync(`temp.avg.${args.id}.last`, args.value, timestamp);
                 },
             });
 
