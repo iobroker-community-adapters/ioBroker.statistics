@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "statistics",
-    "version": "4.0.0",
+    "version": "5.0.0",
     "news": {
+      "5.0.0": {
+        "en": "Adapter requires node.js >= 22 now\nAdapter requires admin >= 7.7.22 now\nAdded option to use a weighted average (based on time delta between changes)\nOptimized avg calculation (without using a sum)\nadmin 7.6.17 and js-controller 6.0.11 (or later) are required\nUpdated dependencies",
+        "de": "Adapter benötigt node.js >= 22 jetzt\nAdapter benötigt admin >= 7.7.22 jetzt\nOption hinzugefügt, um einen gewichteten Durchschnitt zu verwenden (basierend auf der Zeit Delta zwischen Änderungen)\nOptimierte avg-Berechnung (ohne Verwendung einer Summe)\nadmin 7.6.17 und js-controller 6.0.11 (oder später) sind erforderlich\nAktualisierte Abhängigkeiten",
+        "ru": "Адаптер требует node.js >= 22 сейчас\nАдаптер требует администратора >= 7.7.22\nДобавлен вариант использования средневзвешенного значения (на основе дельты времени между изменениями)\nОптимизированный расчет avg (без использования суммы)\nadmin 7.6.17 и js-контроллер 6.0.11 (или более поздние)\nОбновленные зависимости",
+        "pt": "Adaptador requer nod.js >= 22 agora\nAdaptador requer admin >= 7.7.22 agora\nOpção adicionada para usar uma média ponderada (baseada no delta temporal entre as mudanças)\nCálculo Avg otimizado (sem usar uma soma)\nadmin 7.6.17 e js-controller 6.0.11 (ou posterior) são necessários\nDependências atualizadas",
+        "nl": "Voor de adapter zijn node.js < 22 nu nodig\nAdapter vereist admin < 7.7.22 nu\nToegevoegde optie om een gewogen gemiddelde te gebruiken (gebaseerd op tijd delta tussen wijzigingen)\nGeoptimaliseerde avg berekening (zonder gebruik van een som)\nadmin 7.6.17 en js-controller 6.0.11 (of later) zijn vereist\nBijgewerkte afhankelijkheden",
+        "fr": "Adaptateur nécessite node.js >= 22 maintenant\nAdaptateur nécessite admin >= 7.7.22 maintenant\nPossibilité supplémentaire d'utiliser une moyenne pondérée (basée sur le delta temporel entre les variations)\nCalcul d'avag optimisé (sans utiliser de somme)\nadmin 7.6.17 et js-contrôleur 6.0.11 (ou plus tard) sont requis\nDépendances actualisées",
+        "it": "Adattatore richiede node.js >= 22 ora\nAdattatore richiede admin >= 7.7.22 ora\nAggiunta opzione per utilizzare una media ponderata (basata sul tempo delta tra le modifiche)\nCalcolo avg ottimizzato (senza somma)\nadmin 7.6.17 e js-controller 6.0.11 (o successivo) sono richiesti\nDipendenze aggiornate",
+        "es": "Adaptador requiere node.js ю= 22 ahora\nEl adaptador requiere administrador= 7.7.22 ahora\nOpción agregada para utilizar un promedio ponderado (basado en el tiempo delta entre cambios)\nCálculo de avg optimizado (sin utilizar una suma)\nadmin 7.6.17 y js-controller 6.0.11 (o posterior) son necesarios\nDependencias actualizadas",
+        "pl": "Adapter wymaga node.js > = 22\nAdapter wymaga admin > = 7.7.22\nDodano opcję wykorzystania średniej ważonej (na podstawie delta czasu pomiędzy zmianami)\nZoptymalizowane obliczenia avg (bez użycia sumy)\nwymagany jest admin 7.6.17 i kontroler js- 6.0.11 (lub późniejszy)\nAktualizacja zależności",
+        "uk": "Адаптер вимагає node.js >= 22 тепер\nАдаптер вимагає адмін >= 7.7.22 тепер\nДодана можливість використання вагової середньої (на основі часу дельти між змінами)\nОптимізований розрахунок обертів (без використання суми)\nadmin 7.6.17 та js-controller 6.0.11 (або пізніше) обов’язкові\nОновлені залежності",
+        "zh-cn": "适配器需要节点.js 现在22\n适任者需要管理员 \\ 7.7.22 现在\n添加选项以使用加权平均值(根据变化之间的时间三角洲)\n优化avg计算( 不使用总和)\n需要admin 7.6.17和js控制器 6.0.11(或以后)\n更新的依赖关系"
+      },
       "4.0.0": {
         "en": "NodeJS >= 20.x and js-controller >= 6 is required",
         "de": "NodeJS >= 20.x und js-Controller >= 6 ist erforderlich",
@@ -80,19 +93,6 @@
         "pl": "Dodać wartości bezwzględnej i max",
         "uk": "Додано абсолютні мінімальні та максимальні значення",
         "zh-cn": "增加绝对值和最大值"
-      },
-      "2.1.1": {
-        "en": "Fixed usage of default values for groups",
-        "de": "Feste Verwendung von Standardwerten für Gruppen",
-        "ru": "Фиксированное использование значений по умолчанию для групп",
-        "pt": "Uso fixo de valores padrão para grupos",
-        "nl": "Gebruik van defecte waarden voor groepen",
-        "fr": "Utilisation fixe des valeurs par défaut pour les groupes",
-        "it": "Utilizzo fisso dei valori predefiniti per i gruppi",
-        "es": "Uso fijo de valores predeterminados para grupos",
-        "pl": "Wykorzystanie domyślnych wartości dla grup",
-        "uk": "Виправлено використання значень за замовчуванням для груп",
-        "zh-cn": "对集团采用缺省值"
       }
     },
     "titleLang": {

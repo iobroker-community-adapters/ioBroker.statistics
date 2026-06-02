@@ -1,4 +1,7 @@
 # Older changes
+## 2.3.1 (2023-01-11)
+* (klein0r) Added Ukrainian language
+
 ## 2.3.0 (2022-11-03)
 NodeJS 14.5.0 is required
 
