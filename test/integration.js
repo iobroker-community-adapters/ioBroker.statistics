@@ -42,6 +42,15 @@ async function waitUntilStateChangesTo(harness, id, value, action) {
     });
 }
 
+async function assertStateInRange(harness, id, min, max) {
+    const state = await harness.states.getStateAsync(id);
+    expect(state, `${id} should be an object`).to.be.an('object');
+    if (state) {
+        expect(state.val, `${id} value ${state.val} should be >= ${min}`).to.be.at.least(min);
+        expect(state.val, `${id} value ${state.val} should be <= ${max}`).to.be.at.most(max);
+    }
+}
+
 async function assertStateEquals(harness, id, value) {
     const state = await harness.states.getStateAsync(id);
     expect(state, `${id} should be an object (with value ${value})`).to.be.an('object');
@@ -1039,6 +1048,104 @@ tests.integration(path.join(__dirname, '..'), {
 
                 await sleep(1000);
                 await assertStateEquals(harness, `${sumGroupTempId}.day`, 0.02849); // (0 * 0.001 * 0.28) + (-10 * 0.005 * 0.28)
+            });
+        });
+
+        suite('Test Number avgWeighted', (getHarness) => {
+            /**
+             * @type {IntegrationTestHarness}
+             */
+            let harness;
+
+            const customNumberObjId = '0_userdata.0.myAvgWeightedNumber';
+
+            before(async function () {
+                this.timeout(60000);
+
+                harness = getHarness();
+                harness.changeAdapterConfig(harness.adapterName, {
+                    native: {
+                        impUnitPerImpulse: 1,
+                        impFactor: 1,
+                        timezone: 'Europe/Berlin',
+                        groups: []
+                    }
+                });
+
+                await harness.objects.setObjectAsync(customNumberObjId, {
+                    type: 'state',
+                    common: {
+                        name: 'Test weighted average number',
+                        type: 'number',
+                        role: 'value',
+                        read: true,
+                        write: true,
+                        custom: {
+                            'statistics.0': {
+                                enabled: true,
+                                count: false,
+                                fiveMin: false,
+                                sumCount: false,
+                                impUnitPerImpulse: 1,
+                                impUnit: '',
+                                timeCount: false,
+                                avg: true,
+                                avgWeighted: true, // relevant for this test
+                                minmax: false,
+                                sumDelta: false,
+                                sumIgnoreMinus: false,
+                                groupFactor: 1,
+                                logName: 'myAvgWeightedNumber'
+                            }
+                        }
+                    },
+                    native: {},
+                });
+
+                await harness.states.setStateAsync(customNumberObjId, { val: 100, ack: true });
+
+                await waitUntilStateChangesTo(harness, `${harness.adapterName}.0.info.started`, true, () => {
+                    harness.startAdapterAndWait();
+                });
+            });
+
+            after(async function () {
+                await harness.objects.delObjectAsync(customNumberObjId);
+
+                await sleep(1000);
+                await harness.stopAdapter();
+            });
+
+            it('accumulates weighted sum and total time', async function () {
+                this.timeout(60000);
+                await sleep(1000);
+
+                const tempId = `${harness.adapterName}.0.temp.avg.${customNumberObjId}`;
+
+                // Initial state: value 100, no previous data yet
+                await assertStateEquals(harness, `${tempId}.last`, 100);
+                await assertStateEquals(harness, `${tempId}.dayAvg`, 100);
+                await assertStateEquals(harness, `${tempId}.dayWeightedSum`, 0);
+                await assertStateEquals(harness, `${tempId}.dayTotalTime`, 0);
+
+                // Hold value 100 for ~1000ms, then switch to 0
+                // The weighted average must be dominated by the long-held value 100,
+                // unlike a simple average which would yield 50
+                await sleep(1000);
+                await harness.states.setStateAsync(customNumberObjId, { val: 0, ack: true });
+                await sleep(500);
+
+                const wSumState = await harness.states.getStateAsync(`${tempId}.dayWeightedSum`);
+                const tTimeState = await harness.states.getStateAsync(`${tempId}.dayTotalTime`);
+
+                expect(wSumState, 'dayWeightedSum should be an object').to.be.an('object');
+                expect(tTimeState, 'dayTotalTime should be an object').to.be.an('object');
+                expect(wSumState.val, 'dayWeightedSum should be > 0').to.be.greaterThan(0);
+                expect(tTimeState.val, 'dayTotalTime should be > 0').to.be.greaterThan(0);
+
+                // dayAvg must be close to 100 (the dominant value), not 50 (simple avg)
+                // Exact value depends on real elapsed time, so we only assert the range
+                await assertStateInRange(harness, `${tempId}.dayAvg`, 80, 100);
             });
         });
     }

@@ -62,18 +62,32 @@ const nameObjects = {
         temp: [
             '15MinAvg',
             '15MinCount',
+            '15MinWeightedSum',
+            '15MinTotalTime',
             'hourAvg',
             'hourCount',
+            'hourWeightedSum',
+            'hourTotalTime',
             'dayAvg',
             'dayCount',
+            'dayWeightedSum',
+            'dayTotalTime',
             'weekAvg',
             'weekCount',
+            'weekWeightedSum',
+            'weekTotalTime',
             'monthAvg',
             'monthCount',
+            'monthWeightedSum',
+            'monthTotalTime',
             'quarterAvg',
             'quarterCount',
+            'quarterWeightedSum',
+            'quarterTotalTime',
             'yearAvg',
             'yearCount',
+            'yearWeightedSum',
+            'yearTotalTime',
             'last',
         ],
     },
@@ -174,7 +188,7 @@ class Statistics extends utils.Adapter {
             sumDelta: [],
             sumGroup: [],
             avg: [],
-            avgWeighted: [],
+            avgWeighted: /** @type {string[]} */ ([]),
             minmax: [],
             count: [],
             sumCount: [],
@@ -1049,6 +1063,11 @@ class Statistics extends utils.Adapter {
 
                         await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Avg`, prevValue);
                         await this.setValueStatAsync(`temp.avg.${args.id}.${timePeriod}Count`, 1);
+
+                        if (this.typeObjects.avgWeighted.includes(args.id)) {
+                            await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}WeightedSum`, 0);
+                            await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}TotalTime`, 0);
+                        }
                     },
                 });
             }
@@ -1238,7 +1257,12 @@ class Statistics extends utils.Adapter {
 
             obj.native.addr = id;
 
-            if (unit && !['dayCount', 'lastPulse'].includes(objects[s])) {
+            if (
+                unit &&
+                !['dayCount', 'lastPulse'].includes(objects[s]) &&
+                !objects[s].endsWith('WeightedSum') &&
+                !objects[s].endsWith('TotalTime')
+            ) {
                 obj.common.unit = unit;
             }
 
@@ -1348,15 +1372,20 @@ class Statistics extends utils.Adapter {
                         await this.setValueAsync(targetId, minmaxInitVal.val);
                     }
                 } else if (type === 'avg') {
-                    const avgInitVal = await this.getForeignStateAsync(id);
+                    if (name.endsWith('WeightedSum') || name.endsWith('TotalTime')) {
+                        this.log.debug(`[SET INITIAL] ${id} avg init value: 0 (weighted)`);
+                        await this.setValueAsync(targetId, 0);
+                    } else {
+                        const avgInitVal = await this.getForeignStateAsync(id);
 
-                    if (avgInitVal && avgInitVal.val !== null) {
-                        if (name.indexOf('Count') > -1) {
-                            this.log.debug(`[SET INITIAL] ${id} avg init value: 1`);
-                            await this.setValueAsync(targetId, 1);
-                        } else {
-                            this.log.debug(`[SET INITIAL] ${id} avg init value: ${avgInitVal.val}`);
-                            await this.setValueAsync(targetId, avgInitVal.val);
+                        if (avgInitVal && avgInitVal.val !== null) {
+                            if (name.indexOf('Count') > -1) {
+                                this.log.debug(`[SET INITIAL] ${id} avg init value: 1`);
+                                await this.setValueAsync(targetId, 1);
+                            } else {
+                                this.log.debug(`[SET INITIAL] ${id} avg init value: ${avgInitVal.val}`);
+                                await this.setValueAsync(targetId, avgInitVal.val);
+                            }
                         }
                     }
                 } else if (type === 'timeCount') {
@@ -1562,16 +1591,19 @@ class Statistics extends utils.Adapter {
 
                         await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}Count`, count);
 
-                        // weighted average data
-                        if (lastTime !== null && lastValue !== null) {
-                            const deltaTime = timestamp - lastTime;
-                            this.weightedSum += lastValue * deltaTime;
-                            this.totalTime += deltaTime;
-                        }
-
                         if (this.typeObjects.avgWeighted.includes(args.id)) {
-                            // weighted average
-                            // avg = this.totalTime > 0 ? this.weightedSum / this.totalTime : 0;
+                            if (lastTime !== null && lastValue !== null) {
+                                const deltaTime = timestamp - lastTime;
+                                let wSum = (await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}WeightedSum`)) ?? 0;
+                                let tTime = (await this.getValueAsync(`temp.avg.${args.id}.${timePeriod}TotalTime`)) ?? 0;
+                                wSum += lastValue * deltaTime;
+                                tTime += deltaTime;
+                                await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}WeightedSum`, wSum);
+                                await this.setValueAsync(`temp.avg.${args.id}.${timePeriod}TotalTime`, tTime);
+                                avg = tTime > 0 ? wSum / tTime : args.value;
+                            } else {
+                                avg = args.value;
+                            }
                         } else {
                             // Normal average
                             avg += (args.value - avg) / count;
