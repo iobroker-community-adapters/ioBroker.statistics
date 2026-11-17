@@ -49,6 +49,7 @@ iobroker add statistics
 
 ### **WORK IN PROGRESS**
 - (copilot) Adapter requires node.js >= 22.19.0 now
+* (GermanBluefox) Added options to ignore values below/above a limit (#486)
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### __WORK IN PROGRESS__

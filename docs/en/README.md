@@ -29,3 +29,4 @@ The structure of the state is: `statistics.0.{save|temp}.{kind of stat}.{origina
 
 * specify the relevant groups in the instance configuration page (admin => instances => statistics config)
 * specify the configuration in the settings of the state (admin => objects)
+* optional for number states: `Ignore values below` (`ignoreBelowNumber`) and `Ignore values above` (`ignoreAboveNumber`) - values outside these limits are ignored for all calculations (min/max, average, delta). Leave empty to disable.
