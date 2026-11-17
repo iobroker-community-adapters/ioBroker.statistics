@@ -475,6 +475,8 @@ class Statistics extends utils.Adapter {
                         this.log.warn(
                             `[STATE CHANGE] wrong value => ${args.state.val} on ${args.id} => check the other adapter where value comes from `,
                         );
+                    } else if (this.isOutsideLimits(args.id, args.state.val)) {
+                        this.log.debug(`[STATE CHANGE] value ${args.state.val} of ${args.id} ignored (outside limits)`);
                     } else {
                         if (this.typeObjects.sumDelta.includes(args.id)) {
                             this.log.debug(`[STATE CHANGE] schedule onStateChangeSumDeltaValue for ${args.id}`);
@@ -511,6 +513,34 @@ class Statistics extends utils.Adapter {
         }
 
         isStart && this.processTasks();
+    }
+
+    /**
+     * Checks if a numeric value is outside the configured limits (ignoreBelowNumber / ignoreAboveNumber)
+     *
+     * @param {string} id
+     * @param {ioBroker.StateValue} value
+     * @returns {boolean}
+     */
+    isOutsideLimits(id, value) {
+        const options = this.statDP[id];
+        if (!options || typeof value === 'boolean') {
+            return false;
+        }
+
+        const parseLimit = limit => {
+            if (limit === '' || limit === null || limit === undefined) {
+                return null;
+            }
+            const num = Number(limit);
+            return isNaN(num) ? null : num;
+        };
+
+        const below = parseLimit(options.ignoreBelowNumber);
+        const above = parseLimit(options.ignoreAboveNumber);
+        const num = Number(value);
+
+        return (below !== null && num < below) || (above !== null && num > above);
     }
 
     /**
@@ -576,6 +606,8 @@ class Statistics extends utils.Adapter {
                                 minmax: false,
                                 sumDelta: false,
                                 sumIgnoreMinus: false,
+                                ignoreBelowNumber: null,
+                                ignoreAboveNumber: null,
 
                                 sumGroup: undefined, // requires .sumCount = true or .sumDelta = true
                                 groupFactor: 1, // requres sumGroup

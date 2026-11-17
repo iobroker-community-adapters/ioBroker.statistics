@@ -60,6 +60,10 @@ Ermittelt den Minimal- und Maximalwert im jeweiligen Zeitraum.
 
 Speichert Werte in ``statistics.x.temp.sumDelta.*`` bzw. ``statistics.x.save.sumDelta.*``.
 
+### Werte ignorieren unter / über
+
+Mit ``ignoreBelowNumber`` und ``ignoreAboveNumber`` können Grenzen festgelegt werden. Werte außerhalb dieser Grenzen werden für alle Berechnungen (Min/Max, Durchschnitt, Delta) ignoriert. Leer lassen zum Deaktivieren.
+
 ## Gruppen
 
 ![options groups](./img/optionsGroups.png)
@@ -79,6 +83,8 @@ Speichert Werte in ``statistics.x.temp.sumDelta.*`` bzw. ``statistics.x.save.sum
 | minmax            | boolean | number     |
 | sumDelta          | boolean | number     |
 | sumIgnoreMinus    | boolean | number     |
+| ignoreBelowNumber | number  | number     |
+| ignoreAboveNumber | number  | number     |
 | groupFactor       | number  | boolean    |
 | logName           | string  | -          |
 | sumGroup          | string  | -          |

@@ -188,6 +188,29 @@
             "lg": 4,
             "xl": 4
         },
+        "ignoreBelowNumber": {
+            "hidden": "customObj.common.type !== 'number'",
+            "newLine": true,
+            "type": "number",
+            "label": "Ignore values below",
+            "help": "Values below this limit are ignored for all calculations, leave empty to disable",
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
+        },
+        "ignoreAboveNumber": {
+            "hidden": "customObj.common.type !== 'number'",
+            "type": "number",
+            "label": "Ignore values above",
+            "help": "Values above this limit are ignored for all calculations, leave empty to disable",
+            "xs": 12,
+            "sm": 12,
+            "md": 4,
+            "lg": 4,
+            "xl": 4
+        },
 
         "_group": {
             "hidden": "!data.sumDelta && !data.sumCount",
